@@ -1,0 +1,38 @@
+body {
+    margin: 0;
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
+    overflow: hidden;
+}
+
+.flexContainer {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.flexChild {
+    width: 50%;
+    padding: 16px;
+    overflow-y: scroll;
+}
+
+.flexChild .textContainer {
+    display: inline-block;
+    width: 464px;
+}
+
+h1:first-child {
+    margin-top: 0;
+}
+
+#left {
+    background-color: #fff45e;
+    text-align: right;
+    color: #040b33;
+}
+
+#right {
+    background-color: #14141a;
+    text-align: left;
+    color: #c1c0df;
+}
