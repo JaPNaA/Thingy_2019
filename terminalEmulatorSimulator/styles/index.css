@@ -1,0 +1,37 @@
+:root {
+    --white: #c5c5c5;
+    --black: #000000;
+}
+
+table {
+    background-color: var(--black);
+    color: var(--white);
+    /**
+     * Ubuntu mono is probably installed if on Ubuntu,
+     * Consolas is probably installed for windows users,
+     * and the rest, uhh idk
+     */
+    font-family: 'Ubuntu Mono', Consolas, monospace;
+    white-space: pre;
+    border-collapse: collapse;
+    border: 8px solid black;
+}
+
+table tr {
+    padding: 0;
+    border: 0;
+    margin: 0;
+}
+
+table td {
+    padding: 0;
+    border: 0;
+    margin: 0;
+    width: var(--char-width);
+    height: var(--char-height);
+}
+
+table td.cursor {
+    color: var(--black);
+    background-color: var(--white);
+}
