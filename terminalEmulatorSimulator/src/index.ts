@@ -1,5 +1,5 @@
 import Terminal from "./terminal.js";
-import { wait } from "./utils.js";
+import "./programs/programsImporter.js";
 import KeyboardStream from "./keyboardStream.js";
 import ReadStream from "./streams/readStream.js";
 import WriteStream from "./streams/writeStream.js";

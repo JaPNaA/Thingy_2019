@@ -1,5 +1,4 @@
 import Program from "./program.js";
-import "./_programsImporter.js";
 import bashProgramMap from "./bashProgramMap.js";
 import ReadStream from "../streams/readStream.js";
 const quotes = ["'", '"'];
