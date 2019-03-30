@@ -15,26 +15,24 @@ class Player {
         const gain = this.context.createGain();
 
         oscillator.type = type;
+        oscillator.frequency.value = frequency;
 
         oscillator.connect(gain);
         gain.connect(this.context.destination);
-
-        oscillator.frequency.value = frequency;
-
         oscillator.start(this.context.currentTime);
 
         await wait(time);
 
         gain.gain.exponentialRampToValueAtTime(0.00001, this.context.currentTime + (fadeOutTime / 1000));
-        await wait(fadeOutTime + 10);
-        oscillator.stop();
+        await wait(fadeOutTime);
+
+        setTimeout(() => oscillator.stop(), 100);
     }
 
     /**
      * @param {Note} note 
      */
     async playNote(note) {
-        console.log(note);
         await this.play(note.time, note.frequency, note.options.type, note.options.fadeOutTime);
     }
 }

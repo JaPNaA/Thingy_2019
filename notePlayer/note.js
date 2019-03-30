@@ -7,7 +7,7 @@
 
 /** @type {NoteOptions} */
 const defaultOptions = {
-    fadeOutTime: 0.04,
+    fadeOutTime: 40,
     type: "sine"
 };
 
@@ -26,7 +26,7 @@ class Note {
             this.frequency = frequency || Note.defaultFrequency;
         }
 
-        this.options = options ? Object.assign(options, defaultOptions) : defaultOptions;
+        this.options = options ? Object.assign({}, defaultOptions, options) : defaultOptions;
     }
 
     static async setup() {
