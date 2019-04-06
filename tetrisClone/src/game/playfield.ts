@@ -16,7 +16,7 @@ class PlayField {
     private scale: number = 24;
     private tetromino?: Tetromino;
 
-    constructor() {
+    public constructor() {
         this.field = new Matrix(
             PlayField.width,
             PlayField.height + PlayField.vanishHeight,

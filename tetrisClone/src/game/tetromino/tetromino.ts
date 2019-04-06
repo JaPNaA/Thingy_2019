@@ -6,13 +6,13 @@ import IRotatableMatrix from "../matrix/iRotatableMatrix.js";
 import TetrominoI from "./tetrominos/i.js";
 
 abstract class Tetromino {
-    public abstract matrix: IRotatableMatrix<Cell>;
     public abstract type: TetrominoType;
+    protected abstract matrix: IRotatableMatrix<Cell>;
 
     protected x: number;
     protected y: number;
 
-    constructor() {
+    public constructor() {
         this.x = 0;
         this.y = 21;
     }
@@ -25,24 +25,50 @@ abstract class Tetromino {
         this.y--;
     }
 
+    public left() {
+        this.x--;
+    }
+
+    public right() {
+        this.x++;
+    }
+
+    public rotate() {
+        this.matrix.rotate();
+    }
+
     /** Checks if the tetromino can fall one y down */
     public canFall(mat: Matrix<Cell>): boolean {
         return this.canBeAt(this.x, this.y - 1, mat);
+    }
+
+    public canGoLeft(mat: Matrix<Cell>): boolean {
+        return this.canBeAt(this.x - 1, this.y, mat);
+    }
+
+    public canGoRight(mat: Matrix<Cell>): boolean {
+        return this.canBeAt(this.x + 1, this.y, mat);
     }
 
     /** Checks if the tetromino can be at the specified position */
     private canBeAt(thisX: number, thisY: number, mat: Matrix<Cell>): boolean {
         for (let i = 0; i < this.matrix.width; i++) {
             for (let j = 0; j < this.matrix.height; j++) {
-                const thisElm = this.matrix.matrix[i][j];
+                const thisCell = this.matrix.matrix[i][j];
                 const y = thisY - i;
                 const x = j + thisX;
-                const matElm = mat.matrix[y] && mat.matrix[y][x];
-                if (!matElm) { return false; }
+                const matCell = mat.matrix[y] && mat.matrix[y][x];
 
-                if (thisElm.isOccupied() && matElm.isOccupied()) {
-                    return false;
+                if (matCell) {
+                    if (matCell.isOccupied() && thisCell.isOccupied()) {
+                        return false;
+                    }
+                } else {
+                    if (thisCell.isOccupied()) {
+                        return false;
+                    }
                 }
+
             }
         }
 

@@ -4,7 +4,7 @@ import TetrominoType from "./tetromino/tetrominoType.js";
 class Cell {
     public block?: Tetromino;
 
-    constructor() {
+    public constructor() {
         // this.block = TetrominoType.z;
     }
 

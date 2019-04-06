@@ -5,7 +5,7 @@ class Canvas {
     private width: number;
     private height: number;
 
-    constructor() {
+    public constructor() {
         this.canvas = document.createElement("canvas");
         this.width = 300;
         this.height = 150;

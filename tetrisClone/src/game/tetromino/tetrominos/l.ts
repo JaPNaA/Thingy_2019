@@ -12,9 +12,9 @@ class TetrominoL extends Tetromino {
     ], TetrominoType.l);
     public type: TetrominoType = TetrominoType.l;
 
-    public matrix: Matrix33<Cell>;
+    protected matrix: Matrix33<Cell>;
 
-    constructor() {
+    public constructor() {
         super();
         this.matrix = new Matrix33(
             (x, y) => Cell.copy(TetrominoL.layout[y][x])

@@ -4,7 +4,7 @@ import TetrominoGenerator from "./tetromino/tetrominoGenerator.js";
 import TetrominoJ from "./tetromino/tetrominos/j.js";
 import Tetromino from "./tetromino/tetromino.js";
 import tetrominoClassMap from "./tetromino/tetrominoClassMap.js";
-import TetrominoI from "./tetromino/tetrominos/i.js";
+import Keyboard from "../engine/keyboard.js";
 
 class Game {
     private playfield: PlayField;
@@ -12,7 +12,7 @@ class Game {
     private tetrominoGenerator: TetrominoGenerator;
     private tetromino?: Tetromino;
 
-    constructor() {
+    public constructor() {
         this.canvas = new Canvas();
         this.playfield = new PlayField();
         this.tetrominoGenerator = new TetrominoGenerator();
@@ -27,6 +27,29 @@ class Game {
 
         this.tetromino = new TetrominoJ();
         console.log(this.tetromino);
+
+        Keyboard.onKeydown(data => {
+            if (!this.tetromino) { return; }
+
+            switch (data.keyCode) {
+                case 38: // up
+                    this.tetromino.rotate();
+                    break;
+                case 37: // left
+                    if (this.tetromino.canGoLeft(this.playfield.field)) {
+                        this.tetromino.left();
+                    }
+                    break;
+                case 39: // right
+                    if (this.tetromino.canGoRight(this.playfield.field)) {
+                        this.tetromino.right();
+                    }
+                    break;
+                case 40: // down
+                    this.tetromino.fall();
+                    break;
+            }
+        });
     }
 
     private reqanfLoop() {
@@ -40,7 +63,7 @@ class Game {
             //     // this.tetromino.matrix.rotate();
             // }
             if (this.tetromino.canFall(this.playfield.field)) {
-                this.tetromino.fall();
+                // this.tetromino.fall();
             } else {
                 this.tetromino.placeOn(this.playfield.field);
                 this.tetromino = new tetrominoClassMap[this.tetrominoGenerator.next()]();

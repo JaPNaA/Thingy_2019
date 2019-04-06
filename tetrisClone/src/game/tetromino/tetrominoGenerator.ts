@@ -9,7 +9,7 @@ class TetrominoGenerator {
 
     private bag: TetrominoType[];
 
-    constructor() {
+    public constructor() {
         this.bag = [];
         this.que = [];
         this.refillBag();

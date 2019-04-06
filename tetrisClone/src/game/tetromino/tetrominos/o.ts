@@ -11,9 +11,9 @@ class TetrominoO extends Tetromino {
     ], TetrominoType.o);
     public type: TetrominoType = TetrominoType.o;
 
-    public matrix: Matrix22<Cell>;
+    protected matrix: Matrix22<Cell>;
 
-    constructor() {
+    public constructor() {
         super();
         this.matrix = new Matrix22(
             (x, y) => Cell.copy(TetrominoO.layout[y][x])
