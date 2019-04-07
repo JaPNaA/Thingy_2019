@@ -113,6 +113,16 @@ abstract class Tetromino {
         return false;
     }
 
+    public getHardDropY(mat: IMatrix<Cell>): number {
+        const oldY = this.y;
+        while (this.canFall(mat)) {
+            this.fall();
+        }
+        const newY = this.y;
+        this.y = oldY;
+        return newY;
+    }
+
     /** Checks if the tetromino can be at the specified position */
     protected canBeAt(thisX: number, thisY: number, thisMat: IMatrix<Cell>, mat: IMatrix<Cell>): boolean {
         for (let i = 0; i < thisMat.width; i++) {

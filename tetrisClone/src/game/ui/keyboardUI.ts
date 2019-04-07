@@ -1,7 +1,8 @@
-import Action from "./action";
+import { Action, actionsList } from "./action.js";
+import Keyboard from "../../engine/keyboard.js";
 
 class KeyboardUI {
-    public mappings: { [x: number]: Action } = {
+    public mappings: { [x: string]: Action } = {
         38: Action.rotateCW, // up arrow
         88: Action.rotateCW, // x
         97: Action.rotateCW, // numpad 1
@@ -29,7 +30,9 @@ class KeyboardUI {
         112: Action.pause, // f1
     };
 
-    public actionState: { [x: number]: boolean } = {
+    private reverseMappings: { [x: number]: string[] };
+
+    private actionState: { [x: number]: boolean } = {
         [Action.rotateCW]: false,
         [Action.rotateCCW]: false,
         [Action.hardDrop]: false,
@@ -40,10 +43,41 @@ class KeyboardUI {
         [Action.down]: false
     };
 
-    public keyState: boolean[];
+    private onceActionState: { [x: number]: boolean } = {
+        [Action.rotateCW]: false,
+        [Action.rotateCCW]: false,
+        [Action.hardDrop]: false,
+        [Action.hold]: false,
+        [Action.pause]: false,
+        [Action.left]: false,
+        [Action.right]: false,
+        [Action.down]: false
+    };
+
+    private keyState: boolean[];
 
     public constructor() {
         this.keyState = this.createKeyState();
+        this.reverseMappings = this.generateReverseMappings();
+        this.addEventListeners();
+    }
+
+    public getAction(action: Action): boolean {
+        return this.actionState[action];
+    }
+
+    public getOnceAction(action: Action): boolean {
+        const state = this.onceActionState[action];
+        this.onceActionState[action] = false;
+        return state;
+    }
+
+    private addEventListeners() {
+        this.keydownHandler = this.keydownHandler.bind(this);
+        Keyboard.onKeydown(this.keydownHandler);
+
+        this.keyupHandler = this.keyupHandler.bind(this);
+        Keyboard.onKeyup(this.keyupHandler);
     }
 
     private createKeyState(): boolean[] {
@@ -52,6 +86,54 @@ class KeyboardUI {
             arr[i] = false;
         }
         return arr;
+    }
+
+    private generateReverseMappings(): { [x: number]: string[] } {
+        const keys = Object.keys(this.mappings);
+        const reverseMap: { [x: number]: string[] } = {};
+
+        for (const key of keys) {
+            const value = this.mappings[key];
+            if (reverseMap.hasOwnProperty(value)) {
+                reverseMap[value].push(key);
+            } else {
+                reverseMap[value] = [key];
+            }
+        }
+
+        return reverseMap;
+    }
+
+    // private updateAllActionStates(): void {
+    //     for (const actionState of actionsList) {
+    //         this.updateActionState(actionState);
+    //     }
+    // }
+
+    private updateActionState(action: Action): void {
+        if (action === undefined) { return; }
+        const prevState = this.actionState[action];
+        this.actionState[action] = false;
+
+        for (const key of this.reverseMappings[action]) {
+            if (this.keyState[parseInt(key)]) {
+                this.actionState[action] = true;
+                if (!prevState) {
+                    this.onceActionState[action] = true;
+                }
+                return;
+            }
+        }
+    }
+
+    private keydownHandler(e: KeyboardEvent): void {
+        this.keyState[e.keyCode] = true;
+        this.updateActionState(this.mappings[e.keyCode]);
+    }
+
+    private keyupHandler(e: KeyboardEvent): void {
+        this.keyState[e.keyCode] = false;
+        this.updateActionState(this.mappings[e.keyCode]);
     }
 }
 

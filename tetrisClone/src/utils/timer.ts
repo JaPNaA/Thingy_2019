@@ -8,7 +8,7 @@ class Timer {
         this.delay = delay;
         this.time = 0;
         this.count = 0;
-        this.paused = false;
+        this.paused = true;
     }
 
     public start() {

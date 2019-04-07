@@ -1,5 +1,23 @@
-enum Actions {
-    rotateCW, rotateCCW, hardDrop, hold, pause, left, right, down
+enum Action {
+    rotateCW,
+    rotateCCW,
+    hardDrop,
+    hold,
+    pause,
+    left,
+    right,
+    down
 }
 
-export default Actions;
+const actionsList: Action[] = [
+    Action.rotateCW,
+    Action.rotateCCW,
+    Action.hardDrop,
+    Action.hold,
+    Action.pause,
+    Action.left,
+    Action.right,
+    Action.down
+];
+
+export { Action, actionsList };

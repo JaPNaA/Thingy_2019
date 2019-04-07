@@ -2,9 +2,8 @@ import Cell from "./cell.js";
 import Canvas from "../engine/canvas.js";
 import Matrix from "./matrix/matrix.js";
 import TetrominoColorMap from "./tetromino/tetrominoColorMap.js";
-import Tetromino from "./tetromino/tetromino.js";
-import TetrominoI from "./tetromino/tetrominos/i.js";
 import TetrominoType from "./tetromino/tetrominoType.js";
+import IGameHooks from "./iGameHooks.js";
 
 class PlayField {
     public static width = 10;
@@ -13,10 +12,12 @@ class PlayField {
 
     private static vanishHeight = 2;
 
+    private game: IGameHooks;
     private scale: number = 24;
-    private tetromino?: Tetromino;
 
-    public constructor() {
+    public constructor(game: IGameHooks) {
+        this.game = game;
+
         this.field = new Matrix(
             PlayField.width,
             PlayField.height + PlayField.vanishHeight,
@@ -24,12 +25,12 @@ class PlayField {
         );
     }
 
-    public setTetromino(tetromino?: Tetromino): void {
-        this.tetromino = tetromino;
-    }
-
     public renderTo(canvas: Canvas) {
         const X = canvas.getX();
+        const fallingTetromino = this.game.getTetromino();
+        const ghostTetrominoY: number = fallingTetromino ?
+            fallingTetromino.getHardDropY(this.field) : 0;
+        const ghostTetrominoDist: number = -ghostTetrominoY + PlayField.height;
 
         X.fillStyle = "#000000";
         X.fillRect(0, 0, PlayField.width * this.scale, PlayField.height * this.scale);
@@ -40,8 +41,14 @@ class PlayField {
 
             if (cell.isOccupied()) {
                 X.fillStyle = TetrominoColorMap[cell.block as TetrominoType];
-            } else if (this.tetromino && this.tetromino.isIn(x, y)) {
-                X.fillStyle = TetrominoColorMap[this.tetromino.type];
+            } else if (fallingTetromino) {
+                if (fallingTetromino.isIn(x, y)) {
+                    X.fillStyle = TetrominoColorMap[fallingTetromino.type];
+                } else if (fallingTetromino.isIn(x, y + ghostTetrominoDist)) {
+                    X.fillStyle = "#888888";
+                } else {
+                    return;
+                }
             } else {
                 return;
             }
