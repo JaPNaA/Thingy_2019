@@ -14,7 +14,7 @@ abstract class Tetromino {
 
     public constructor() {
         this.x = 0;
-        this.y = 21;
+        this.y = 20;
     }
 
     protected setup() {

@@ -17,6 +17,7 @@ class TetrominoI extends Tetromino {
 
     public constructor() {
         super();
+        this.y = 20;
         this.matrix = new Matrix44(
             (x, y) => Cell.copy(TetrominoI.layout[y][x])
         );

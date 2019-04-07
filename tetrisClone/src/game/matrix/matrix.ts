@@ -4,13 +4,15 @@ class Matrix<T> {
     public matrix: T[][];
     public width: number;
     public height: number;
+    private filler?: Filler<T>
 
     constructor(width: number, height: number, filler?: Filler<T>) {
         this.matrix = [];
         this.width = width;
         this.height = height;
 
-        this.fillMatrix(filler);
+        this.filler = filler;
+        this.fillMatrix();
     }
 
     public static fromArray<T>(arr: T[][]) {
@@ -22,19 +24,26 @@ class Matrix<T> {
     public forEach(cb: (elm: T, x: number, y: number) => void) {
         for (let i = 0; i < this.height; i++) {
             for (let j = 0; j < this.width; j++) {
-                cb(this.matrix[i][j], j ,i);
+                cb(this.matrix[i][j], j, i);
             }
         }
     }
 
-    private fillMatrix(filler?: Filler<T>) {
-        if (!filler) { return; }
+    public createRow(i: number): T[] {
+        if (!this.filler) { throw new Error("No filler specified"); }
+
+        const arr = [];
+        for (let j = 0; j < this.width; j++) {
+            arr[j] = this.filler(j, i);
+        }
+        return arr;
+    }
+
+    private fillMatrix() {
+        if (!this.filler) { return; }
 
         for (let i = 0; i < this.height; i++) {
-            this.matrix[i] = [];
-            for (let j = 0; j < this.width; j++) {
-                this.matrix[i][j] = filler(j, i);
-            }
+            this.matrix[i] = this.createRow(i);
         }
     }
 }

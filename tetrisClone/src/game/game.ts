@@ -71,6 +71,7 @@ class Game {
         }
 
         this.playfield.setTetromino(this.tetromino);
+        this.playfield.update();
         this.playfield.renderTo(this.canvas);
     }
 }

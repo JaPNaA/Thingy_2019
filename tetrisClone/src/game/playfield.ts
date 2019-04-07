@@ -31,11 +31,13 @@ class PlayField {
     public renderTo(canvas: Canvas) {
         const X = canvas.getX();
 
+        X.fillStyle = "#000000";
+        X.fillRect(0, 0, PlayField.width * this.scale, PlayField.height * this.scale);
         X.strokeStyle = "#888888";
-        X.clearRect(0, 0, PlayField.width * this.scale, PlayField.height * this.scale);
 
         this.field.forEach((cell, x, y) => {
-            // if (y < PlayField.vanishHeight - 1) { return; }
+            if (y >= PlayField.height) { return; }
+
             if (cell.isOccupied()) {
                 X.fillStyle = TetrominoColorMap[cell.block as TetrominoType];
             } else if (this.tetromino && this.tetromino.isIn(x, y)) {
@@ -47,7 +49,7 @@ class PlayField {
             X.beginPath();
             X.rect(
                 x * this.scale,
-                (PlayField.height - y) * this.scale,
+                (PlayField.height - y - 1) * this.scale,
                 this.scale,
                 this.scale
             );
@@ -55,6 +57,25 @@ class PlayField {
             X.fill();
             X.stroke();
         });
+    }
+
+    public update() {
+        rowsLoop: for (let i = this.field.height - 1; i >= 0; i--) {
+            const row = this.field.matrix[i];
+
+            for (let j = 0; j < this.field.width; j++) {
+                if (!row[j].isOccupied()) {
+                    continue rowsLoop;
+                }
+            }
+
+            this.clearLine(i);
+        }
+    }
+
+    public clearLine(index: number) {
+        this.field.matrix.splice(index, 1);
+        this.field.matrix.push(this.field.createRow(this.field.height - 1));
     }
 }
 
