@@ -123,6 +123,10 @@ abstract class Tetromino {
         return newY;
     }
 
+    public getY(): number {
+        return this.y;
+    }
+
     /** Checks if the tetromino can be at the specified position */
     protected canBeAt(thisX: number, thisY: number, thisMat: IMatrix<Cell>, mat: IMatrix<Cell>): boolean {
         for (let i = 0; i < thisMat.width; i++) {

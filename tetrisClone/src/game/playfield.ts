@@ -4,6 +4,7 @@ import Matrix from "./matrix/matrix.js";
 import TetrominoColorMap from "./tetromino/tetrominoColorMap.js";
 import TetrominoType from "./tetromino/tetrominoType.js";
 import IGameHooks from "./iGameHooks.js";
+import Tetromino from "./tetromino/tetromino.js";
 
 class PlayField {
     public static width = 10;
@@ -28,9 +29,7 @@ class PlayField {
     public renderTo(canvas: Canvas) {
         const X = canvas.getX();
         const fallingTetromino = this.game.getTetromino();
-        const ghostTetrominoY: number = fallingTetromino ?
-            fallingTetromino.getHardDropY(this.field) : 0;
-        const ghostTetrominoDist: number = -ghostTetrominoY + PlayField.height;
+        const ghostTetrominoDist = this.getGhostTetrominoDist(fallingTetromino);
 
         X.fillStyle = "#000000";
         X.fillRect(0, 0, PlayField.width * this.scale, PlayField.height * this.scale);
@@ -80,9 +79,14 @@ class PlayField {
         }
     }
 
-    public clearLine(index: number) {
+    private clearLine(index: number) {
         this.field.matrix.splice(index, 1);
         this.field.matrix.push(this.field.createRow(this.field.height - 1));
+    }
+
+    private getGhostTetrominoDist(fallingTetromino?: Tetromino): number {
+        if (!fallingTetromino) { return 0; }
+        return fallingTetromino.getY() - fallingTetromino.getHardDropY(this.field);
     }
 }
 
