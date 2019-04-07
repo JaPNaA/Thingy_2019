@@ -1,5 +1,5 @@
-import Tetromino from "./tetromino/tetrominoType.js";
-import TetrominoType from "./tetromino/tetrominoType.js";
+import Tetromino from "../tetromino/tetrominoType.js";
+import TetrominoType from "../tetromino/tetrominoType.js";
 
 class Cell {
     public block?: Tetromino;

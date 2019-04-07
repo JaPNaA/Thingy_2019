@@ -1,11 +1,12 @@
-import Cell from "../cell.js";
-import PlayField from "../playfield.js";
+import Cell from "../playField/cell.js";
+import PlayField from "../playField/playfield.js";
 import TetrominoType from "./tetrominoType.js";
 import IRotatableMatrix from "../matrix/iRotatableMatrix.js";
 import RotationState from "./tetrominoRotationState.js";
 import IMatrix from "../matrix/iMatrix.js";
 import Matrix33 from "../matrix/matrix33.js";
 import copy2dArr from "../../utils/copy2dArr.js";
+import IGameHooks from "../iGameHooks.js";
 
 abstract class Tetromino {
     public abstract type: TetrominoType;
@@ -22,10 +23,12 @@ abstract class Tetromino {
     protected y: number;
 
     protected rotationState: RotationState;
+    private game: IGameHooks;
 
-    public constructor() {
+    public constructor(game: IGameHooks) {
         this.x = 0;
         this.y = 20;
+        this.game = game;
         this.rotationState = RotationState.up;
     }
 
@@ -35,19 +38,23 @@ abstract class Tetromino {
 
     public fall() {
         this.y--;
+        this.onMove();
     }
 
     public left() {
         this.x--;
+        this.onMove();
     }
 
     public right() {
         this.x++;
+        this.onMove();
     }
 
     public rotateCW() {
         this.matrix.rotate();
         this.rotationState = (this.rotationState + 1) % 4;
+        this.onMove();
     }
 
     public isIn(x: number, y: number): boolean {
@@ -150,6 +157,10 @@ abstract class Tetromino {
         }
 
         return true;
+    }
+
+    private onMove() {
+        this.game.getPhysics().tetrominoMoved();
     }
 }
 

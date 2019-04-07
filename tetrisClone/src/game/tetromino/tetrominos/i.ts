@@ -1,11 +1,12 @@
 import Tetromino from "../tetromino.js";
-import Cell from "../../cell.js";
+import Cell from "../../playField/cell.js";
 import strArrToLayout from "../../../utils/strArrToLayout.js";
 import Matrix44 from "../../matrix/matrix44.js";
 import TetrominoType from "../tetrominoType.js";
 import IMatrix from "../../matrix/iMatrix.js";
 import copy2dArr from "../../../utils/copy2dArr.js";
 import RotationState from "../tetrominoRotationState.js";
+import IGameHooks from "../../iGameHooks.js";
 
 class TetrominoI extends Tetromino {
     private static layout = strArrToLayout([
@@ -26,8 +27,8 @@ class TetrominoI extends Tetromino {
 
     protected matrix: Matrix44<Cell>;
 
-    public constructor() {
-        super();
+    public constructor(game: IGameHooks) {
+        super(game);
         this.y = 20;
         this.matrix = new Matrix44(
             (x, y) => Cell.copy(TetrominoI.layout[y][x])

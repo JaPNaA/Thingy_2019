@@ -4,8 +4,8 @@ class Timer {
     public count: number;
     public paused: boolean;
 
-    constructor(delay: number) {
-        this.delay = delay;
+    constructor(delay?: number) {
+        this.delay = delay || 0;
         this.time = 0;
         this.count = 0;
         this.paused = true;
@@ -28,9 +28,14 @@ class Timer {
         this.time = 0;
     }
 
+    public restart() {
+        this.time = 0;
+    }
+
     public pause() {
         this.paused = false;
     }
+
 }
 
 export default Timer;

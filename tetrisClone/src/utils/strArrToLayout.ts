@@ -1,4 +1,4 @@
-import Cell from "../game/cell.js";
+import Cell from "../game/playField/cell.js";
 import Tetromino from "../game/tetromino/tetrominoType.js";
 
 export default function strArrToLayout(arr: string[], type: Tetromino): Cell[][] {
