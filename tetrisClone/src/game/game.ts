@@ -33,7 +33,7 @@ class Game {
 
             switch (data.keyCode) {
                 case 38: // up
-                    this.tetromino.rotate();
+                    this.tetromino.ifCanRotateCW(this.playfield.field);
                     break;
                 case 37: // left
                     if (this.tetromino.canGoLeft(this.playfield.field)) {
