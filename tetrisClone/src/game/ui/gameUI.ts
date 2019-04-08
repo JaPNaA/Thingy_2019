@@ -93,6 +93,10 @@ class GameUI {
             tetromino.placeOn(playfield.field);
             this.game.newTetromino();
         }
+
+        if (this.keyboardUI.getOnceAction(Action.hold)) {
+            this.game.getLogic().hold();
+        }
     }
 }
 

@@ -13,7 +13,7 @@ class TetrominoZ extends Tetromino {
     ], TetrominoType.z);
     public type: TetrominoType = TetrominoType.z;
 
-    protected matrix: Matrix33<Cell>;
+    public matrix: Matrix33<Cell>;
 
     public constructor(game: IGameHooks) {
         super(game);

@@ -1,6 +1,6 @@
 import Tetromino from "./tetromino.js";
-import GameHooks from "../gameHooks.js";
+import IGameHooks from "../iGameHooks.js";
 
-type TetrominoClass = new (game: GameHooks) => Tetromino;
+type TetrominoClass = new (game: IGameHooks) => Tetromino;
 
 export default TetrominoClass;

@@ -10,7 +10,7 @@ import IGameHooks from "../iGameHooks.js";
 
 abstract class Tetromino {
     public abstract type: TetrominoType;
-    protected abstract matrix: IRotatableMatrix<Cell>;
+    public abstract matrix: IRotatableMatrix<Cell>;
 
     private static wallKickDataCW: { [x: number]: [number, number][] } = {
         [RotationState.up]: [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]],
@@ -25,15 +25,25 @@ abstract class Tetromino {
     protected rotationState: RotationState;
     private game: IGameHooks;
 
+    private startX: number;
+    private startY: number;
+
     public constructor(game: IGameHooks) {
-        this.x = 0;
-        this.y = 20;
+        this.startX = this.x = 0;
+        this.startY = this.y = 20;
         this.game = game;
         this.rotationState = RotationState.up;
     }
 
     protected setup() {
         this.x = Math.floor((PlayField.width - this.matrix.width) / 2);
+        this.startX = this.x;
+        this.startY = this.y;
+    }
+
+    public resetPos() {
+        this.x = this.startX;
+        this.y = this.startY;
     }
 
     public fall() {

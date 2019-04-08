@@ -25,7 +25,7 @@ class TetrominoI extends Tetromino {
 
     public type: TetrominoType = TetrominoType.i;
 
-    protected matrix: Matrix44<Cell>;
+    public matrix: Matrix44<Cell>;
 
     public constructor(game: IGameHooks) {
         super(game);
