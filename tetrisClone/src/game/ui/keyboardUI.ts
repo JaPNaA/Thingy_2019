@@ -111,7 +111,6 @@ class KeyboardUI {
     // }
 
     private updateActionState(action: Action): void {
-        if (action === undefined) { return; }
         const prevState = this.actionState[action];
         this.actionState[action] = false;
 
@@ -128,12 +127,19 @@ class KeyboardUI {
 
     private keydownHandler(e: KeyboardEvent): void {
         this.keyState[e.keyCode] = true;
-        this.updateActionState(this.mappings[e.keyCode]);
+        this.keyChangeHandler(e);
     }
 
     private keyupHandler(e: KeyboardEvent): void {
         this.keyState[e.keyCode] = false;
-        this.updateActionState(this.mappings[e.keyCode]);
+        this.keyChangeHandler(e);
+    }
+
+    private keyChangeHandler(e: KeyboardEvent): void {
+        const action = this.mappings[e.keyCode];
+        if (action === undefined) { return; }
+        e.preventDefault();
+        this.updateActionState(action);
     }
 }
 
