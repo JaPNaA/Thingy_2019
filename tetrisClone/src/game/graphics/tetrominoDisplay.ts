@@ -6,18 +6,34 @@ import TetrominoType from "../tetromino/tetrominoType.js";
 import renderTetromino from "../../utils/renderTetromino.js";
 
 class TetrominoDisplay {
-    private static x: number = 8;
-    private static y: number = 8;
-    private static scale: number = 24;
-    private static width: number = 4;
-    private static height: number = 4;
+    private static defaultX: number = 8;
+    private static defaultY: number = 8;
+    private static defaultScale: number = 24;
+    private static defaultWidth: number = 4;
+    private static defaultHeight: number = 4;
 
     private tetromino?: Tetromino;
 
     private game: IGameHooks;
+    private x: number;
+    private y: number;
+    private scale: number;
+    private width: number;
+    private height: number;
 
-    public constructor(game: IGameHooks) {
+    public constructor(game: IGameHooks, options: {
+        x?: number,
+        y?: number,
+        scale?: number,
+        width?: number,
+        height?: number
+    } = {}) {
         this.game = game;
+        this.x = options.x || TetrominoDisplay.defaultX;
+        this.y = options.y || TetrominoDisplay.defaultY;
+        this.scale = options.scale || TetrominoDisplay.defaultScale;
+        this.width = options.width || TetrominoDisplay.defaultWidth;
+        this.height = options.height || TetrominoDisplay.defaultHeight;
     }
 
     public render(canvas: Canvas) {
@@ -26,11 +42,11 @@ class TetrominoDisplay {
         renderTetromino(
             this.tetromino,
             canvas,
-            TetrominoDisplay.scale,
-            TetrominoDisplay.x,
-            TetrominoDisplay.y,
-            TetrominoDisplay.width,
-            TetrominoDisplay.height
+            this.scale,
+            this.x,
+            this.y,
+            this.width,
+            this.height
         );
     }
 

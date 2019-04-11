@@ -5,7 +5,7 @@ import TetrominoType from "./tetrominoType.js";
 class TetrominoGenerator {
     public que: TetrominoType[];
 
-    private static queLength = 5;
+    public static queLength = 5;
 
     private bag: TetrominoType[];
 
