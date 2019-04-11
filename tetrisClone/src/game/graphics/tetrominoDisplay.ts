@@ -21,7 +21,7 @@ class TetrominoDisplay {
     }
 
     public render(canvas: Canvas) {
-        if (!this.tetromino) { return; }
+        if (this.tetromino === undefined) { return; }
 
         renderTetromino(
             this.tetromino,
@@ -32,32 +32,10 @@ class TetrominoDisplay {
             TetrominoDisplay.width,
             TetrominoDisplay.height
         );
-
-        // const X = canvas.getX();
-        // X.fillStyle = "#000000";
-        // X.fillRect(
-        //     HoldDisplay.holdX,
-        //     HoldDisplay.holdY,
-        //     HoldDisplay.holdScale * HoldDisplay.holdWidth,
-        //     HoldDisplay.holdScale * HoldDisplay.holdHieght
-        // );
-
-        // this.tetromino.matrix.forEach((elm, x, y) => {
-        //     X.fillStyle = TetrominoColorMap[(this.tetromino as Tetromino).type];
-
-        //     if (elm.isOccupied()) {
-        //         X.fillRect(
-        //             x * HoldDisplay.holdScale + HoldDisplay.holdX,
-        //             y * HoldDisplay.holdScale + HoldDisplay.holdY,
-        //             HoldDisplay.holdScale,
-        //             HoldDisplay.holdScale
-        //         );
-        //     }
-        // });
     }
 
     public setTetromino(tetromino?: TetrominoType) {
-        if (!tetromino) {
+        if (tetromino === undefined) {
             this.tetromino = undefined;
         } else if (this.isDifferentFrom(tetromino)) {
             this.tetromino = new tetrominoClassMap[tetromino](this.game);
@@ -65,7 +43,7 @@ class TetrominoDisplay {
     }
 
     private isDifferentFrom(tetromino: TetrominoType) {
-        return !this.tetromino || tetromino !== this.tetromino.type;
+        return this.tetromino === undefined || tetromino !== this.tetromino.type;
     }
 }
 

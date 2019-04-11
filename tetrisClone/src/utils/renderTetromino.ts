@@ -16,7 +16,7 @@ export default function renderTetromino(tetromino: Tetromino, canvas: Canvas, sc
             X.rect(
                 x * scale + startX,
                 y * scale + startY,
-                scale,
+                scale,  
                 scale
             );
             X.fill();
