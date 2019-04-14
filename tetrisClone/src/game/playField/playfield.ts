@@ -66,6 +66,8 @@ class PlayField {
     }
 
     public update() {
+        let linesCleared = 0;
+
         rowsLoop: for (let i = this.field.height - 1; i >= 0; i--) {
             const row = this.field.matrix[i];
 
@@ -76,6 +78,11 @@ class PlayField {
             }
 
             this.clearLine(i);
+            linesCleared++;
+        }
+
+        if (linesCleared) {
+            this.game.getScoring().clearLines(linesCleared);
         }
     }
 

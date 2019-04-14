@@ -9,6 +9,7 @@ import GameHooks from "./gameHooks.js";
 import GamePhysics from "./gamePhysics.js";
 import GameHold from "./gameHold.js";
 import GameRenderer from "./gameRenderer.js";
+import GameScoring from "./gameScoring.js";
 
 class Game {
     private hooks: GameHooks;
@@ -21,6 +22,7 @@ class Game {
     private physics: GamePhysics;
     private hold: GameHold;
     private renderer: GameRenderer;
+    private scoring: GameScoring;
 
     private then: number;
 
@@ -34,6 +36,7 @@ class Game {
         this.physics = new GamePhysics(this.hooks);
         this.hold = new GameHold(this.hooks);
         this.renderer = new GameRenderer(this.hooks);
+        this.scoring = new GameScoring(this.hooks);
 
         this.hooks.setPlayField(this.playfield);
         this.hooks.setGenerator(this.tetrominoGenerator);
@@ -41,6 +44,7 @@ class Game {
         this.hooks.setHold(this.hold);
         this.hooks.setNewTetromino(this.newTetromino.bind(this));
         this.hooks.setSwitchTetromino(this.switchTetromino.bind(this));
+        this.hooks.setScoring(this.scoring);
 
         this.gameUI = new GameUI(this.hooks);
         this.then = performance.now();

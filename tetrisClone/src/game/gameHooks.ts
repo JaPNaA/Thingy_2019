@@ -5,6 +5,7 @@ import IGameHooks from "./iGameHooks.js";
 import _null from "../utils/_null.js";
 import GamePhysics from "./gamePhysics.js";
 import GameHold from "./gameHold.js";
+import GameScoring from "./gameScoring.js";
 
 class GameHooks implements IGameHooks {
     private newTetrominoFunc: Function = _null;
@@ -14,6 +15,7 @@ class GameHooks implements IGameHooks {
     private tetrominoGenerator: TetrominoGenerator = _null;
     private physics: GamePhysics = _null;
     private hold: GameHold = _null;
+    private scoring: GameScoring = _null;
 
     public setNewTetromino(func: Function): void {
         this.newTetrominoFunc = func;
@@ -69,6 +71,14 @@ class GameHooks implements IGameHooks {
 
     public getHold(): GameHold {
         return this.hold;
+    }
+
+    public setScoring(scoring: GameScoring) {
+        this.scoring = scoring;
+    }
+
+    public getScoring(): GameScoring {
+        return this.scoring;
     }
 }
 
