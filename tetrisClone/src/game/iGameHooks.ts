@@ -2,7 +2,7 @@ import Tetromino from "./tetromino/tetromino.js";
 import PlayField from "./playField/playfield.js";
 import TetrominoGenerator from "./tetromino/tetrominoGenerator.js";
 import GamePhysics from "./gamePhysics.js";
-import GameLogic from "./gameLogic.js";
+import GameHold from "./gameHold.js";
 
 export default interface IGameHooks {
     newTetromino(): void;
@@ -11,5 +11,5 @@ export default interface IGameHooks {
     getPlayField(): PlayField;
     getGenerator(): TetrominoGenerator;
     getPhysics(): GamePhysics;
-    getLogic(): GameLogic;
+    getHold(): GameHold;
 }

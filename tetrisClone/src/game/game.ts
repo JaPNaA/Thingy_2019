@@ -7,7 +7,7 @@ import tetrominoClassMap from "./tetromino/tetrominoClassMap.js";
 import GameUI from "./ui/gameUI.js";
 import GameHooks from "./gameHooks.js";
 import GamePhysics from "./gamePhysics.js";
-import GameLogic from "./gameLogic.js";
+import GameHold from "./gameHold.js";
 import GameRenderer from "./gameRenderer.js";
 
 class Game {
@@ -19,7 +19,7 @@ class Game {
     private tetromino?: Tetromino;
     private gameUI: GameUI;
     private physics: GamePhysics;
-    private logic: GameLogic;
+    private hold: GameHold;
     private renderer: GameRenderer;
 
     private then: number;
@@ -32,13 +32,13 @@ class Game {
         this.tetrominoGenerator = new TetrominoGenerator();
         this.playfield = new PlayField(this.hooks);
         this.physics = new GamePhysics(this.hooks);
-        this.logic = new GameLogic(this.hooks);
+        this.hold = new GameHold(this.hooks);
         this.renderer = new GameRenderer(this.hooks);
 
         this.hooks.setPlayField(this.playfield);
         this.hooks.setGenerator(this.tetrominoGenerator);
         this.hooks.setPhysics(this.physics);
-        this.hooks.setLogic(this.logic);
+        this.hooks.setHold(this.hold);
         this.hooks.setNewTetromino(this.newTetromino.bind(this));
         this.hooks.setSwitchTetromino(this.switchTetromino.bind(this));
 
@@ -88,7 +88,7 @@ class Game {
 
     private callNewTetrominoEvents(): void {
         this.physics.onNewTetromino();
-        this.logic.onNewTetromino();
+        this.hold.onNewTetromino();
     }
 }
 

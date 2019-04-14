@@ -4,7 +4,7 @@ import TetrominoGenerator from "./tetromino/tetrominoGenerator.js";
 import IGameHooks from "./iGameHooks.js";
 import _null from "../utils/_null.js";
 import GamePhysics from "./gamePhysics.js";
-import GameLogic from "./gameLogic.js";
+import GameHold from "./gameHold.js";
 
 class GameHooks implements IGameHooks {
     private newTetrominoFunc: Function = _null;
@@ -13,7 +13,7 @@ class GameHooks implements IGameHooks {
     private playField: PlayField = _null;
     private tetrominoGenerator: TetrominoGenerator = _null;
     private physics: GamePhysics = _null;
-    private logic: GameLogic = _null;
+    private hold: GameHold = _null;
 
     public setNewTetromino(func: Function): void {
         this.newTetrominoFunc = func;
@@ -63,12 +63,12 @@ class GameHooks implements IGameHooks {
         return this.physics;
     }
 
-    public setLogic(logic: GameLogic): void {
-        this.logic = logic;
+    public setHold(hold: GameHold): void {
+        this.hold = hold;
     }
 
-    public getLogic(): GameLogic {
-        return this.logic;
+    public getHold(): GameHold {
+        return this.hold;
     }
 }
 

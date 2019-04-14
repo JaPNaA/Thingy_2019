@@ -95,7 +95,7 @@ class GameUI {
         }
 
         if (this.keyboardUI.getOnceAction(Action.hold)) {
-            this.game.getLogic().hold();
+            this.game.getHold().hold();
         }
     }
 }

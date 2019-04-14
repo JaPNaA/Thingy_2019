@@ -24,7 +24,7 @@ class GameRenderer {
     }
 
     private renderHold(canvas: Canvas) {
-        const hold = this.game.getLogic().getHold();
+        const hold = this.game.getHold().getHold();
         this.holdDisplay.setTetromino(hold);
         this.holdDisplay.render(canvas);
     }

@@ -3,7 +3,7 @@ import IGameHooks from "./iGameHooks.js";
 import TetrominoType from "./tetromino/tetrominoType.js";
 import tetrominoClassMap from "./tetromino/tetrominoClassMap.js";
 
-class GameLogic {
+class GameHold {
     private holdingTetromino?: TetrominoType;
     private game: IGameHooks;
     private held: boolean;
@@ -41,4 +41,4 @@ class GameLogic {
     }
 }
 
-export default GameLogic;
+export default GameHold;
