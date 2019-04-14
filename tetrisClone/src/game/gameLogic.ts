@@ -6,16 +6,24 @@ import tetrominoClassMap from "./tetromino/tetrominoClassMap.js";
 class GameLogic {
     private holdingTetromino?: TetrominoType;
     private game: IGameHooks;
+    private held: boolean;
 
     constructor(game: IGameHooks) {
         this.game = game;
+        this.held = false;
     }
 
     public getHold(): TetrominoType | undefined {
         return this.holdingTetromino;
     }
 
+    public onNewTetromino(): void {
+        this.held = false;
+    }
+
     public hold(): void {
+        if (this.held) { return; }
+
         if (this.holdingTetromino !== undefined) {
             const oldHold = this.holdingTetromino;
             this.setHold(this.game.getTetromino());
@@ -24,6 +32,8 @@ class GameLogic {
             this.setHold(this.game.getTetromino());
             this.game.newTetromino();
         }
+
+        this.held = true;
     }
 
     private setHold(tetromino?: Tetromino): void {

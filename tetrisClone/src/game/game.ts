@@ -78,12 +78,17 @@ class Game {
 
     private newTetromino() {
         this.tetromino = new tetrominoClassMap[this.tetrominoGenerator.next()](this.hooks);
-        this.physics.onNewTetromino();
+        this.callNewTetrominoEvents();
     }
 
     private switchTetromino(tetromino: Tetromino) {
         this.tetromino = tetromino;
+        this.callNewTetrominoEvents();
+    }
+
+    private callNewTetrominoEvents(): void {
         this.physics.onNewTetromino();
+        this.logic.onNewTetromino();
     }
 }
 
