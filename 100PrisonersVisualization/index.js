@@ -283,6 +283,8 @@ class OrganizeButton {
 		if (isPointInside(x, y, this.x, this.y, this.width, this.height)) {
 			if (this.app.organized) {
 				this.app.organized = false;
+				this.app.translateX = 0;
+				this.app.translateY = 0;
 			} else {
 				this.app.organize();
 			}
