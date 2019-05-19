@@ -1,3 +1,13 @@
+// ==UserScript==
+// @name         Better image viewer
+// @version      0.1
+// @description  A better image viewer
+// @author       someRandomGuy
+// @include      *://*/*
+// @grant        none
+// @namespace    https://greasyfork.org/users/117222
+// ==/UserScript==
+
 (function () {
     "use strict";
 
