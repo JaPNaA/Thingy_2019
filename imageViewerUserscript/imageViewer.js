@@ -1,21 +1,23 @@
 // ==UserScript==
 // @name         Better image viewer
-// @version      0.1
+// @version      0.2
 // @description  A better image viewer
 // @author       someRandomGuy
 // @include      *://*/*
 // @grant        none
 // @namespace    https://greasyfork.org/users/117222
+// @compatible   chrome
+// @compatible   firefox
 // ==/UserScript==
 
 (function () {
     "use strict";
 
-    if (document.body.childNodes.length === 1 && document.body.children[0].tagName === "IMG") {
-        initSinglePageImageViewer();
-    } else {
-        initOverlayImageViewer();
-    }
+    /**
+     * Is the page just an image?
+     * @type {boolean}
+     */
+    const isJustImage = document.body.childNodes.length === 1 && document.body.children[0] && document.body.children[0].tagName === "IMG";
 
     /**
      * Class name prefix,
@@ -27,15 +29,25 @@
     class ImageViewer {
         /**
          * ImageViewer constructor
-         * @param {HTMLImageElement} img
+         * @param {HTMLImageElement} img the image to view, should be already loaded
+         * @param {boolean} canClose can the image viewer be closed?
          */
-        constructor(img) {
+        constructor(img, canClose) {
             /**
              * The element that contains it all
              * @type {HTMLDivElement}
              */
             this.elm = document.createElement("div");
             this.elm.classList.add(clsP + "elm");
+            if (canClose) {
+                this.elm.classList.add(clsP + "canClose");
+                this.elm.classList.add(clsP + "beforeTransitionIn");
+                requestAnimationFrame(() =>
+                    requestAnimationFrame(() =>
+                        this.elm.classList.remove(clsP + "beforeTransitionIn")
+                    )
+                );
+            }
 
             /**
              * The background
@@ -53,6 +65,7 @@
             this.img.classList.add(clsP + "img");
             this.elm.appendChild(this.img);
 
+            this.canClose = canClose;
 
             /**
              * The width of the image
@@ -91,13 +104,13 @@
             this.isDragging = false;
 
             /**
-             * Translate X, first applied
+             * Translate X, second applied
              * @type {number}
              */
             this.x = 0;
 
             /**
-             * Translate Y, first applied
+             * Translate Y, second applied
              * @type {number}
              */
             this.y = 0;
@@ -151,7 +164,7 @@
             this.lastCursorY = 0;
 
             /**
-             * Scale, second applied
+             * Scale, first applied
              * @type {number}
              */
             this.scale = 1;
@@ -233,7 +246,13 @@
         _reqanfLoop() {
             this._tick();
             this._updateInlineStyles();
-            requestAnimationFrame(this._reqanfLoop);
+            // this mitigates effect of weird bug
+            for (let i = 0; i < 100; i++) {
+                try {
+                    requestAnimationFrame(this._reqanfLoop);
+                    break;
+                } catch (err) { }
+            }
         }
 
         /**
@@ -256,12 +275,6 @@
             this.y += (this.ty - this.y) / 5;
 
             this.scale += (this.tScale - this.scale) / 5;
-
-            if (this.scale > 6) {
-                this.img.style.setProperty("image-rendering", "pixelated");
-            } else {
-                this.img.style.setProperty("image-rendering", "unset");
-            }
 
             this._restrainToBoundaries();
         }
@@ -291,6 +304,12 @@
          * Update inline styles of image
          */
         _updateInlineStyles() {
+            if (this.scale > 6) {
+                this.img.style.setProperty("image-rendering", "crisp-edges");
+            } else {
+                this.img.style.setProperty("image-rendering", "unset");
+            }
+
             this.img.style.width = this.width * this.scale + "px";
             this.img.style.height = this.height * this.scale + "px";
             this.img.style.transform = "translate(" + this.x + "px," + this.y + "px) rotate(" + this.rotation + "rad)";
@@ -302,7 +321,9 @@
          * Handles a click on the background
          */
         _onBackgroundClick() {
-            this.destory();
+            if (this.canClose) {
+                this.destory();
+            }
         }
 
         /**
@@ -336,8 +357,8 @@
                 this._translate(e.movementX, e.movementY);
             }
 
-            this.cursorX = e.layerX;
-            this.cursorY = e.layerY;
+            this.cursorX = e.clientX;
+            this.cursorY = e.clientY;
         }
 
         /**
@@ -345,6 +366,7 @@
          * @param {WheelEvent} e event
          */
         _onWheel(e) {
+            e.preventDefault();
             let scale;
             if (e.deltaY < 0) {
                 scale = ImageViewer.scaleFactor;
@@ -352,14 +374,19 @@
                 scale = 1 / ImageViewer.scaleFactor;
             }
 
-            this._zoomInto(scale, e.layerX, e.layerY);
+            this._zoomInto(scale, e.clientX, e.clientY);
         }
 
         /**
          * Handles double click events
+         * @param {MouseEvent} e event
          */
-        _onDoubleClick() {
-            throw new Error("double click not implemented");
+        _onDoubleClick(e) {
+            if (this.tScale >= 1) {
+                this._resetImageTransform();
+            } else {
+                this._zoomInto(1 / this.tScale, e.clientX, e.clientY);
+            }
         }
 
         // --- Transformations ---
@@ -431,6 +458,15 @@
     ImageViewer.scaleFactor = 1.2;
 
 
+
+    if (isJustImage) {
+        initSinglePageImageViewer();
+    } else {
+        initOverlayImageViewer();
+    }
+
+
+
     function initSinglePageImageViewer() {
         // @ts-ignore
         const src = document.body.children[0].src;
@@ -441,19 +477,35 @@
     }
 
     function initOverlayImageViewer() {
-        document.body.addEventListener("click", function (e) {
-            if (!(e.target instanceof HTMLAnchorElement)) { return; }
-            const link = e.target.href;
+        addEventListener("click", function (e) {
+            // @ts-ignore
+            const link = getLinkAncestor(e.target);
             if (!link) { return; }
+            /*/          /* Reddit */                /* Everything else */
+            const href = link.dataset.hrefUrl || link.href;
+            if (!href) { return; }
 
-            if (link && /\.(png|jpg|gif)$/i.test(link)) {
+            if (href && /\.(png|jpg|gif)$/i.test(href)) {
                 e.preventDefault();
-                createImageViewer(link).then(viewer => {
+                createImageViewer(href).then(viewer => {
                     viewer.appendTo(document.body);
-                    viewer.elm.classList.add("overlay");
                 });
             }
         });
+    }
+
+    /**
+     * Gets a parent link, if any exists
+     * @param {Element} elm element
+     * @returns {null | HTMLAnchorElement}
+     */
+    function getLinkAncestor(elm) {
+        let curr = elm;
+        while ((!(curr instanceof HTMLAnchorElement) || !curr.href) && curr) {
+            curr = curr.parentElement;
+        }
+        // @ts-ignore
+        return curr;
     }
 
     /**
@@ -480,6 +532,12 @@
                 height: auto;
                 will-change: transform, width, height, top, left;
                 z-index: 2;
+                margin: 0;
+                transition: 0.15s opacity;
+            }
+
+            .${clsP}elm.${clsP}beforeTransitionIn .${clsP}img {
+                opacity: 0;
             }
 
             .${clsP}background {
@@ -489,13 +547,18 @@
                 width: 100%;
                 height: 100%;
                 z-index: 1;
+                transition: 0.15s opacity;
             }
 
-            .${clsP}elm .${clsP}background {
+            .${clsP}elm.${clsP}beforeTransitionIn .${clsP}img {
+                opacity: 0;
+            }
+
+            .${clsP}elm.${clsP}canClose .${clsP}background {
                 background-color: rgba(0, 0, 0, 0.6);
             }
 
-            .${clsP}elm .${clsP}img {
+            .${clsP}elm.${clsP}canClose .${clsP}img {
                 box-shadow: 1px 2px 8px #00000069, 0 0 4px #0000007a;
             }
         `;
@@ -518,6 +581,6 @@
             });
         }
 
-        return new ImageViewer(img);
+        return new ImageViewer(img, !isJustImage);
     }
 })();
