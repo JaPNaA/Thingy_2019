@@ -11,13 +11,22 @@
 // ==/UserScript==
 
 (function () {
+    // Yes, you may change these values safely.
+    const CONFIG = {
+        enableWhenOnlyImageOnPage: true,
+        openImageByLinkClick: true,
+
+        // --- DEBUG SETTINGS --- (you shouldn't play around with these)
+        forceEnableImageViewer: true
+    };
+
     "use strict";
 
     /**
      * Is the page just an image?
      * @type {boolean}
      */
-    const isJustImage = document.body.childNodes.length === 1 && document.body.children[0] && document.body.children[0].tagName === "IMG";
+    const isJustImage = CONFIG.forceEnableImageViewer || document.body.childNodes.length === 1 && document.body.children[0] && document.body.children[0].tagName === "IMG" && CONFIG.enableWhenOnlyImageOnPage;
 
     /**
      * Class name prefix,
@@ -65,6 +74,29 @@
             this.img.classList.add(clsP + "img");
             this.elm.appendChild(this.img);
 
+            /**
+             * Simple image settings element
+             */
+            this.imageSettingsElm = document.createElement("div");
+            this.imageSettingsElm.classList.add(clsP + "imageSettings");
+            this.elm.appendChild(this.imageSettingsElm);
+
+            /**
+             * Brightness slider
+             * @type {HTMLInputElement}
+             */
+            this.brightnessSlider = null;
+
+            /**
+             * Contrast slider
+             * @type {HTMLInputElement}
+             */
+            this.contrastSlider = null;
+
+            /**
+             * Can the imageViewer be closed?
+             * @type {boolean}
+             */
             this.canClose = canClose;
 
             /**
@@ -181,6 +213,17 @@
              */
             this.rotation = 0;
 
+            /**
+             * The brightness, normal -> 1
+             * @type {number}
+             */
+            this.brightness = 1;
+
+            /**
+             * The contrast, normal -> 1
+             * @type {number}
+             */
+            this.contrast = 1;
 
             this._setup();
         }
@@ -209,11 +252,45 @@
          * Sets up ImageViewer
          */
         _setup() {
+            this._setupImageSettingsElm();
             this._addEventListeners();
             this._reqanfLoop = this._reqanfLoop.bind(this);
             this._resetImageTransform();
             this._stopAnimations();
             this._reqanfLoop();
+        }
+
+        _setupImageSettingsElm() {
+            this.brightnessSlider = this._createSlider();
+            this.brightnessSlider.addEventListener("input", this._brightnessSliderChangeHandler.bind(this));
+            this.imageSettingsElm.appendChild(this.brightnessSlider);
+
+            this.contrastSlider = this._createSlider();
+            this.contrastSlider.addEventListener("input", this._contrastSliderChangeHandler.bind(this));
+            this.imageSettingsElm.appendChild(this.contrastSlider);
+        }
+
+        _brightnessSliderChangeHandler() {
+            let brightness = parseFloat(this.brightnessSlider.value) * 2;
+            brightness *= brightness;
+            brightness *= brightness;
+            this.brightness = brightness;
+        }
+
+        _contrastSliderChangeHandler() {
+            let contrast = parseFloat(this.contrastSlider.value) * 2;
+            contrast *= contrast;
+            contrast *= contrast;
+            this.contrast = contrast;
+        }
+
+        _createSlider() {
+            const slider = document.createElement("input");
+            slider.type = "range";
+            slider.max = "1";
+            slider.min = "0";
+            slider.step = "0.0001";
+            return slider;
         }
 
         /**
@@ -246,13 +323,13 @@
         _reqanfLoop() {
             this._tick();
             this._updateInlineStyles();
-            // this mitigates effect of weird bug
-            for (let i = 0; i < 100; i++) {
-                try {
-                    requestAnimationFrame(this._reqanfLoop);
-                    break;
-                } catch (err) { }
-            }
+            // // this mitigates effect of weird bug
+            // for (let i = 0; i < 100; i++) {
+            //     try {
+            requestAnimationFrame(this._reqanfLoop);
+            //         break;
+            //     } catch (err) { }
+            // }
         }
 
         /**
@@ -313,6 +390,8 @@
             this.img.style.width = this.width * this.scale + "px";
             this.img.style.height = this.height * this.scale + "px";
             this.img.style.transform = "translate(" + this.x + "px," + this.y + "px) rotate(" + this.rotation + "rad)";
+
+            this.img.style.filter = "brightness(" + (this.brightness * 100) + "%) contrast(" + (this.contrast * 100) + "%)";
         }
 
 
@@ -352,8 +431,8 @@
          * @param {MouseEvent} e event
          */
         _onMouseMove(e) {
-            e.preventDefault();
             if (this.isDragging) {
+                e.preventDefault();
                 this._translate(e.movementX, e.movementY);
             }
 
@@ -477,21 +556,23 @@
     }
 
     function initOverlayImageViewer() {
-        addEventListener("click", function (e) {
-            // @ts-ignore
-            const link = getLinkAncestor(e.target);
-            if (!link) { return; }
-            /*/          /* Reddit */                /* Everything else */
-            const href = link.dataset.hrefUrl || link.href;
-            if (!href) { return; }
+        if (CONFIG.openImageByLinkClick) {
+            addEventListener("click", function (e) {
+                // @ts-ignore
+                const link = getLinkAncestor(e.target);
+                if (!link) { return; }
+                /*/          /* Reddit */            /* Everything else */
+                const href = link.dataset.hrefUrl || link.href;
+                if (!href) { return; }
 
-            if (href && /\.(png|jpg|gif)$/i.test(href)) {
-                e.preventDefault();
-                createImageViewer(href).then(viewer => {
-                    viewer.appendTo(document.body);
-                });
-            }
-        });
+                if (href && /\.(png|jpg|gif)$/i.test(href)) {
+                    e.preventDefault();
+                    createImageViewer(href).then(viewer => {
+                        viewer.appendTo(document.body);
+                    });
+                }
+            });
+        }
     }
 
     /**
@@ -548,6 +629,13 @@
                 height: 100%;
                 z-index: 1;
                 transition: 0.15s opacity;
+            }
+
+            .${clsP}imageSettings {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                z-index: 3;
             }
 
             .${clsP}elm.${clsP}beforeTransitionIn .${clsP}img {
