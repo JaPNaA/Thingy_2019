@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Better image viewer
-// @version      0.2
+// @version      0.3
 // @description  A better image viewer
 // @author       someRandomGuy
 // @include      *://*/*
@@ -67,12 +67,20 @@
             this.elm.appendChild(this.background);
 
             /**
+             * Image container
+             * @type {HTMLDivElement}
+             */
+            this.imgContainer = document.createElement("div");
+            this.imgContainer.classList.add(clsP + "imgContainer");
+            this.elm.appendChild(this.imgContainer);
+
+            /**
              * The image
              * @type {HTMLImageElement}
              */
             this.img = img;
             this.img.classList.add(clsP + "img");
-            this.elm.appendChild(this.img);
+            this.imgContainer.appendChild(this.img);
 
             /**
              * Simple image settings element
@@ -391,7 +399,7 @@
             this.img.style.height = this.height * this.scale + "px";
             this.img.style.transform = "translate(" + this.x + "px," + this.y + "px) rotate(" + this.rotation + "rad)";
 
-            this.img.style.filter = "brightness(" + (this.brightness * 100) + "%) contrast(" + (this.contrast * 100) + "%)";
+            this.imgContainer.style.filter = "brightness(" + (this.brightness * 100) + "%) contrast(" + (this.contrast * 100) + "%)";
         }
 
 
@@ -605,6 +613,11 @@
                 z-index: 2147483647; /* Always. on. top. */
             }
 
+            .${clsP}imgContainer {
+                position: absolute;
+                z-index: 2;
+            }
+
             .${clsP}img {
                 position: absolute;
                 top: 0;
@@ -612,7 +625,6 @@
                 width: auto;
                 height: auto;
                 will-change: transform, width, height, top, left;
-                z-index: 2;
                 margin: 0;
                 transition: 0.15s opacity;
             }
