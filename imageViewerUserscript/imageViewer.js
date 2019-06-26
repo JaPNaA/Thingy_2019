@@ -17,7 +17,7 @@
         openImageByLinkClick: true,
 
         // --- DEBUG SETTINGS --- (you shouldn't play around with these)
-        forceEnableImageViewer: true
+        forceEnableImageViewer: false
     };
 
     "use strict";
