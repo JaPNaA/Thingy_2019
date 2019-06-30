@@ -13,10 +13,6 @@ class Pentagon extends Polygon {
         [Math.cos(Math.PI * 10 / 5) * Pentagon.renderedRadius, Math.sin(Math.PI * 10 / 5) * Pentagon.renderedRadius]
     ];
 
-    constructor(x: number, y: number) {
-        super(x, y);
-    }
-
     public render(X: CanvasRenderingContext2D): void {
         X.translate(this.x, this.y);
         X.rotate(this.rotation);

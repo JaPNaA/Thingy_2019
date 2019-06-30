@@ -6,10 +6,6 @@ class Square extends Polygon {
 
     private static renderRadius = 16;
 
-    constructor(x: number, y: number) {
-        super(x, y);
-    }
-
     public render(X: CanvasRenderingContext2D): void {
         X.translate(this.x, this.y);
         X.rotate(this.rotation);

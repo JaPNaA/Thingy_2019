@@ -11,10 +11,6 @@ class Triangle extends Polygon {
         [Math.cos(Math.PI * 6 / 3) * Triangle.renderedRadius, Math.sin(Math.PI * 6 / 3) * Triangle.renderedRadius]
     ];
 
-    constructor(x: number, y: number) {
-        super(x, y);
-    }
-
     public render(X: CanvasRenderingContext2D): void {
         X.translate(this.x, this.y);
         X.rotate(this.rotation);

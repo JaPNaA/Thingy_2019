@@ -1,6 +1,7 @@
 import Entity from "../Entity";
 import Ticker from "../engine/Ticker";
 import circleCircleElasticCollision from "../collisions/polygon-polygon";
+import Game from "../Game";
 
 abstract class Polygon extends Entity {
     public x: number;
@@ -12,8 +13,8 @@ abstract class Polygon extends Entity {
 
     private static fixedFriction: number = 0.995 ** Ticker.fixedTime;
 
-    constructor(x: number, y: number) {
-        super();
+    constructor(game: Game, x: number, y: number) {
+        super(game);
         this.x = x;
         this.y = y;
 
