@@ -8,9 +8,10 @@ class Bullet extends Entity {
     public y: number;
     public vx: number;
     public vy: number;
-    public radius: number;
     public rotation: number;
-    public health: number;
+    public radius: number = 6;
+    public health: number = 1;
+    public damage: number = 1;
 
     private static fixedFriction = 0.99995 ** Ticker.fixedTime;
 
@@ -20,9 +21,7 @@ class Bullet extends Entity {
         this.y = y;
         this.vx = Math.cos(direction) * speed;
         this.vy = Math.sin(direction) * speed;
-        this.radius = 6;
         this.rotation = 0;
-        this.health = 1;
     }
 
     public render(X: CanvasRenderingContext2D): void {
@@ -45,6 +44,7 @@ class Bullet extends Entity {
     }
 
     public collideWith(other: Entity): void {
+        super.collideWith(other);
         circleCircleElasticCollision(this, other);
     }
 }

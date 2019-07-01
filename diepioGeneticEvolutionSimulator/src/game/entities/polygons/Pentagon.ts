@@ -1,8 +1,8 @@
 import Polygon from "../Polygon";
 
 class Pentagon extends Polygon {
-    public radius: number = 30;
-    public health: number = 2;
+    public radius: number = 20;
+    public health: number = 10;
 
     private static renderedRadius: number = 32;
     private static points = [

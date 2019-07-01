@@ -2,7 +2,7 @@ import Polygon from "../Polygon";
 
 class Square extends Polygon {
     public radius: number = 18;
-    public health: number = 1;
+    public health: number = 2;
 
     private static renderRadius = 16;
 

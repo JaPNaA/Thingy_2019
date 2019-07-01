@@ -8,8 +8,10 @@ import IColliable from "./interfaces/ICollidable";
 import Bounder from "./Bounder";
 import Boundaries from "../entities/Boundaries";
 import IBoundable from "./interfaces/IBoundable";
+import IRemovable from "./interfaces/IRemovable";
+import Remover from "./Remover";
 
-type Entity = IRenderable & ITickable & IColliable & IBoundable;
+type Entity = IRenderable & ITickable & IColliable & IBoundable & IRemovable;
 
 class Engine {
     public canvas: Canvas;
@@ -17,6 +19,7 @@ class Engine {
     private ticker: Ticker;
     private collider: CircleCollider;
     private bounder: Bounder;
+    private removever: Remover;
     private entities: Entity[];
 
     constructor(entities: Entity[]) {
@@ -25,14 +28,16 @@ class Engine {
         this.ticker = new Ticker();
         this.collider = new CircleCollider();
         this.bounder = new Bounder();
+        this.removever = new Remover();
         this.entities = entities;
     }
 
     public render() {
         this.ticker.tickAll(this.entities);
         this.collider.collideAll(this.entities);
-        this.renderer.renderAll(this.entities);
         this.bounder.boundAll(this.entities);
+        this.renderer.renderAll(this.entities);
+        this.removever.removeAllIfDestoryed(this.entities);
     }
 
     public setBoundaries(boundaries: Boundaries): void {

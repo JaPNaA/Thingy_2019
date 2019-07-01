@@ -6,7 +6,8 @@ import Bullet from "../Bullet";
 
 abstract class Tank extends Entity {
     public radius: number = 24;
-    public health: number = 4;
+    public health: number = Tank.maxHealth;
+    public damage: number = 0.5;
     public rotation: number;
     public x: number;
     public y: number;
@@ -17,6 +18,10 @@ abstract class Tank extends Entity {
 
     private static speed = 0.0005;
     private static fixedFriction: number = 0.995 ** Ticker.fixedTime;
+    private static maxHealth: number = 16;
+    private static hpBarLength: number = 42;
+    private static hpBarWidth: number = 6;
+    private static hpBarPadding: number = 8;
 
     private canonWidth: number = 18;
     private canonLength: number = 20;
@@ -41,6 +46,8 @@ abstract class Tank extends Entity {
 
     public render(X: CanvasRenderingContext2D): void {
         X.translate(this.x, this.y);
+        this.drawHPBar(X);
+
         X.rotate(this.rotation);
         X.fillStyle = "#cccccc";
         X.strokeStyle = "#888888";
@@ -72,12 +79,23 @@ abstract class Tank extends Entity {
     }
 
     public collideWith(other: Entity): void {
+        super.collideWith(other);
         circleCircleElasticCollision(this, other);
     }
 
     protected abstract getMovement(): [number, number];
     protected abstract getDirection(): [number, number];
     protected abstract getTriggered(): boolean;
+
+    private drawHPBar(X: CanvasRenderingContext2D): void {
+        const x = -Tank.hpBarLength / 2
+        const y = this.radius + Tank.hpBarPadding - Tank.hpBarWidth / 2;
+
+        X.fillStyle = "#aaaaaa";
+        X.fillRect(x, y, Tank.hpBarLength, Tank.hpBarWidth);
+        X.fillStyle = "#00dd00";
+        X.fillRect(x, y, Tank.hpBarLength * this.health / Tank.maxHealth, Tank.hpBarWidth);
+    }
 
     private doMovement(): void {
         const [ax, ay] = this.normalize(this.getMovement(), 1);
@@ -106,13 +124,15 @@ abstract class Tank extends Entity {
     }
 
     private fireBullet(): void {
-        this.game.addEntity(new Bullet(
+        const bullet = new Bullet(
             this.game,
             this.x + Math.cos(this.rotation) * this.radius,
             this.y + Math.sin(this.rotation) * this.radius,
             0.4,
             this.rotation
-        ));
+        );
+        bullet.setTeamID(this.teamID);
+        this.game.addEntity(bullet);
     }
 
     private normalize(vec: [number, number], scale: number = 1): [number, number] {

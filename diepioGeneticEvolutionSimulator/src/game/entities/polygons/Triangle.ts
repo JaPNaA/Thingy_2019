@@ -2,7 +2,7 @@ import Polygon from "../Polygon";
 
 class Triangle extends Polygon {
     public radius: number = 14;
-    public health: number = 2;
+    public health: number = 6;
 
     private static renderedRadius: number = 20;
     private static points = [

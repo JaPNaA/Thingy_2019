@@ -10,8 +10,11 @@ abstract class Polygon extends Entity {
     public vy: number;
     public vrotation: number;
     public rotation: number;
+    public damage: number = 1;
+    public teamID = Polygon.polygonTeam;
 
     private static fixedFriction: number = 0.995 ** Ticker.fixedTime;
+    private static polygonTeam: number = -1;
 
     constructor(game: Game, x: number, y: number) {
         super(game);
@@ -37,6 +40,7 @@ abstract class Polygon extends Entity {
     }
 
     public collideWith(other: Entity): void {
+        super.collideWith(other);
         circleCircleElasticCollision(this, other);
     }
 }
