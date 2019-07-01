@@ -2,10 +2,11 @@ import Tank from "./Tank";
 import Game from "../../Game";
 import Genes from "./Genes";
 import Polygon from "../Polygon";
+import Entity from "../../Entity";
 
 class GeneticTank extends Tank {
     private genes: Genes;
-    private targetPolygon?: Polygon;
+    private target?: Entity;
     private inFiringRange: boolean;
 
     constructor(game: Game, x: number, y: number, genes: Genes) {
@@ -21,13 +22,13 @@ class GeneticTank extends Tank {
     }
 
     protected getMovement(): [number, number] {
-        if (!this.targetPolygon || this.inFiringRange) { return [0, 0]; }
-        return [this.targetPolygon.x - this.x, this.targetPolygon.y - this.y];
+        if (!this.target || this.inFiringRange) { return [0, 0]; }
+        return [this.target.x - this.x, this.target.y - this.y];
     }
 
     protected getDirection(): [number, number] {
-        if (!this.targetPolygon) { return [0, 0]; }
-        return [this.targetPolygon.x - this.x, this.targetPolygon.y - this.y];
+        if (!this.target) { return [0, 0]; }
+        return [this.target.x - this.x, this.target.y - this.y];
     }
 
     protected getTriggered(): boolean {
@@ -35,29 +36,35 @@ class GeneticTank extends Tank {
     }
 
     private updatePolygonTarget(): void {
-        if (this.targetPolygon && !this.targetPolygon.destoryed) { return; }
+        if (this.target && !this.target.destoryed) { return; }
 
         let range = this.range * this.genes.range;
         range *= range;
 
         for (const entity of this.game.entities) {
-            if (entity instanceof Polygon && entity.x * entity.x + entity.y * entity.y < range) {
-                this.targetPolygon = entity;
+            if (entity.x * entity.x + entity.y * entity.y > range) { continue; }
+            if (entity instanceof Polygon) {
+                this.target = entity;
                 return;
+            } else if (entity instanceof Tank) {
+                if (Math.random() < this.genes.aggression) {
+                    this.target = entity;
+                    return;
+                }
             }
         }
 
-        this.targetPolygon = undefined;
+        this.target = undefined;
     }
 
     private updateInRange(): void {
-        if (!this.targetPolygon) {
+        if (!this.target) {
             this.inFiringRange = false;
             return;
         }
 
-        const dx = this.x - this.targetPolygon.x;
-        const dy = this.y - this.targetPolygon.y;
+        const dx = this.x - this.target.x;
+        const dy = this.y - this.target.y;
         const dist = dx * dx + dy * dy;
         let distBeforeFiring = this.genes.distanceBeforeFiring * this.genes.range * this.range;
         distBeforeFiring *= distBeforeFiring;
