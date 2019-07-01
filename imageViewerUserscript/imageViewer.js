@@ -23,10 +23,21 @@
     "use strict";
 
     /**
+     * Is the document an SVG?
+     * @type {boolean}
+     */
+    const isSVG = document.documentElement.tagName === "svg";
+
+    /**
      * Is the page just an image?
      * @type {boolean}
      */
-    const isJustImage = CONFIG.forceEnableImageViewer || document.body.childNodes.length === 1 && document.body.children[0] && document.body.children[0].tagName === "IMG" && CONFIG.enableWhenOnlyImageOnPage;
+    const isJustImage = CONFIG.forceEnableImageViewer || isSVG || (
+        document.body && document.body.childNodes.length === 1 &&
+        document.body.children[0] && document.body.children[0].tagName === "IMG" &&
+        CONFIG.enableWhenOnlyImageOnPage
+    );
+
 
     /**
      * Class name prefix,
@@ -46,7 +57,7 @@
              * The element that contains it all
              * @type {HTMLDivElement}
              */
-            this.elm = document.createElement("div");
+            this.elm = createHTMLElement("div");
             this.elm.classList.add(clsP + "elm");
             if (canClose) {
                 this.elm.classList.add(clsP + "canClose");
@@ -62,7 +73,7 @@
              * The background
              * @type {HTMLDivElement}
              */
-            this.background = document.createElement("div");
+            this.background = createHTMLElement("div");
             this.background.classList.add(clsP + "background");
             this.elm.appendChild(this.background);
 
@@ -70,7 +81,7 @@
              * Image container
              * @type {HTMLDivElement}
              */
-            this.imgContainer = document.createElement("div");
+            this.imgContainer = createHTMLElement("div");
             this.imgContainer.classList.add(clsP + "imgContainer");
             this.elm.appendChild(this.imgContainer);
 
@@ -85,7 +96,7 @@
             /**
              * Simple image settings element
              */
-            this.imageSettingsElm = document.createElement("div");
+            this.imageSettingsElm = createHTMLElement("div");
             this.imageSettingsElm.classList.add(clsP + "imageSettings");
             this.elm.appendChild(this.imageSettingsElm);
 
@@ -111,13 +122,13 @@
              * The width of the image
              * @type {number}
              */
-            this.width = this.img.naturalWidth;
+            this.width = this.img.naturalWidth || this.img.width;
 
             /**
              * The height of the image
              * @type {number}
              */
-            this.height = this.img.naturalHeight;
+            this.height = this.img.naturalHeight || this.img.height;
 
             /**
              * The boundary width
@@ -238,7 +249,7 @@
 
         /**
          * Append to parent
-         * @param {HTMLElement} parent
+         * @param {Element | Document} parent
          */
         appendTo(parent) {
             if (!ImageViewer.hasInjectedCSS) {
@@ -293,7 +304,8 @@
         }
 
         _createSlider() {
-            const slider = document.createElement("input");
+            /** @type {HTMLInputElement} */
+            const slider = createHTMLElement("input");
             slider.type = "range";
             slider.max = "1";
             slider.min = "0";
@@ -331,13 +343,7 @@
         _reqanfLoop() {
             this._tick();
             this._updateInlineStyles();
-            // // this mitigates effect of weird bug
-            // for (let i = 0; i < 100; i++) {
-            //     try {
             requestAnimationFrame(this._reqanfLoop);
-            //         break;
-            //     } catch (err) { }
-            // }
         }
 
         /**
@@ -545,22 +551,26 @@
     ImageViewer.scaleFactor = 1.2;
 
 
-
     if (isJustImage) {
         initSinglePageImageViewer();
     } else {
         initOverlayImageViewer();
     }
 
-
-
     function initSinglePageImageViewer() {
-        // @ts-ignore
-        const src = document.body.children[0].src;
-        createImageViewer(src).then(imageView => {
-            while (document.body.firstChild) { document.body.removeChild(document.body.firstChild); }
-            imageView.appendTo(document.body);
-        });
+        if (isSVG) {
+            buildHTMLDocument();
+            createImageViewer(location.href).then(iv => {
+                iv.appendTo(document.body);
+            });
+        } else {
+            // @ts-ignore
+            const src = document.body.children[0].src;
+            createImageViewer(src).then(imageView => {
+                removeChildrenOf(document.body);
+                imageView.appendTo(document.body);
+            });
+        }
     }
 
     function initOverlayImageViewer() {
@@ -569,17 +579,40 @@
                 // @ts-ignore
                 const link = getLinkAncestor(e.target);
                 if (!link) { return; }
-                /*/          /* Reddit */            /* Everything else */
+                //           /* Reddit */            /* Everything else */
                 const href = link.dataset.hrefUrl || link.href;
                 if (!href) { return; }
 
-                if (href && /\.(png|jpg|gif)$/i.test(href)) {
+                if (href && /\.(png|jpg|gif|svg)$/i.test(href)) {
                     e.preventDefault();
                     createImageViewer(href).then(viewer => {
                         viewer.appendTo(document.body);
                     });
                 }
             });
+        }
+    }
+
+    /**
+     * Builds the regular HTML document
+     */
+    function buildHTMLDocument() {
+        const html = createHTMLElement("html");
+        const head = createHTMLElement("head");
+        const body = createHTMLElement("body");
+        html.appendChild(head);
+        html.appendChild(body);
+        document.removeChild(document.documentElement);
+        document.appendChild(html);
+    }
+
+    /**
+     * Removes all children of parent
+     * @param {Element} parent 
+     */
+    function removeChildrenOf(parent) {
+        while (parent.firstChild) {
+            parent.removeChild(parent.firstChild);
         }
     }
 
@@ -598,11 +631,20 @@
     }
 
     /**
+     * Creates an HTML element with the proper namespace
+     * @param {keyof HTMLElementTagNameMap} tagName
+     * @returns {any}
+     */
+    function createHTMLElement(tagName) {
+        return document.createElementNS("http://www.w3.org/1999/xhtml", tagName);
+    }
+
+    /**
      * Creates the injected CSS
      * @returns {HTMLStyleElement}
      */
     function createCSS() {
-        const style = document.createElement("style");
+        const style = createHTMLElement("style");
         style.innerHTML = `
             .${clsP}elm {
                 position: fixed;
@@ -671,7 +713,8 @@
      * @returns {Promise<ImageViewer>}
      */
     async function createImageViewer(src) {
-        const img = document.createElement("img");
+        /** @type {HTMLImageElement} */
+        const img = createHTMLElement("img");
         img.src = src;
 
         if (!img.complete) {
