@@ -281,10 +281,12 @@
 
         _setupImageSettingsElm() {
             this.brightnessSlider = this._createSlider();
+            this.brightnessSlider.title = "Brightness";
             this.brightnessSlider.addEventListener("input", this._brightnessSliderChangeHandler.bind(this));
             this.imageSettingsElm.appendChild(this.brightnessSlider);
 
             this.contrastSlider = this._createSlider();
+            this.contrastSlider.title = "Contrast";
             this.contrastSlider.addEventListener("input", this._contrastSliderChangeHandler.bind(this));
             this.imageSettingsElm.appendChild(this.contrastSlider);
         }
