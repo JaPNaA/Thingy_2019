@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Better image viewer
-// @version      0.3
+// @version      0.4
 // @description  A better image viewer
 // @author       someRandomGuy
 // @include      *://*/*
