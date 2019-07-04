@@ -3,16 +3,23 @@ import Game from "../../Game";
 import Genes from "./Genes";
 import Polygon from "../Polygon";
 import Entity from "../../Entity";
+import OpenSimplexNoise from "open-simplex-noise";
 
 class GeneticTank extends Tank {
     private genes: Genes;
     private target?: Entity;
     private inFiringRange: boolean;
+    private noise: OpenSimplexNoise;
+    private noiseProgress: number;
 
     constructor(game: Game, x: number, y: number, genes: Genes) {
         super(game, x, y);
         this.genes = genes;
         this.inFiringRange = false;
+        this.noise = new OpenSimplexNoise(Math.random() * Number.MAX_SAFE_INTEGER);
+        this.noiseProgress = Math.random() * 100;
+
+        this.unstableness = 1 - this.genes.accuracy;
     }
 
     public tick(deltaTime: number): void {
@@ -21,18 +28,25 @@ class GeneticTank extends Tank {
         super.tick(deltaTime);
     }
 
-    protected getMovement(): [number, number] {
-        if (!this.target || this.inFiringRange) { return [0, 0]; }
+    protected getMovement(deltaTime: number): [number, number] {
+        if (!this.target) {
+            return this.wander(deltaTime);
+        }
+        if (this.inFiringRange) { return [0, 0]; }
         return [this.target.x - this.x, this.target.y - this.y];
     }
 
     protected getDirection(): [number, number] {
-        if (!this.target) { return [0, 0]; }
+        if (!this.target) { return [this.vx, this.vy]; }
         return [this.target.x - this.x, this.target.y - this.y];
     }
 
     protected getTriggered(): boolean {
-        return this.inFiringRange;
+        if (this.target) {
+            return this.inFiringRange;
+        } else {
+            return false;
+        }
     }
 
     private updatePolygonTarget(): void {
@@ -42,15 +56,20 @@ class GeneticTank extends Tank {
         range *= range;
 
         for (const entity of this.game.entities) {
-            if (entity.x * entity.x + entity.y * entity.y > range) { continue; }
-            if (entity instanceof Polygon) {
-                this.target = entity;
-                return;
-            } else if (entity instanceof Tank) {
+            if (entity.teamID === this.teamID) { continue; }
+            const dx = entity.x - this.x;
+            const dy = entity.y - this.y;
+
+            if (dx * dx + dy * dy > range) { continue; }
+
+            if (entity instanceof Tank) {
                 if (Math.random() < this.genes.aggression) {
                     this.target = entity;
                     return;
                 }
+            } else {
+                this.target = entity;
+                return;
             }
         }
 
@@ -69,6 +88,14 @@ class GeneticTank extends Tank {
         let distBeforeFiring = this.genes.distanceBeforeFiring * this.genes.range * this.range;
         distBeforeFiring *= distBeforeFiring;
         this.inFiringRange = dist < distBeforeFiring;
+    }
+
+    private wander(deltaTime: number): [number, number] {
+        const dx = this.noise.noise2D(this.noiseProgress, this.noiseProgress);
+        const dy = this.noise.noise2D(-this.noiseProgress, -this.noiseProgress);
+        this.noiseProgress += 0.0001 * deltaTime;
+
+        return [dx, dy];
     }
 }
 

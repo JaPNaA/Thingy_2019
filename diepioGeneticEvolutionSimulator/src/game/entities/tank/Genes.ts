@@ -10,6 +10,8 @@ class Genes {
     public distanceBeforeFiring: number;
     /** Chance to attack another tank */
     public aggression: number;
+    /** How much randomness is applied to the intended direction of fire */
+    public accuracy: number;
 
     /** Chance to spec into health regeneration on level up */
     public healthRegeneration: number;
@@ -41,6 +43,7 @@ class Genes {
             this.range = genes.range;
             this.distanceBeforeFiring = genes.distanceBeforeFiring;
             this.aggression = genes.aggression;
+            this.accuracy = genes.accuracy;
             this.healthRegeneration = genes.healthRegeneration;
             this.maxHealth = genes.maxHealth;
             this.bodyDamage = genes.bodyDamage;
@@ -56,6 +59,7 @@ class Genes {
             this.range = Math.random();
             this.distanceBeforeFiring = Math.random();
             this.aggression = Math.random();
+            this.accuracy = Math.random();
             this.healthRegeneration = Math.random();
             this.maxHealth = Math.random();
             this.bodyDamage = Math.random();

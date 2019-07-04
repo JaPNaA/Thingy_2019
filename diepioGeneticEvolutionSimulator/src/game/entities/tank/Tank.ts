@@ -15,6 +15,7 @@ abstract class Tank extends Entity {
     public vy: number;
 
     protected range: number = 720;
+    protected unstableness: number = 0.2;
 
     private static speed = 0.0005;
     private static fixedFriction: number = 0.995 ** Ticker.fixedTime;
@@ -65,7 +66,7 @@ abstract class Tank extends Entity {
     }
 
     public tick(deltaTime: number): void {
-        this.doMovement();
+        this.doMovement(deltaTime);
         this.rotateToCursor();
         this.fireIfShould(deltaTime);
     }
@@ -83,7 +84,7 @@ abstract class Tank extends Entity {
         circleCircleElasticCollision(this, other);
     }
 
-    protected abstract getMovement(): [number, number];
+    protected abstract getMovement(deltaTime: number): [number, number];
     protected abstract getDirection(): [number, number];
     protected abstract getTriggered(): boolean;
 
@@ -97,8 +98,8 @@ abstract class Tank extends Entity {
         X.fillRect(x, y, Tank.hpBarLength * this.health / Tank.maxHealth, Tank.hpBarWidth);
     }
 
-    private doMovement(): void {
-        const [ax, ay] = this.normalize(this.getMovement(), 1);
+    private doMovement(deltaTime: number): void {
+        const [ax, ay] = this.normalize(this.getMovement(deltaTime), 1);
         this.ax = ax;
         this.ay = ay;
     }
@@ -129,7 +130,7 @@ abstract class Tank extends Entity {
             this.x + Math.cos(this.rotation) * this.radius,
             this.y + Math.sin(this.rotation) * this.radius,
             0.4,
-            this.rotation
+            this.rotation + (Math.random() - 0.5) * this.unstableness
         );
         bullet.setTeamID(this.teamID);
         this.game.addEntity(bullet);

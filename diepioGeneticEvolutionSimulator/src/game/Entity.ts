@@ -16,8 +16,8 @@ abstract class Entity implements IRenderable, ITickable, IColliable, IRemovable 
     public abstract damage: number;
 
     public destoryed: boolean;
+    public teamID: number;
 
-    protected teamID: number;
     protected game: Game;
 
     private static teamIDIncrementer: number = 0;

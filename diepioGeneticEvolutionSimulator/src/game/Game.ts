@@ -41,7 +41,7 @@ class Game {
     }
 
     private createInitalShapes(): void {
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 5; i++) {
             // for (let j = 0; j < 25; j++) {
             //     this.entities.push(new Bullet(this, i * 24, j * 24, 0, 0));
             // }
@@ -62,13 +62,13 @@ class Game {
             ));
         }
 
-        this.entities.push(new Player(
-            this, // 860, 580
-            Math.random() * this.engine.canvas.width,
-            Math.random() * this.engine.canvas.height
-        ));
+        // this.entities.push(new Player(
+        //     this, // 860, 580
+        //     Math.random() * this.engine.canvas.width,
+        //     Math.random() * this.engine.canvas.height
+        // ));
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 8; i++) {
             this.entities.push(new GeneticTank(
                 this,
                 Math.random() * this.engine.canvas.width,
