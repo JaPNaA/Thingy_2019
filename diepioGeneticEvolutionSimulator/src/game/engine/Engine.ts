@@ -10,10 +10,13 @@ import Boundaries from "../entities/Boundaries";
 import IBoundable from "./interfaces/IBoundable";
 import IRemovable from "./interfaces/IRemovable";
 import Remover from "./Remover";
+import Camera from "./Camera";
 
 type Entity = IRenderable & ITickable & IColliable & IBoundable & IRemovable;
 
 class Engine {
+    private camera: Camera;
+
     public canvas: Canvas;
     private renderer: Renderer;
     private ticker: Ticker;
@@ -23,8 +26,9 @@ class Engine {
     private entities: Entity[];
 
     constructor(entities: Entity[]) {
+        this.camera = new Camera();
         this.canvas = new Canvas();
-        this.renderer = new Renderer(this.canvas);
+        this.renderer = new Renderer(this.canvas, this.camera);
         this.ticker = new Ticker();
         this.collider = new CircleCollider();
         this.bounder = new Bounder();

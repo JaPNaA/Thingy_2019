@@ -4,6 +4,7 @@ import Genes from "./Genes";
 import Polygon from "../Polygon";
 import Entity from "../../Entity";
 import OpenSimplexNoise from "open-simplex-noise";
+import Bullet from "../Bullet";
 
 class GeneticTank extends Tank {
     private genes: Genes;
@@ -62,7 +63,7 @@ class GeneticTank extends Tank {
 
             if (dx * dx + dy * dy > range) { continue; }
 
-            if (entity instanceof Tank) {
+            if (entity instanceof Tank || entity instanceof Bullet) {
                 if (Math.random() < this.genes.aggression) {
                     this.target = entity;
                     return;
