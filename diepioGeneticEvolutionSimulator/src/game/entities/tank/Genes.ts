@@ -14,11 +14,11 @@ class Genes {
     public accuracy: number;
 
     /** Chance to spec into health regeneration on level up */
-    public healthRegeneration: number;
+    public healthRegeneration: number; // todo: not implemented
     /** Chance to spec into max health on level up */
-    public maxHealth: number;
+    public maxHealth: number; // todo: not implemented
     /** Chance to spec into body damage on level up */
-    public bodyDamage: number;
+    public bodyDamage: number; // todo: not implemented
     /** Chance to spec into bullet speed on level up */
     public bulletSpeed: number;
     /** Chance to spec into bullet penetration on level up */
@@ -31,9 +31,9 @@ class Genes {
     public movementSpeed: number;
 
     /** Level they must reach before reproducing */
-    public pointsToReproduction: number;
+    public pointsToReproduction: number; // todo: not implemented
     /** Mutation rate for future mutations */
-    public mutationRate: number;
+    public mutationRate: number; // todo: not implemented
 
     /** Tank class */
     public class: TankClass;

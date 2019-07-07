@@ -7,3 +7,6 @@ game.appendTo(document.body);
 
 console.log(game);
 console.log(evolver);
+
+// @ts-ignore
+window.game = game;

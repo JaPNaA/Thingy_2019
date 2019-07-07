@@ -3,9 +3,16 @@ import Ticker from "../../engine/Ticker";
 import Game from "../../Game";
 import circleCircleElasticCollision from "../../collisions/polygon-polygon";
 import Bullet from "../Bullet";
+import TankBuild from "./TankBuild";
+import TankLevels from "./TankLevels";
+import { IXPGivable, isXPGivable } from "../IXPGivable";
 
-abstract class Tank extends Entity {
-    public radius: number = 24;
+abstract class Tank extends Entity implements IXPGivable {
+    public static initalRadius = 24;
+    public static baseSpeed = 0.00035;
+    public static initalCooldownSpeed = 1000;
+
+    public radius: number = Tank.initalRadius;
     public health: number = Tank.maxHealth;
     public damage: number = 0.5;
     public rotation: number;
@@ -14,24 +21,29 @@ abstract class Tank extends Entity {
     public vx: number;
     public vy: number;
 
+    protected speed: number = Tank.baseSpeed;
     protected range: number = 720;
     protected unstableness: number = 0.2;
+    protected scale: number;
 
-    private static speed = 0.0005;
+    protected build: TankBuild;
+    protected levels: TankLevels;
+
+    protected ax: number;
+    protected ay: number;
+
+    protected cooldownSpeed: number = Tank.initalCooldownSpeed;
+
     private static fixedFriction: number = 0.995 ** Ticker.fixedTime;
     private static maxHealth: number = 16;
     private static hpBarLength: number = 42;
     private static hpBarWidth: number = 6;
     private static hpBarPadding: number = 8;
 
-    private canonWidth: number = 18;
-    private canonLength: number = 20;
-    private cooldownSpeed: number = 1000;
-
+    private canonWidth: number = 0.75;
+    private canonLength: number = 0.85;
     private cooldown: number;
 
-    private ax: number;
-    private ay: number;
 
     constructor(game: Game, x: number, y: number) {
         super(game);
@@ -43,6 +55,13 @@ abstract class Tank extends Entity {
         this.ay = 0;
         this.rotation = 0;
         this.cooldown = 0;
+
+        this.scale = 1;
+
+        this.build = new TankBuild();
+        this.levels = new TankLevels();
+
+        this.levels.onLevelUp(this.onLevelUp.bind(this));
     }
 
     public render(X: CanvasRenderingContext2D): void {
@@ -53,8 +72,10 @@ abstract class Tank extends Entity {
         X.fillStyle = "#cccccc";
         X.strokeStyle = "#888888";
 
+        const canonWidth = this.canonWidth * this.radius;
+        const canonLength = this.canonLength * this.radius;
         X.beginPath();
-        X.rect(0, -this.canonWidth / 2, this.canonLength + this.radius, this.canonWidth);
+        X.rect(0, -canonWidth / 2, canonLength + this.radius, canonWidth);
         X.fill();
         X.stroke();
 
@@ -69,13 +90,15 @@ abstract class Tank extends Entity {
         this.doMovement(deltaTime);
         this.rotateToCursor();
         this.fireIfShould(deltaTime);
+
+        this.health = Math.min(Tank.maxHealth, this.health + deltaTime * 0.00025);
     }
 
     public fixedTick(): void {
         this.vx *= Tank.fixedFriction;
         this.vy *= Tank.fixedFriction;
-        this.vx += this.ax * Ticker.fixedTime * Tank.speed;
-        this.vy += this.ay * Ticker.fixedTime * Tank.speed;
+        this.vx += this.ax * Ticker.fixedTime * this.speed;
+        this.vy += this.ay * Ticker.fixedTime * this.speed;
         super.fixedTick();
     }
 
@@ -84,9 +107,30 @@ abstract class Tank extends Entity {
         circleCircleElasticCollision(this, other);
     }
 
+    public giveXP(xp: number): void {
+        this.levels.addXP(xp);
+    }
+
+    public destory(by: Entity): void {
+        super.destory(by);
+        if (isXPGivable(by)) {
+            by.giveXP(this.levels.totalXP / 3);
+        }
+    }
+
     protected abstract getMovement(deltaTime: number): [number, number];
     protected abstract getDirection(): [number, number];
     protected abstract getTriggered(): boolean;
+
+    protected onLevelUp(): void {
+        this.scale = 1.01 ** (this.levels.level - 1);
+        this.radius = this.scale * Tank.initalRadius;
+    }
+
+    protected updateStatsWithBuild(): void {
+        this.speed = Tank.baseSpeed * (1 + this.build.movementSpeed * 0.2);
+        this.cooldownSpeed = Tank.initalCooldownSpeed * (1 - this.build.reload * 0.08);
+    }
 
     private drawHPBar(X: CanvasRenderingContext2D): void {
         const x = -Tank.hpBarLength / 2
@@ -129,10 +173,12 @@ abstract class Tank extends Entity {
             this.game,
             this.x + Math.cos(this.rotation) * this.radius,
             this.y + Math.sin(this.rotation) * this.radius,
-            0.4,
-            this.rotation + (Math.random() - 0.5) * this.unstableness
+            0.25 + 0.03 * this.build.bulletSpeed ** 1.4,
+            this.rotation + (Math.random() - 0.5) * this.unstableness,
+            this.build.bulletPenetration * 0.2,
+            this.build.bulletDamage * 0.2
         );
-        bullet.setTeamID(this.teamID);
+        bullet.setFirer(this);
         this.game.addEntity(bullet);
     }
 

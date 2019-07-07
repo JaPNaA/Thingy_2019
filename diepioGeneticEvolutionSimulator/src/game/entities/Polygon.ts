@@ -2,8 +2,12 @@ import Entity from "../Entity";
 import Ticker from "../engine/Ticker";
 import circleCircleElasticCollision from "../collisions/polygon-polygon";
 import Game from "../Game";
+import Tank from "./tank/Tank";
+import Bullet from "./Bullet";
+import { isXPGivable } from "./IXPGivable";
 
 abstract class Polygon extends Entity {
+    public abstract xpValue: number;
     public x: number;
     public y: number;
     public vx: number;
@@ -42,6 +46,14 @@ abstract class Polygon extends Entity {
     public collideWith(other: Entity): void {
         super.collideWith(other);
         circleCircleElasticCollision(this, other);
+    }
+
+    public destory(by: Entity): void {
+        super.destory(by);
+
+        if (isXPGivable(by)) {
+            by.giveXP(this.xpValue);
+        }
     }
 }
 

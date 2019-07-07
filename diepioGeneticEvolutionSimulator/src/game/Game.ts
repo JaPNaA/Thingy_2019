@@ -7,6 +7,7 @@ import Player from "./entities/tank/Player";
 import Boundaries from "./entities/Boundaries";
 import GeneticTank from "./entities/tank/GeneticTank";
 import Genes from "./entities/tank/Genes";
+import Polygon from "./entities/Polygon";
 
 class Game {
     public entities: Entity[];
@@ -41,7 +42,7 @@ class Game {
     }
 
     private createInitalShapes(): void {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 10; i++) {
             // for (let j = 0; j < 25; j++) {
             //     this.entities.push(new Bullet(this, i * 24, j * 24, 0, 0));
             // }
@@ -61,6 +62,28 @@ class Game {
                 Math.random() * this.engine.canvas.height
             ));
         }
+
+        setInterval(() => {
+            if (this.entities.filter(e => e instanceof Polygon).length > 50) {
+                return;
+            }
+
+            this.entities.push(new Square(
+                this,
+                Math.random() * this.engine.canvas.width,
+                Math.random() * this.engine.canvas.height
+            ));
+            this.entities.push(new Triangle(
+                this,
+                Math.random() * this.engine.canvas.width,
+                Math.random() * this.engine.canvas.height
+            ));
+            this.entities.push(new Pentagon(
+                this,
+                Math.random() * this.engine.canvas.width,
+                Math.random() * this.engine.canvas.height
+            ));
+        }, 3000);
 
         // this.entities.push(new Player(
         //     this, // 860, 580

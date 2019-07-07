@@ -2,8 +2,10 @@ import Entity from "../Entity";
 import circleCircleElasticCollision from "../collisions/polygon-polygon";
 import Game from "../Game";
 import Ticker from "../engine/Ticker";
+import Tank from "./tank/Tank";
+import { IXPGivable } from "./IXPGivable";
 
-class Bullet extends Entity {
+class Bullet extends Entity implements IXPGivable {
     public x: number;
     public y: number;
     public vx: number;
@@ -13,15 +15,19 @@ class Bullet extends Entity {
     public health: number = 1;
     public damage: number = 1;
 
+    private firer?: Tank;
+
     private static fixedFriction = 0.99995 ** Ticker.fixedTime;
 
-    constructor(game: Game, x: number, y: number, speed: number, direction: number) {
+    constructor(game: Game, x: number, y: number, speed: number, direction: number, health: number, damage: number) {
         super(game);
         this.x = x;
         this.y = y;
         this.vx = Math.cos(direction) * speed;
         this.vy = Math.sin(direction) * speed;
         this.rotation = 0;
+        this.health += health;
+        this.damage += damage;
     }
 
     public render(X: CanvasRenderingContext2D): void {
@@ -46,6 +52,17 @@ class Bullet extends Entity {
     public collideWith(other: Entity): void {
         super.collideWith(other);
         circleCircleElasticCollision(this, other);
+    }
+
+    public setFirer(firer: Tank): void {
+        this.teamID = firer.teamID;
+        this.firer = firer;
+    }
+
+    public giveXP(xp: number): void {
+        if (this.firer) {
+            this.firer.giveXP(xp);
+        }
     }
 }
 
