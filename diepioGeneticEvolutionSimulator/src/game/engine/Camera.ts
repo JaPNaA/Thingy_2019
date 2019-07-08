@@ -19,7 +19,6 @@ class Camera {
     }
 
     public setup(): void {
-        return;
         addEventListener("mousemove", e => {
             if (!mouse.down) { return; }
             this.x += e.movementX;

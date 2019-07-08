@@ -18,7 +18,7 @@ class Game {
     constructor() {
         this.entities = [];
         this.engine = new Engine(this.entities);
-        this.boundaries = new Boundaries(1280, 720);
+        this.boundaries = new Boundaries(4000, 4000);
         this.setup();
     }
 
@@ -42,60 +42,60 @@ class Game {
     }
 
     private createInitalShapes(): void {
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 50; i++) {
             // for (let j = 0; j < 25; j++) {
             //     this.entities.push(new Bullet(this, i * 24, j * 24, 0, 0));
             // }
             this.entities.push(new Square(
                 this,
-                Math.random() * this.engine.canvas.width,
-                Math.random() * this.engine.canvas.height
+                Math.random() * this.boundaries.width,
+                Math.random() * this.boundaries.height
             ));
             this.entities.push(new Triangle(
                 this,
-                Math.random() * this.engine.canvas.width,
-                Math.random() * this.engine.canvas.height
+                Math.random() * this.boundaries.width,
+                Math.random() * this.boundaries.height
             ));
             this.entities.push(new Pentagon(
                 this,
-                Math.random() * this.engine.canvas.width,
-                Math.random() * this.engine.canvas.height
+                Math.random() * this.boundaries.width,
+                Math.random() * this.boundaries.height
             ));
         }
 
         setInterval(() => {
-            if (this.entities.filter(e => e instanceof Polygon).length > 50) {
+            if (this.entities.filter(e => e instanceof Polygon).length > 150) {
                 return;
             }
 
             this.entities.push(new Square(
                 this,
-                Math.random() * this.engine.canvas.width,
-                Math.random() * this.engine.canvas.height
+                Math.random() * this.boundaries.width,
+                Math.random() * this.boundaries.height
             ));
             this.entities.push(new Triangle(
                 this,
-                Math.random() * this.engine.canvas.width,
-                Math.random() * this.engine.canvas.height
+                Math.random() * this.boundaries.width,
+                Math.random() * this.boundaries.height
             ));
             this.entities.push(new Pentagon(
                 this,
-                Math.random() * this.engine.canvas.width,
-                Math.random() * this.engine.canvas.height
+                Math.random() * this.boundaries.width,
+                Math.random() * this.boundaries.height
             ));
         }, 3000);
 
         // this.entities.push(new Player(
         //     this, // 860, 580
-        //     Math.random() * this.engine.canvas.width,
-        //     Math.random() * this.engine.canvas.height
+        //     Math.random() * this.boundaries.width,
+        //     Math.random() * this.boundaries.height
         // ));
 
         for (let i = 0; i < 8; i++) {
             this.entities.push(new GeneticTank(
                 this,
-                Math.random() * this.engine.canvas.width,
-                Math.random() * this.engine.canvas.height,
+                Math.random() * this.boundaries.width,
+                Math.random() * this.boundaries.height,
                 new Genes()
             ));
         }

@@ -39,7 +39,7 @@ abstract class Entity implements IRenderable, ITickable, IColliable, IRemovable 
         this.teamID = id;
     }
 
-    public destory(by: Entity): void {
+    public destory(by?: Entity): void {
         this.destoryed = true;
     }
 
@@ -61,6 +61,10 @@ abstract class Entity implements IRenderable, ITickable, IColliable, IRemovable 
         if (thisHealth <= 0) {
             this.destory(other);
         }
+    }
+
+    protected resetTeamId(): void {
+        this.teamID = Entity.teamIDIncrementer++;
     }
 }
 

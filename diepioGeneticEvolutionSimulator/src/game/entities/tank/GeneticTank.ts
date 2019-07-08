@@ -5,20 +5,29 @@ import Entity from "../../Entity";
 import OpenSimplexNoise from "open-simplex-noise";
 import Bullet from "../Bullet";
 import TankBuild from "./TankBuild";
+import TankLevels from "./TankLevels";
+import GeneticTankCursor from "./GeneticTankCursor";
 
 class GeneticTank extends Tank {
     private genes: Genes;
     private target?: Entity;
-    private inFiringRange: boolean;
+    private inIdealRange: boolean;
+    private tooClose: boolean;
     private noise: OpenSimplexNoise;
     private noiseProgress: number;
+    private timeToNewTeamID?: number; // todo: not implemented
+
+    private cursor: GeneticTankCursor;
 
     constructor(game: Game, x: number, y: number, genes: Genes) {
         super(game, x, y);
         this.genes = genes;
-        this.inFiringRange = false;
+        this.inIdealRange = false;
+        this.tooClose = false;
         this.noise = new OpenSimplexNoise(Math.random() * Number.MAX_SAFE_INTEGER);
         this.noiseProgress = Math.random() * 100;
+
+        this.cursor = new GeneticTankCursor();
 
         this.unstableness = 1 - this.genes.accuracy;
     }
@@ -27,27 +36,42 @@ class GeneticTank extends Tank {
         this.updateTarget();
         this.updateInRange();
         super.tick(deltaTime);
+        this.updateTeamIdIfShould(deltaTime);
+    }
+
+    public fixedTick(): void {
+        super.fixedTick();
+        this.cursor.fixedTick();
     }
 
     protected getMovement(deltaTime: number): [number, number] {
         if (!this.target) {
             return this.wander(deltaTime);
         }
-        if (this.inFiringRange) { return [0, 0]; }
-        return [this.target.x - this.x, this.target.y - this.y];
+        if (this.inIdealRange) {
+            if (this.tooClose) {
+                return [this.x - this.target.x, this.y - this.target.y];
+            } else {
+                return [0, 0];
+            }
+        } else {
+            return [this.target.x - this.x, this.target.y - this.y];
+        }
     }
 
     protected getDirection(): [number, number] {
-        if (!this.target) { return [this.ax, this.ay]; }
-        return [this.target.x - this.x, this.target.y - this.y];
+        if (this.target) {
+            this.cursor.setTarget(
+                this.target.x - this.x,
+                this.target.y - this.y
+            );
+        }
+
+        return [this.cursor.x, this.cursor.y];
     }
 
     protected getTriggered(): boolean {
-        if (this.target) {
-            return this.inFiringRange;
-        } else {
-            return false;
-        }
+        return Boolean(this.target);
     }
 
     protected onLevelUp(): void {
@@ -58,7 +82,13 @@ class GeneticTank extends Tank {
             this.getRandomStatByGenes()
         )) { }
 
+        this.reproduceIfShould();
         this.updateStatsWithBuild();
+    }
+
+    protected setMotherTeam(motherTeamID: number, care: number): void {
+        this.setTeamID(motherTeamID);
+        this.timeToNewTeamID = 120_000 * care;
     }
 
     private updateTarget(): void {
@@ -106,19 +136,20 @@ class GeneticTank extends Tank {
         return dx * dx + dy * dy;
     }
 
-
     private updateInRange(): void {
         if (!this.target) {
-            this.inFiringRange = false;
+            this.inIdealRange = false;
             return;
         }
 
         const dx = this.x - this.target.x;
         const dy = this.y - this.target.y;
         const dist = dx * dx + dy * dy;
-        let distBeforeFiring = this.genes.distanceBeforeFiring * this.genes.range * this.range;
+        let distBeforeFiring = this.genes.idealDistance * this.genes.range * this.range;
+        let comfortableDist = distBeforeFiring * this.genes.comfortableDistance;
         distBeforeFiring *= distBeforeFiring;
-        this.inFiringRange = dist < distBeforeFiring;
+        this.inIdealRange = dist < distBeforeFiring;
+        this.tooClose = dist < comfortableDist;
     }
 
     private wander(deltaTime: number): [number, number] {
@@ -145,6 +176,44 @@ class GeneticTank extends Tank {
         }
 
         throw new Error("Impossible state");
+    }
+
+    private reproduceIfShould(): void {
+        if (
+            this.levels.level <
+            (this.genes.levelToReproduction * 0.75 + 0.25) * TankLevels.maxLevel
+        ) { return; }
+
+        const randomAngle = Math.random() * Math.PI * 2;
+        const radius2 = this.radius - 2;
+        const care = this.genes.care * 0.6 + 0.2;
+
+        const selfPoints = this.levels.totalXP * (1 - care);
+        const givePoints = this.levels.totalXP * care;
+        TankBuild.reset(this.build);
+        this.levels.reset();
+        this.levels.addXP(selfPoints);
+
+        const baby = new GeneticTank(
+            this.game,
+            this.x + Math.cos(randomAngle) * radius2,
+            this.y + Math.sin(randomAngle) * radius2,
+            this.genes.copyAndMutate()
+        );
+        baby.levels.addXP(givePoints);
+        baby.setMotherTeam(this.teamID, this.genes.care);
+
+        this.game.addEntity(baby);
+    }
+
+    private updateTeamIdIfShould(deltaTime: number): void {
+        if (this.timeToNewTeamID === undefined) { return; }
+        this.timeToNewTeamID -= deltaTime;
+
+        if (this.timeToNewTeamID < 0) {
+            this.resetTeamId();
+            this.timeToNewTeamID = undefined;
+        }
     }
 }
 

@@ -28,6 +28,13 @@ class TankBuild {
             return true;
         }
     }
+
+    public static reset(build: TankBuild): void {
+        const keys = Object.keys(build) as (keyof TankBuild)[];
+        for (const key of keys) {
+            build[key] = 0;
+        }
+    }
 }
 
 export default TankBuild;

@@ -4,10 +4,20 @@ import { TankClass, tankClass } from "./Classes";
  * Tank genes, all `number` properties in range [0..1]
  */
 class Genes {
+    /** Max value of a gene, safeguard */
+    private static readonly max = 0.99;
+    /** Min value of a gene, safeguard */
+    private static readonly min = 0.01;
+    /** Max mutation */
+    private static readonly baseMutationRate = 0.3;
+
     /** How close until they start walking towards the shape */
     public range: number;
     /** How close until they start firing */
-    public distanceBeforeFiring: number;
+    public idealDistance: number;
+    /** How close before they back off */
+    public comfortableDistance: number;
+
     /** Chance to attack another tank */
     public aggression: number;
     /** How much randomness is applied to the intended direction of fire */
@@ -31,7 +41,9 @@ class Genes {
     public movementSpeed: number;
 
     /** Level they must reach before reproducing */
-    public pointsToReproduction: number; // todo: not implemented
+    public levelToReproduction: number;
+    /** How long until the baby switches teams? And how much the mother gives to the child */
+    public care: number;
     /** Mutation rate for future mutations */
     public mutationRate: number; // todo: not implemented
 
@@ -41,7 +53,8 @@ class Genes {
     constructor(genes?: Genes) {
         if (genes) {
             this.range = genes.range;
-            this.distanceBeforeFiring = genes.distanceBeforeFiring;
+            this.idealDistance = genes.idealDistance;
+            this.comfortableDistance = genes.comfortableDistance;
             this.aggression = genes.aggression;
             this.accuracy = genes.accuracy;
             this.healthRegeneration = genes.healthRegeneration;
@@ -52,12 +65,14 @@ class Genes {
             this.bulletDamage = genes.bulletDamage;
             this.reload = genes.reload;
             this.movementSpeed = genes.movementSpeed;
-            this.pointsToReproduction = genes.pointsToReproduction;
+            this.levelToReproduction = genes.levelToReproduction;
+            this.care = genes.care;
             this.mutationRate = genes.mutationRate;
             this.class = genes.class;
         } else {
             this.range = Math.random();
-            this.distanceBeforeFiring = Math.random();
+            this.idealDistance = Math.random();
+            this.comfortableDistance = Math.random();
             this.aggression = Math.random();
             this.accuracy = Math.random();
             this.healthRegeneration = Math.random();
@@ -68,7 +83,8 @@ class Genes {
             this.bulletDamage = Math.random();
             this.reload = Math.random();
             this.movementSpeed = Math.random();
-            this.pointsToReproduction = Math.random();
+            this.levelToReproduction = Math.random();
+            this.care = Math.random();
             this.mutationRate = Math.random();
             this.class = tankClass.basic;
         }
@@ -86,19 +102,20 @@ class Genes {
     }
 
     protected mutateGene<T extends keyof Genes>(gene: T): void {
-        if (gene === "class") {
+        const val = this[gene];
+        if (typeof val === "number") {
+            this[gene] = this.calcMutateFromValue(val) as any;
+        } else if (gene === "class") {
             // do nothing, for now
             // todo
-        } else {
-            this[gene] = this.calcMutateFromValue(this[gene] as number) as any;
         }
     }
 
     private calcMutateFromValue(currValue: number): number {
         const newValue = currValue +
-            (Math.random() - 0.5) * 2 * this.mutationRate;
-        if (newValue >= 1) { return 1; }
-        else if (newValue <= 0) { return 0; }
+            (Math.random() - 0.5) * 2 * this.mutationRate * Genes.baseMutationRate;
+        if (newValue >= Genes.max) { return Genes.max; }
+        else if (newValue <= Genes.min) { return Genes.min; }
         return newValue;
     }
 }

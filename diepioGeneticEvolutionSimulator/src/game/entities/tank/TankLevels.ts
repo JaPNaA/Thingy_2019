@@ -23,6 +23,11 @@ class TankLevels {
         }
     }
 
+    public reset(): void {
+        this.level = 1;
+        this.totalXP = 0;
+    }
+
     public onLevelUp(handler: LevelUpHandler): void {
         this.levelUpHandlers.push(handler);
     }

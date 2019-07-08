@@ -10,6 +10,8 @@ class Canvas {
 
         this.canvas.width = this.width = 1280;
         this.canvas.height = this.height = 720;
+
+        this.setup();
     }
 
     public getX(): CanvasRenderingContext2D {
@@ -18,6 +20,16 @@ class Canvas {
 
     public appendTo(parent: Element): void {
         parent.appendChild(this.canvas);
+    }
+
+    private setup(): void {
+        addEventListener("resize", this.resizeHandler.bind(this));
+        this.resizeHandler();
+    }
+
+    private resizeHandler(): void {
+        this.width = this.canvas.width = innerWidth;
+        this.height = this.canvas.height = innerHeight;
     }
 }
 

@@ -14,6 +14,7 @@ class Bullet extends Entity implements IXPGivable {
     public radius: number = 6;
     public health: number = 1;
     public damage: number = 1;
+    public ttl: number = 30000;
 
     private firer?: Tank;
 
@@ -39,7 +40,12 @@ class Bullet extends Entity implements IXPGivable {
         X.stroke();
     }
 
-    public tick(deltaTime: number): void { }
+    public tick(deltaTime: number): void {
+        this.ttl -= deltaTime;
+        if (this.ttl < 0) {
+            this.destory();
+        }
+    }
 
     public fixedTick(): void {
         this.x += this.vx * Ticker.fixedTime;
