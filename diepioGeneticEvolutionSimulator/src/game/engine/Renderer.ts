@@ -1,6 +1,7 @@
-import IRenderable from "./interfaces/IRenderable";
 import Canvas from "./Canvas";
 import Camera from "./Camera";
+import CircleCollider from "./CircleCollider";
+import IEntity from "./interfaces/IEntity";
 
 class Renderer {
     private canvas: Canvas;
@@ -13,7 +14,7 @@ class Renderer {
         this.X = canvas.getX();
     }
 
-    public renderAll(renderables: IRenderable[]): void {
+    public renderAll(renderables: IEntity[]): void {
         this.X.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.camera.apply(this.X);
         for (const renderable of renderables) {
@@ -21,6 +22,12 @@ class Renderer {
             renderable.render(this.X);
             this.X.restore();
         }
+        this.X.resetTransform();
+    }
+
+    public debugRenderQuadtree(collider: CircleCollider): void {
+        this.camera.apply(this.X);
+        collider.quadTree.debugRender(this.X);
         this.X.resetTransform();
     }
 }

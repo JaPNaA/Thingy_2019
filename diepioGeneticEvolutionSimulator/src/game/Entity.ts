@@ -1,11 +1,8 @@
-import IRenderable from "./engine/interfaces/IRenderable";
-import ITickable from "./engine/interfaces/ITickable";
-import IColliable from "./engine/interfaces/ICollidable";
 import Ticker from "./engine/Ticker";
 import Game from "./Game";
-import IRemovable from "./engine/interfaces/IRemovable";
+import IEntity from "./engine/interfaces/IEntity";
 
-abstract class Entity implements IRenderable, ITickable, IColliable, IRemovable {
+abstract class Entity implements IEntity {
     public abstract x: number;
     public abstract y: number;
     public abstract vx: number;
@@ -14,6 +11,9 @@ abstract class Entity implements IRenderable, ITickable, IColliable, IRemovable 
     public abstract rotation: number;
     public abstract health: number;
     public abstract damage: number;
+
+    public oldX: number = 0;
+    public oldY: number = 0;
 
     public destoryed: boolean;
     public teamID: number;
@@ -32,6 +32,7 @@ abstract class Entity implements IRenderable, ITickable, IColliable, IRemovable 
     public abstract tick(deltaTime: number): void;
 
     public collideWith(other: Entity): void {
+        if (other.destoryed) { return; }
         this.damageHit(other);
     }
 

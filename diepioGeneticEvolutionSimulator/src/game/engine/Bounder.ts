@@ -1,5 +1,5 @@
 import Boundaries from "../entities/Boundaries";
-import IBoundable from "./interfaces/IBoundable";
+import IEntity from "./interfaces/IEntity";
 
 class Bounder {
     private boundaries?: Boundaries;
@@ -8,7 +8,7 @@ class Bounder {
         this.boundaries = boundaries;
     }
 
-    public boundAll(entities: IBoundable[]): void {
+    public boundAll(entities: IEntity[]): void {
         if (!this.boundaries) { return; }
 
         for (const entity of entities) {
