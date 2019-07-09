@@ -2,8 +2,8 @@ export default interface IEntity {
     radius: number;
     x: number;
     y: number;
-    oldX: number;
-    oldY: number;
+    quadTreeX: number;
+    quadTreeY: number;
     vx: number;
     vy: number;
     destoryed: boolean;

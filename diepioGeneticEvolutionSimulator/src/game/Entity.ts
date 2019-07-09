@@ -12,8 +12,8 @@ abstract class Entity implements IEntity {
     public abstract health: number;
     public abstract damage: number;
 
-    public oldX: number = 0;
-    public oldY: number = 0;
+    public quadTreeX: number = 0;
+    public quadTreeY: number = 0;
 
     public destoryed: boolean;
     public teamID: number;

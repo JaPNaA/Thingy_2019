@@ -88,9 +88,10 @@ class Game {
             ));
         }, 3000);
 
-        // this.addEntity(new Player(
-        //     this, 0, 0
-        // ));
+        // {
+        //     const player = new Player(this, 0, 0);
+        //     this.addEntity(player);
+        // }
 
         for (let i = 0; i < 24; i++) {
             this.addEntity(new GeneticTank(
