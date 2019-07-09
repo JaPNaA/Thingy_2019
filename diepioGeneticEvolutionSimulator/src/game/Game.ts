@@ -65,11 +65,12 @@ class Game {
             ));
         }
 
-        {
-            const player = new Player(this, 0, 0);
-            player.setGodMode();
-            this.addEntity(player);
-        }
+        // {
+        //     const player = new Player(this, 0, 0);
+        //     this.engine.attachCameraTo(player);
+        //     player.setGodMode();
+        //     this.addEntity(player);
+        // }
 
         setInterval(() => {
             if (this.entities.filter(e => e instanceof Polygon).length > 2400) {

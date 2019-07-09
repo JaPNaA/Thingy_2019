@@ -21,8 +21,8 @@ class Engine {
     private entities: IEntity[];
 
     constructor(entities: IEntity[]) {
-        this.camera = new Camera();
         this.canvas = new Canvas();
+        this.camera = new Camera(this.canvas);
         this.renderer = new Renderer(this.canvas, this.camera);
         this.collider = new CircleCollider();
         this.ticker = new Ticker(this.collider);
@@ -40,7 +40,11 @@ class Engine {
         this.remover.removeAllIfDestoryed(this.entities);
 
         this.renderer.renderEntitiesInTree(this.collider.quadTree);
-        this.renderer.debugRenderQuadtree(this.collider.quadTree);
+        // this.renderer.debugRenderQuadtree(this.collider.quadTree);
+    }
+
+    public attachCameraTo(entity: IEntity): void {
+        this.camera.attachTo(entity);
     }
 
     public setBoundaries(boundaries: Boundaries): void {
