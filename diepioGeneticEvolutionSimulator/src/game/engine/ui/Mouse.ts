@@ -1,7 +1,10 @@
+import Camera from "../Camera";
+
 class Mouse {
     public x: number;
     public y: number;
     public down: boolean;
+    private camera?: Camera;
 
     constructor() {
         this.x = innerWidth / 2;
@@ -11,6 +14,10 @@ class Mouse {
         this.setup()
     }
 
+    public attachCamera(camera: Camera) {
+        this.camera = camera;
+    }
+
     private setup(): void {
         addEventListener("mousemove", this.mousemoveHandler.bind(this));
         addEventListener("mousedown", this.mousedownHandler.bind(this));
@@ -18,20 +25,27 @@ class Mouse {
     }
 
     private mousemoveHandler(e: MouseEvent): void {
-        this.x = e.clientX;
-        this.y = e.clientY;
+        this.updateCameraPos(e);
     }
 
     private mousedownHandler(e: MouseEvent): void {
-        this.x = e.clientX;
-        this.y = e.clientY;
+        this.updateCameraPos(e);
         this.down = true;
     }
 
     private mouseupHandler(e: MouseEvent): void {
-        this.x = e.clientX;
-        this.y = e.clientY;
+        this.updateCameraPos(e);
         this.down = false;
+    }
+
+    private updateCameraPos(e: MouseEvent): void {
+        if (this.camera) {
+            this.x = (e.clientX - this.camera.x) / this.camera.scale;
+            this.y = (e.clientY - this.camera.y) / this.camera.scale;
+        } else {
+            this.x = e.clientX;
+            this.y = e.clientY;
+        }
     }
 }
 

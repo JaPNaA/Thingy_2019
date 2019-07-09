@@ -1,7 +1,7 @@
 import Canvas from "./Canvas";
 import Camera from "./Camera";
-import CircleCollider from "./CircleCollider";
 import IEntity from "./interfaces/IEntity";
+import CircleQuadTree from "./CircleQuadTree";
 
 class Renderer {
     private canvas: Canvas;
@@ -14,20 +14,41 @@ class Renderer {
         this.X = canvas.getX();
     }
 
-    public renderAll(renderables: IEntity[]): void {
+    public renderAll(entities: IEntity[]): void {
         this.X.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.camera.apply(this.X);
-        for (const renderable of renderables) {
+        for (const entity of entities) {
             this.X.save();
-            renderable.render(this.X);
+            entity.render(this.X);
             this.X.restore();
         }
         this.X.resetTransform();
     }
 
-    public debugRenderQuadtree(collider: CircleCollider): void {
+    public renderEntitiesInTree(tree: CircleQuadTree<IEntity>) {
+        const entities = tree.rectQueryNoVerify(
+            -this.camera.x / this.camera.scale,
+            -this.camera.y / this.camera.scale,
+            this.canvas.width / this.camera.scale,
+            this.canvas.height / this.camera.scale
+        );
+
+        this.X.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
         this.camera.apply(this.X);
-        collider.quadTree.debugRender(this.X);
+        this.X.fillStyle = "#00000008";
+
+        for (const entity of entities) {
+            this.X.save();
+            entity.render(this.X);
+            this.X.restore();
+        }
+        this.X.resetTransform();
+    }
+
+    public debugRenderQuadtree(tree: CircleQuadTree<IEntity>): void {
+        this.camera.apply(this.X);
+        tree.debugRender(this.X);
         this.X.resetTransform();
     }
 }

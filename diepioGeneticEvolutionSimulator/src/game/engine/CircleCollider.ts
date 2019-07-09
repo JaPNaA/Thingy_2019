@@ -16,13 +16,17 @@ class CircleCollider {
 
         for (const entity of entities) {
             this.quadTree.updateSingle(entity);
+            entity._collisionObj = undefined;
         }
 
         for (let i = 0; i < entities.length; i++) {
-            const collidable = entities[i];
-            const other = this.quadTree.queryOne(collidable.x, collidable.y, collidable.radius, collidable);
+            const entity = entities[i];
+            const other = this.quadTree.queryOne(entity.x, entity.y, entity.radius, entity);
             if (other) {
-                collidable.collideWith(other);
+                if (other._collisionObj !== entity) {
+                    entity.collideWith(other);
+                    entity._collisionObj = other;
+                }
             }
         }
     }

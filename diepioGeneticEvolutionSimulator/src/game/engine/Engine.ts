@@ -7,6 +7,7 @@ import Boundaries from "../entities/Boundaries";
 import Remover from "./Remover";
 import Camera from "./Camera";
 import IEntity from "./interfaces/IEntity";
+import { mouse } from "./ui/Mouse";
 
 class Engine {
     private camera: Camera;
@@ -28,6 +29,8 @@ class Engine {
         this.remover = new Remover(this.collider);
         this.bounder = new Bounder();
         this.entities = entities;
+
+        mouse.attachCamera(this.camera);
     }
 
     public render() {
@@ -36,8 +39,8 @@ class Engine {
         this.bounder.boundAll(this.entities);
         this.remover.removeAllIfDestoryed(this.entities);
 
-        this.renderer.renderAll(this.entities);
-        this.renderer.debugRenderQuadtree(this.collider);
+        this.renderer.renderEntitiesInTree(this.collider.quadTree);
+        this.renderer.debugRenderQuadtree(this.collider.quadTree);
     }
 
     public setBoundaries(boundaries: Boundaries): void {

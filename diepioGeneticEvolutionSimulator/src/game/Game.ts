@@ -18,8 +18,8 @@ class Game {
     constructor() {
         this.entities = [];
         this.engine = new Engine(this.entities);
-        this.boundaries = new Boundaries(8000, 8000);
-        // this.boundaries = new Boundaries(200, 200);
+        this.boundaries = new Boundaries(16000, 16000);
+        // this.boundaries = new Boundaries(400, 400);
         this.setup();
     }
 
@@ -44,7 +44,7 @@ class Game {
     }
 
     private createInitalShapes(): void {
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < 800; i++) {
             // for (let j = 0; j < 25; j++) {
             //     this.addEntity(new Bullet(this, i * 24, j * 24, 0, 0));
             // }
@@ -65,9 +65,14 @@ class Game {
             ));
         }
 
-        // return;
+        {
+            const player = new Player(this, 0, 0);
+            player.setGodMode();
+            this.addEntity(player);
+        }
+
         setInterval(() => {
-            if (this.entities.filter(e => e instanceof Polygon).length > 600) {
+            if (this.entities.filter(e => e instanceof Polygon).length > 2400) {
                 return;
             }
 
@@ -88,12 +93,8 @@ class Game {
             ));
         }, 3000);
 
-        // {
-        //     const player = new Player(this, 0, 0);
-        //     this.addEntity(player);
-        // }
 
-        for (let i = 0; i < 24; i++) {
+        for (let i = 0; i < 96; i++) {
             this.addEntity(new GeneticTank(
                 this,
                 Math.random() * this.boundaries.width,

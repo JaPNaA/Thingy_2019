@@ -29,6 +29,7 @@ class Key {
     public x = 88;
     public y = 89;
     public z = 90;
+    public space = 32;
 }
 
 const key = new Key();

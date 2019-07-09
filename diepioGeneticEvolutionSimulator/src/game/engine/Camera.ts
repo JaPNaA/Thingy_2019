@@ -1,9 +1,9 @@
-import { mouse } from "./ui/Mouse";
+import { keyboard } from "./ui/Keyboard";
 
 class Camera {
-    private x: number;
-    private y: number;
-    private scale: number;
+    public x: number;
+    public y: number;
+    public scale: number;
 
     constructor() {
         this.x = 0;
@@ -20,7 +20,7 @@ class Camera {
 
     public setup(): void {
         addEventListener("mousemove", e => {
-            if (!mouse.down) { return; }
+            if (!keyboard.isDown("space")) { return; }
             this.x += e.movementX;
             this.y += e.movementY;
         });
