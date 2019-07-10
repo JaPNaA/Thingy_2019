@@ -5,15 +5,9 @@ import Square from "../entities/polygons/Square";
 import Game from "../Game";
 
 class CircleCollider {
-    quadTree!: CircleQuadTree<IEntity>;
-    treeIsEmpty: boolean = true;
+    public quadTree!: CircleQuadTree<IEntity>;
 
     public collideAll(entities: IEntity[]): void {
-        if (this.treeIsEmpty) {
-            this.quadTree.addAll(entities);
-            this.treeIsEmpty = false;
-        }
-
         for (const entity of entities) {
             this.quadTree.updateSingle(entity);
             entity._collisionObj = undefined;
@@ -33,7 +27,6 @@ class CircleCollider {
 
     public setBoundaries(boundaries: Boundaries): void {
         this.quadTree = new CircleQuadTree(Math.max(boundaries.width, boundaries.height));
-        this.treeIsEmpty = true;
     }
 
     public newEntity(collidable: IEntity): void {

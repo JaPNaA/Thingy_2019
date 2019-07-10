@@ -7,7 +7,7 @@ class Remover {
     public removeAllIfDestoryed(entities: IEntity[]): void {
         for (let i = entities.length - 1; i >= 0; i--) {
             if (entities[i].destoryed) {
-                this.collider.removeEntity(entities[i] as any);
+                this.collider.removeEntity(entities[i]);
                 entities.splice(i, 1);
             }
         }

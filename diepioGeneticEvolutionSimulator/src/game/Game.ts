@@ -3,14 +3,22 @@ import Engine from "./engine/Engine";
 import Square from "./entities/polygons/Square";
 import Triangle from "./entities/polygons/Triangle";
 import Pentagon from "./entities/polygons/Pentagon";
-import Player from "./entities/tank/Player";
 import Boundaries from "./entities/Boundaries";
 import GeneticTank from "./entities/tank/GeneticTank";
 import Genes from "./entities/tank/Genes";
 import Polygon from "./entities/Polygon";
 
+type PolygonClass = new (game: Game, x: number, y: number) => Polygon;
+
 class Game {
     public entities: Entity[];
+
+    private static targetEntities: number = 2400;
+    private static spawnrates: [PolygonClass, number][] = [
+        [Square, 0.5],
+        [Triangle, 0.3],
+        [Pentagon, 0.2]
+    ];
 
     private engine: Engine;
     private boundaries: Boundaries;
@@ -19,14 +27,13 @@ class Game {
         this.entities = [];
         this.engine = new Engine(this.entities);
         this.boundaries = new Boundaries(16000, 16000);
-        // this.boundaries = new Boundaries(400, 400);
         this.setup();
     }
 
     public setup(): void {
         this.engine.setBoundaries(this.boundaries);
+        this.populateInital();
         this.reqanf();
-        this.createInitalShapes();
     }
 
     public appendTo(parent: Element) {
@@ -38,63 +45,49 @@ class Game {
         this.engine.newEntity(entity);
     }
 
+    /**
+     * Gets rid of half of the entities randomly
+     */
+    public thanosSnap(): void {
+        for (const entity of this.entities) {
+            if (Math.random() < 0.5) {
+                entity.destory();
+            }
+        }
+    }
+
     private reqanf() {
         this.engine.render();
+        this.createShapesToTarget();
+
         requestAnimationFrame(this.reqanf.bind(this));
     }
 
-    private createInitalShapes(): void {
-        for (let i = 0; i < 800; i++) {
-            // for (let j = 0; j < 25; j++) {
-            //     this.addEntity(new Bullet(this, i * 24, j * 24, 0, 0));
-            // }
-            this.addEntity(new Square(
-                this,
-                Math.random() * this.boundaries.width,
-                Math.random() * this.boundaries.height
-            ));
-            this.addEntity(new Triangle(
-                this,
-                Math.random() * this.boundaries.width,
-                Math.random() * this.boundaries.height
-            ));
-            this.addEntity(new Pentagon(
-                this,
-                Math.random() * this.boundaries.width,
-                Math.random() * this.boundaries.height
-            ));
+    private createShapesToTarget(): void {
+        let amount = this.entities.length;
+        for (; amount < Game.targetEntities; amount++) {
+            this.spawnShape();
         }
+    }
 
-        // {
-        //     const player = new Player(this, 0, 0);
-        //     this.engine.attachCameraTo(player);
-        //     player.setGodMode();
-        //     this.addEntity(player);
-        // }
+    private spawnShape(): void {
+        const rand = Math.random();
+        let total = 0;
 
-        setInterval(() => {
-            if (this.entities.filter(e => e instanceof Polygon).length > 2400) {
-                return;
+        for (const [entityType, rate] of Game.spawnrates) {
+            total += rate;
+            if (rand < total) {
+                this.addEntity(new entityType(
+                    this,
+                    Math.random() * this.boundaries.width,
+                    Math.random() * this.boundaries.height
+                ));
+                break;
             }
+        }
+    }
 
-            this.addEntity(new Square(
-                this,
-                Math.random() * this.boundaries.width,
-                Math.random() * this.boundaries.height
-            ));
-            this.addEntity(new Triangle(
-                this,
-                Math.random() * this.boundaries.width,
-                Math.random() * this.boundaries.height
-            ));
-            this.addEntity(new Pentagon(
-                this,
-                Math.random() * this.boundaries.width,
-                Math.random() * this.boundaries.height
-            ));
-        }, 3000);
-
-
+    private populateInital(): void {
         for (let i = 0; i < 96; i++) {
             this.addEntity(new GeneticTank(
                 this,
