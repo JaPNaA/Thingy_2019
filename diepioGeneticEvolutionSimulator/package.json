@@ -4,7 +4,8 @@
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && webpack --config webpack.config.js"
+    "build": "tsc && webpack --config webpack.config.js",
+    "start": "x-terminal-emulator --working-directory=. -e tsc -w; x-terminal-emulator --working-directory=. -e webpack --config webpack.config.js; hs ."
   },
   "author": "JaPNaA",
   "license": "ISC",
