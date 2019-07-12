@@ -15,8 +15,9 @@ class Bullet extends Entity implements IXPGivable {
     public health: number = 1;
     public damage: number = 1;
     public ttl: number = 30000;
+    public targetable = false;
 
-    private firer?: Tank;
+    public firer?: Tank;
 
     private static fixedFriction = 0.99995 ** Ticker.fixedTime;
 

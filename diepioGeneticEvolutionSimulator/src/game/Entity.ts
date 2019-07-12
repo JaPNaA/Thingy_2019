@@ -11,6 +11,7 @@ abstract class Entity implements IEntity {
     public abstract rotation: number;
     public abstract health: number;
     public abstract damage: number;
+    public abstract targetable: boolean;
 
     public _quadTreeX: number = 0;
     public _quadTreeY: number = 0;
@@ -50,20 +51,25 @@ abstract class Entity implements IEntity {
         this.y += this.vy * Ticker.fixedTime;
     }
 
-    protected damageHit(other: Entity): void {
-        if (other.teamID === this.teamID) { return; }
-        const otherHealth = other.health - this.damage * this.health;
-        const thisHealth = this.health - other.damage * other.health;
-        other.health = otherHealth;
+    protected damageHit(by: Entity): void {
+        if (by.teamID === this.teamID) { return; }
+        const otherHealth = by.health - this.damage * this.health;
+        const thisHealth = this.health - by.damage * by.health;
+        by.health = otherHealth;
         this.health = thisHealth;
 
         if (otherHealth <= 0) {
-            other.destory(this);
+            by.destory(this);
         }
         if (thisHealth <= 0) {
-            this.destory(other);
+            this.destory(by);
         }
+
+        this.reactHit(by);
+        by.reactHit(this);
     }
+
+    protected reactHit(by: Entity): void { }
 
     protected resetTeamId(): void {
         this.teamID = Entity.teamIDIncrementer++;

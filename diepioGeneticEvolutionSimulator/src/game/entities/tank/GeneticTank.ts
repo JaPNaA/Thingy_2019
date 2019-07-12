@@ -34,7 +34,7 @@ class GeneticTank extends Tank {
 
     public tick(deltaTime: number): void {
         this.updateTarget();
-        this.updateInRange();
+        this.updateRangeStates();
         super.tick(deltaTime);
         this.updateTeamIdIfShould(deltaTime);
     }
@@ -91,17 +91,25 @@ class GeneticTank extends Tank {
         this.timeToNewTeamID = 120_000 * care;
     }
 
+    protected reactHit(by: Entity): void {
+        if (by.teamID === this.teamID) { return; }
+        if (by instanceof Bullet) {
+            if (by.firer && this.canBeTarget(by.firer)) {
+                this.target = by.firer;
+            }
+        } else if (by instanceof Tank) {
+            if (this.canBeTarget(by)) {
+                this.target = by;
+            }
+        }
+    }
+
     private updateTarget(): void {
-        const range = this.range * this.genes.range;
+        if (this.target && this.canBeTarget(this.target)) {
+            return;
+        }
 
-        if (
-            this.target &&
-            !this.target.destoryed &&
-            this.getDistSquared(this.target) <= range * range
-        ) { return; /* The tank keeps it's target */ }
-
-
-        const entities = this.game.quadTree.query(this.x, this.y, range);
+        const entities = this.game.quadTree.query(this.x, this.y, this.range * this.genes.range);
         let closest = undefined;
         let closestDistSquared = Infinity;
 
@@ -115,12 +123,12 @@ class GeneticTank extends Tank {
 
             if (distSquared > closestDistSquared) { continue; }
 
-            if (entity instanceof Tank || entity instanceof Bullet) {
+            if (entity instanceof Tank) {
                 if (Math.random() < this.genes.aggression) {
                     closest = entity;
                     closestDistSquared = distSquared;
                 }
-            } else {
+            } else if (entity.targetable) {
                 closest = entity;
                 closestDistSquared = distSquared;
             }
@@ -129,15 +137,24 @@ class GeneticTank extends Tank {
         this.target = closest;
     }
 
-    private getDistSquared(entity: Entity): number {
+    private canBeTarget(entity?: Entity): boolean {
+        if (!entity) { return false; }
+
+        const range = this.range * this.genes.range;
         const dx = entity.x - this.x;
         const dy = entity.y - this.y;
-        return dx * dx + dy * dy;
+        const distSquared = dx * dx + dy * dy;
+
+        return Boolean(
+            !entity.destoryed &&
+            distSquared <= range * range
+        );
     }
 
-    private updateInRange(): void {
+    private updateRangeStates(): void {
         if (!this.target) {
             this.inIdealRange = false;
+            this.tooClose = false;
             return;
         }
 

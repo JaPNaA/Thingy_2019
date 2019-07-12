@@ -14,6 +14,7 @@ abstract class Polygon extends Entity {
     public rotation: number;
     public damage: number = 1;
     public teamID = Polygon.polygonTeam;
+    public targetable = true;
 
     private static fixedFriction: number = 0.995 ** Ticker.fixedTime;
     private static polygonTeam: number = -1;

@@ -20,6 +20,7 @@ abstract class Tank extends Entity implements IXPGivable {
     public y: number;
     public vx: number;
     public vy: number;
+    public targetable = true;
 
     protected speed: number = Tank.baseSpeed;
     protected range: number = 720;
