@@ -26,7 +26,7 @@ class Genes {
     /** Chance to spec into health regeneration on level up */
     public healthRegeneration: number;
     /** Chance to spec into max health on level up */
-    public maxHealth: number; // todo: not implemented
+    public maxHealth: number;
     /** Chance to spec into body damage on level up */
     public bodyDamage: number; // todo: not implemented
     /** Chance to spec into bullet speed on level up */

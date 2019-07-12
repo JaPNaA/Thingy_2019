@@ -9,14 +9,25 @@ import { IXPGivable, isXPGivable } from "../IXPGivable";
 
 abstract class Tank extends Entity implements IXPGivable {
     public static initalRadius = 24;
-    public static baseSpeed = 0.00035;
+    public static quickHealDelay: number = 60_000;
+
     public static initalCooldownSpeed = 1000;
-    private static quickHealDelay: number = 60_000;
+    public static baseSpeed = 0.00035;
     public static baseRegenRate: number = 0.0001;
+    public static baseMaxHealth: number = 16;
+
+    protected unstableness: number = 0.2;
+    protected range: number = 720;
+    protected scale: number;
+    protected maxHealth: number;
+
+    protected cooldownSpeed: number;
+    protected speed: number;
+    protected regenRate: number;
 
     public radius: number = Tank.initalRadius;
-    public health: number = Tank.maxHealth;
     public damage: number = 0.5;
+    public health: number;
     public rotation: number;
     public x: number;
     public y: number;
@@ -24,18 +35,13 @@ abstract class Tank extends Entity implements IXPGivable {
     public vy: number;
     public targetable = true;
 
-    protected range: number = 720;
-    protected unstableness: number = 0.2;
-    protected scale: number;
+    protected ax: number;
+    protected ay: number;
 
     protected build: TankBuild;
     protected levels: TankLevels;
 
-    protected ax: number;
-    protected ay: number;
-
     private static fixedFriction: number = 0.995 ** Ticker.fixedTime;
-    private static maxHealth: number = 16;
     private static hpBarLength: number = 42;
     private static hpBarWidth: number = 6;
     private static hpBarPadding: number = 8;
@@ -45,11 +51,6 @@ abstract class Tank extends Entity implements IXPGivable {
     private cooldown: number;
 
     private timeToQuickHeal: number;
-
-    protected cooldownSpeed: number;
-    protected speed: number;
-    private regenRate: number;
-
 
     constructor(game: Game, x: number, y: number) {
         super(game);
@@ -62,13 +63,15 @@ abstract class Tank extends Entity implements IXPGivable {
         this.rotation = 0;
         this.cooldown = 0;
 
+        this.scale = 1;
         this.timeToQuickHeal = Tank.quickHealDelay;
 
         this.speed = Tank.baseSpeed;
         this.cooldownSpeed = Tank.initalCooldownSpeed;
         this.regenRate = 0;
+        this.maxHealth = Tank.baseMaxHealth;
 
-        this.scale = 1;
+        this.health = this.maxHealth;
 
         this.build = new TankBuild();
         this.levels = new TankLevels();
@@ -148,6 +151,10 @@ abstract class Tank extends Entity implements IXPGivable {
         this.speed = Tank.baseSpeed * (1 + this.build.movementSpeed * 0.2);
         this.cooldownSpeed = Tank.initalCooldownSpeed * (1 - this.build.reload * 0.08);
         this.regenRate = Tank.baseRegenRate * (this.build.healthRegeneration ** 1.4);
+
+        const healthRatio = this.health / this.maxHealth;
+        this.maxHealth = Tank.baseMaxHealth * (1 + (this.build.maxHealth ** 1.4) * 0.1);
+        this.health = this.maxHealth * healthRatio;
     }
 
     private drawHPBar(X: CanvasRenderingContext2D): void {
@@ -157,7 +164,7 @@ abstract class Tank extends Entity implements IXPGivable {
         X.fillStyle = "#aaaaaa";
         X.fillRect(x, y, Tank.hpBarLength, Tank.hpBarWidth);
         X.fillStyle = "#00dd00";
-        X.fillRect(x, y, Tank.hpBarLength * this.health / Tank.maxHealth, Tank.hpBarWidth);
+        X.fillRect(x, y, Tank.hpBarLength * this.health / this.maxHealth, Tank.hpBarWidth);
     }
 
     private doMovement(deltaTime: number): void {
@@ -216,7 +223,7 @@ abstract class Tank extends Entity implements IXPGivable {
             rate = this.regenRate;
         }
 
-        this.health = Math.min(Tank.maxHealth, this.health + deltaTime * rate);
+        this.health = Math.min(this.maxHealth, this.health + deltaTime * rate);
     }
 }
 
