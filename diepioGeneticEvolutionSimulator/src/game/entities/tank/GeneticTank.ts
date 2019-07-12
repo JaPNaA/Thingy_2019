@@ -92,6 +92,7 @@ class GeneticTank extends Tank {
     }
 
     protected reactHit(by: Entity): void {
+        super.reactHit(by);
         if (by.teamID === this.teamID) { return; }
         if (by instanceof Bullet) {
             if (by.firer && this.canBeTarget(by.firer)) {
