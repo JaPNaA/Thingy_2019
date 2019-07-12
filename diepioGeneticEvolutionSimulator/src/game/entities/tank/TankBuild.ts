@@ -8,9 +8,9 @@ class TankBuild {
         "reload", "movementSpeed"
     ];
 
-    public healthRegeneration: number = 0; // todo: not implemented
-    public maxHealth: number = 0; // todo: not implemented
-    public bodyDamage: number = 0; // todo: not implemented
+    public healthRegeneration: number = 0;
+    public maxHealth: number = 0;
+    public bodyDamage: number = 0;
     public bulletSpeed: number = 0;
     public bulletPenetration: number = 0;
     public bulletDamage: number = 0;

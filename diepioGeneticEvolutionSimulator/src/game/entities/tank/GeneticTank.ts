@@ -15,7 +15,7 @@ class GeneticTank extends Tank {
     private tooClose: boolean;
     private noise: OpenSimplexNoise;
     private noiseProgress: number;
-    private timeToNewTeamID?: number; // todo: not implemented
+    private timeToNewTeamID?: number;
 
     private cursor: GeneticTankCursor;
 
