@@ -24,7 +24,7 @@ class Genes {
     public accuracy: number;
 
     /** Chance to spec into health regeneration on level up */
-    public healthRegeneration: number; // todo: not implemented
+    public healthRegeneration: number;
     /** Chance to spec into max health on level up */
     public maxHealth: number; // todo: not implemented
     /** Chance to spec into body damage on level up */
