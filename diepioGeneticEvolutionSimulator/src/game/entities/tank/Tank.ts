@@ -15,6 +15,7 @@ abstract class Tank extends Entity implements IXPGivable {
     public static baseSpeed = 0.00035;
     public static baseRegenRate: number = 0.0001;
     public static baseMaxHealth: number = 16;
+    public static baseDamage: number = 0.5;
 
     protected unstableness: number = 0.2;
     protected range: number = 720;
@@ -26,7 +27,7 @@ abstract class Tank extends Entity implements IXPGivable {
     protected regenRate: number;
 
     public radius: number = Tank.initalRadius;
-    public damage: number = 0.5;
+    public damage: number;
     public health: number;
     public rotation: number;
     public x: number;
@@ -62,6 +63,7 @@ abstract class Tank extends Entity implements IXPGivable {
         this.ay = 0;
         this.rotation = 0;
         this.cooldown = 0;
+        this.damage = Tank.baseDamage;
 
         this.scale = 1;
         this.timeToQuickHeal = Tank.quickHealDelay;
@@ -151,6 +153,7 @@ abstract class Tank extends Entity implements IXPGivable {
         this.speed = Tank.baseSpeed * (1 + this.build.movementSpeed * 0.2);
         this.cooldownSpeed = Tank.initalCooldownSpeed * (1 - this.build.reload * 0.08);
         this.regenRate = Tank.baseRegenRate * (this.build.healthRegeneration ** 1.4);
+        this.damage = Tank.baseDamage * (1 + (this.build.bodyDamage ** 1.4) * 0.1);
 
         const healthRatio = this.health / this.maxHealth;
         this.maxHealth = Tank.baseMaxHealth * (1 + (this.build.maxHealth ** 1.4) * 0.1);

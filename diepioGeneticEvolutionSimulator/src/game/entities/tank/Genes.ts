@@ -28,7 +28,7 @@ class Genes {
     /** Chance to spec into max health on level up */
     public maxHealth: number;
     /** Chance to spec into body damage on level up */
-    public bodyDamage: number; // todo: not implemented
+    public bodyDamage: number;
     /** Chance to spec into bullet speed on level up */
     public bulletSpeed: number;
     /** Chance to spec into bullet penetration on level up */
@@ -45,7 +45,7 @@ class Genes {
     /** How long until the baby switches teams? And how much the mother gives to the child */
     public care: number;
     /** Mutation rate for future mutations */
-    public mutationRate: number; // todo: not implemented
+    public mutationRate: number;
 
     /** Tank class */
     public class: TankClass;
