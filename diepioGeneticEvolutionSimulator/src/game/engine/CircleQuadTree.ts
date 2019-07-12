@@ -437,6 +437,100 @@ class CircleQuadTree<T extends IEntity> implements QuadTreeChild<T> {
         }
     }
 
+    public query(x: number, y: number, radius: number): T[] {
+        // possible optimization: check if query only collides with 3 quadrants
+
+        // as an alternative to recursive
+        /** [child, cx, cy, halfSize of child] */
+        const que: [QuadTreeChild<T>, number, number, number][] = [
+            [this, this.halfSize, this.halfSize, this.halfSize / 2]
+        ];
+        const entities: T[] = [];
+
+        let queItem;
+        while (queItem = que.pop()) {
+            const that = queItem[0];
+
+            if (that.children !== null) {
+                const cx = queItem[1];
+                const cy = queItem[2];
+                const qSize = queItem[3];
+                const eSize = qSize / 2;
+
+                if (y > cy) {
+                    if (x > cx) {
+                        que.push([that.children[0], cx + qSize, cy + qSize, eSize]);
+                        if (x - radius < cx) {
+                            que.push([that.children[1], cx - qSize, cy + qSize, eSize]);
+                            if (y - radius < cy) {
+                                que.push([that.children[2], cx - qSize, cy - qSize, eSize]);
+                                que.push([that.children[3], cx + qSize, cy - qSize, eSize]);
+                            }
+                        } else {
+                            if (y - radius < cy) {
+                                que.push([that.children[3], cx + qSize, cy - qSize, eSize]);
+                            }
+                        }
+                    } else {
+                        que.push([that.children[1], cx - qSize, cy + qSize, eSize]);
+                        if (x + radius > cx) {
+                            que.push([that.children[0], cx + qSize, cy + qSize, eSize]);
+                            if (y - radius < cy) {
+                                que.push([that.children[2], cx - qSize, cy - qSize, eSize]);
+                                que.push([that.children[3], cx + qSize, cy - qSize, eSize]);
+                            }
+                        } else {
+                            if (y - radius < cy) {
+                                que.push([that.children[2], cx - qSize, cy - qSize, eSize]);
+                            }
+                        }
+                    }
+                } else {
+                    if (x > cx) {
+                        que.push([that.children[3], cx + qSize, cy - qSize, eSize]);
+                        if (x - radius < cx) {
+                            que.push([that.children[2], cx - qSize, cy - qSize, eSize]);
+                            if (y + radius > cy) {
+                                que.push([that.children[0], cx + qSize, cy + qSize, eSize]);
+                                que.push([that.children[1], cx - qSize, cy + qSize, eSize]);
+                            }
+                        } else {
+                            if (y + radius > cy) {
+                                que.push([that.children[0], cx + qSize, cy + qSize, eSize]);
+                            }
+                        }
+                    } else {
+                        que.push([that.children[2], cx - qSize, cy - qSize, eSize]);
+                        if (x + radius > cx) {
+                            que.push([that.children[3], cx + qSize, cy - qSize, eSize]);
+                            if (y + radius > cy) {
+                                que.push([that.children[0], cx + qSize, cy + qSize, eSize]);
+                                que.push([that.children[1], cx - qSize, cy + qSize, eSize]);
+                            }
+                        } else {
+                            if (y + radius > cy) {
+                                que.push([that.children[1], cx - qSize, cy + qSize, eSize]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (let i = that.elements.length - 1; i >= 0; i--) {
+                const element = that.elements[i];
+                const dx = element.x - x;
+                const dy = element.y - y;
+                const r = element.radius + radius;
+
+                if (dx * dx + dy * dy < r * r) {
+                    entities.push(element);
+                }
+            }
+        }
+
+        return entities;
+    }
+
     /**
      * Querys a rectangle in the quadtree without checking if the
      * entities actually collide with the given rectangle

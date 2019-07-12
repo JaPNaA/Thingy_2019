@@ -7,11 +7,13 @@ import Boundaries from "./entities/Boundaries";
 import GeneticTank from "./entities/tank/GeneticTank";
 import Genes from "./entities/tank/Genes";
 import Polygon from "./entities/Polygon";
+import CircleQuadTree from "./engine/CircleQuadTree";
 
 type PolygonClass = new (game: Game, x: number, y: number) => Polygon;
 
 class Game {
     public entities: Entity[];
+    public quadTree: CircleQuadTree<Entity>;
 
     private static targetEntities: number = 2400;
     private static spawnrates: [PolygonClass, number][] = [
@@ -20,18 +22,19 @@ class Game {
         [Pentagon, 0.2]
     ];
 
-    private engine: Engine;
+    private engine: Engine<Entity>;
     private boundaries: Boundaries;
 
     constructor() {
         this.entities = [];
         this.engine = new Engine(this.entities);
         this.boundaries = new Boundaries(16000, 16000);
+        this.engine.setBoundaries(this.boundaries);
+        this.quadTree = this.engine.getQuadTree();
         this.setup();
     }
 
     public setup(): void {
-        this.engine.setBoundaries(this.boundaries);
         this.populateInital();
         this.reqanf();
     }

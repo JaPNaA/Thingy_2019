@@ -1,10 +1,10 @@
 import CircleCollider from "./CircleCollider";
 import IEntity from "./interfaces/IEntity";
 
-class Remover {
-    constructor(private collider: CircleCollider) { }
+class Remover<T extends IEntity> {
+    constructor(private collider: CircleCollider<T>) { }
 
-    public removeAllIfDestoryed(entities: IEntity[]): void {
+    public removeAllIfDestoryed(entities: T[]): void {
         for (let i = entities.length - 1; i >= 0; i--) {
             if (entities[i].destoryed) {
                 this.collider.removeEntity(entities[i]);

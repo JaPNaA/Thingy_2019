@@ -8,24 +8,25 @@ import Remover from "./Remover";
 import Camera from "./Camera";
 import IEntity from "./interfaces/IEntity";
 import { mouse } from "./ui/Mouse";
+import CircleQuadTree from "./CircleQuadTree";
 
-class Engine {
+class Engine<T extends IEntity> {
     private camera: Camera;
 
     public canvas: Canvas;
     private renderer: Renderer;
-    private ticker: Ticker;
-    private collider: CircleCollider;
+    private ticker: Ticker<T>;
+    private collider: CircleCollider<T>;
     private bounder: Bounder;
-    private remover: Remover;
-    private entities: IEntity[];
+    private remover: Remover<T>;
+    private entities: T[];
 
-    constructor(entities: IEntity[]) {
+    constructor(entities: T[]) {
         this.canvas = new Canvas();
         this.camera = new Camera(this.canvas);
         this.renderer = new Renderer(this.canvas, this.camera);
         this.collider = new CircleCollider();
-        this.ticker = new Ticker(this.collider);
+        this.ticker = new Ticker();
         this.remover = new Remover(this.collider);
         this.bounder = new Bounder();
         this.entities = entities;
@@ -43,7 +44,7 @@ class Engine {
         // this.renderer.debugRenderQuadtree(this.collider.quadTree);
     }
 
-    public attachCameraTo(entity: IEntity): void {
+    public attachCameraTo(entity: T): void {
         this.camera.attachTo(entity);
     }
 
@@ -52,12 +53,16 @@ class Engine {
         this.collider.setBoundaries(boundaries);
     }
 
-    public newEntity(entity: IEntity): void {
+    public newEntity(entity: T): void {
         this.collider.newEntity(entity);
     }
 
     public appendTo(parent: Element): void {
         this.canvas.appendTo(parent);
+    }
+
+    public getQuadTree(): CircleQuadTree<T> {
+        return this.collider.getQuadTree();
     }
 }
 

@@ -92,21 +92,21 @@ class GeneticTank extends Tank {
     }
 
     private updateTarget(): void {
-        let rangeSquared = this.range * this.genes.range;
-        rangeSquared *= rangeSquared;
+        const range = this.range * this.genes.range;
 
         if (
             this.target &&
             !this.target.destoryed &&
-            this.getDistSquared(this.target) <= rangeSquared
-        ) { return; }
+            this.getDistSquared(this.target) <= range * range
+        ) { return; /* The tank keeps it's target */ }
 
 
+        const entities = this.game.quadTree.query(this.x, this.y, range);
         let closest = undefined;
         let closestDistSquared = Infinity;
 
-        for (let i = 0; i < this.game.entities.length; i++) {
-            const entity = this.game.entities[i];
+        for (let i = 0; i < entities.length; i++) {
+            const entity = entities[i];
             if (entity.teamID === this.teamID) { continue; }
 
             const dx = entity.x - this.x;
@@ -114,7 +114,6 @@ class GeneticTank extends Tank {
             const distSquared = dx * dx + dy * dy;
 
             if (distSquared > closestDistSquared) { continue; }
-            if (distSquared > rangeSquared) { continue; }
 
             if (entity instanceof Tank || entity instanceof Bullet) {
                 if (Math.random() < this.genes.aggression) {
