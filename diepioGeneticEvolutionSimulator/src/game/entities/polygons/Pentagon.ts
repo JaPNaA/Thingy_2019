@@ -1,7 +1,7 @@
 import Polygon from "../Polygon";
 
 class Pentagon extends Polygon {
-    public radius: number = 20;
+    public radius: number = 28;
     public health: number = 10;
     public xpValue: number = 120;
 
@@ -18,8 +18,10 @@ class Pentagon extends Polygon {
         X.translate(this.x, this.y);
         X.rotate(this.rotation);
         X.beginPath();
-        X.fillStyle = "#0073ff";
-        X.strokeStyle = "#888888";
+        X.fillStyle = "#7088f9";
+        X.strokeStyle = "#5364b7";
+        X.lineWidth = 3;
+        X.lineJoin = "round";
         X.moveTo(Pentagon.points[0][0], Pentagon.points[0][1]);
         X.lineTo(Pentagon.points[1][0], Pentagon.points[1][1]);
         X.lineTo(Pentagon.points[2][0], Pentagon.points[2][1]);

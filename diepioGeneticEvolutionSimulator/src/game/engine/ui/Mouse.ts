@@ -33,6 +33,7 @@ class Mouse {
     }
 
     private mousedownHandler(e: MouseEvent): void {
+        if (e.button !== 0) { return; }
         this.updateCameraPos(e);
         this.down = true;
     }

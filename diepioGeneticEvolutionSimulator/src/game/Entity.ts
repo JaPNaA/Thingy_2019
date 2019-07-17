@@ -51,6 +51,14 @@ abstract class Entity implements IEntity {
         this.y += this.vy * Ticker.fixedTime;
     }
 
+    public __debugRenderHitCircle(X: CanvasRenderingContext2D): void {
+        X.strokeStyle = "#ff0000";
+        X.lineWidth = 2;
+        X.beginPath();
+        X.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        X.stroke();
+    }
+
     protected damageHit(by: Entity): void {
         if (by.teamID === this.teamID) { return; }
         const otherHealth = by.health - this.damage * this.health;

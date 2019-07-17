@@ -1,7 +1,7 @@
 import Polygon from "../Polygon";
 
 class Triangle extends Polygon {
-    public radius: number = 14;
+    public radius: number = 15;
     public health: number = 6;
     public xpValue: number = 20;
 
@@ -16,8 +16,10 @@ class Triangle extends Polygon {
         X.translate(this.x, this.y);
         X.rotate(this.rotation);
         X.beginPath();
-        X.fillStyle = "#f04511";
-        X.strokeStyle = "#888888";
+        X.fillStyle = "#f86e73";
+        X.strokeStyle = "#b65256";
+        X.lineWidth = 3;
+        X.lineJoin = "round";
         X.moveTo(Triangle.points[0][0], Triangle.points[0][1]);
         X.lineTo(Triangle.points[1][0], Triangle.points[1][1]);
         X.lineTo(Triangle.points[2][0], Triangle.points[2][1]);

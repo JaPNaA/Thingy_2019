@@ -14,4 +14,5 @@ export default interface IEntity {
     tick(deltaTime: number): void;
     fixedTick(): void;
     collideWith(other: any): void;
+    __debugRenderHitCircle(X: CanvasRenderingContext2D): void;
 }

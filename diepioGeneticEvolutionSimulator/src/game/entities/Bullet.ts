@@ -11,17 +11,19 @@ class Bullet extends Entity implements IXPGivable {
     public vx: number;
     public vy: number;
     public rotation: number;
-    public radius: number = 6;
+    public radius: number;
     public health: number = 1;
     public damage: number = 1;
-    public ttl: number = 30000;
+    public ttl: number = 10000;
     public targetable = false;
 
     public firer?: Tank;
 
+    private hue: number;
+
     private static fixedFriction = 0.99995 ** Ticker.fixedTime;
 
-    constructor(game: Game, x: number, y: number, speed: number, direction: number, health: number, damage: number) {
+    constructor(game: Game, x: number, y: number, speed: number, direction: number, health: number, damage: number, radius: number, hue: number) {
         super(game);
         this.x = x;
         this.y = y;
@@ -30,12 +32,15 @@ class Bullet extends Entity implements IXPGivable {
         this.rotation = 0;
         this.health += health;
         this.damage += damage;
+        this.radius = radius;
+        this.hue = hue;
     }
 
     public render(X: CanvasRenderingContext2D): void {
         X.beginPath();
-        X.fillStyle = "#ff5762";
-        X.strokeStyle = "#888888";
+        X.lineWidth = 3;
+        X.strokeStyle = "hsl(" + this.hue + ",79%,35%)";
+        X.fillStyle = "hsl(" + this.hue + ",78%,49%)";
         X.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         X.fill();
         X.stroke();

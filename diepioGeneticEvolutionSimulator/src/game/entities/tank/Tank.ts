@@ -43,13 +43,15 @@ abstract class Tank extends Entity implements IXPGivable {
     protected levels: TankLevels;
 
     private static fixedFriction: number = 0.995 ** Ticker.fixedTime;
-    private static hpBarLength: number = 42;
-    private static hpBarWidth: number = 6;
-    private static hpBarPadding: number = 8;
+    private static hpBarLength: number = 1;
+    private static hpBarWidth: number = 4;
+    private static hpBarPadding: number = 0.5;
 
     private canonWidth: number = 0.75;
     private canonLength: number = 0.85;
     private cooldown: number;
+
+    private hue: number = Math.random() * 360;
 
     private timeToQuickHeal: number;
 
@@ -85,9 +87,12 @@ abstract class Tank extends Entity implements IXPGivable {
         X.translate(this.x, this.y);
         this.drawHPBar(X);
 
+        X.lineWidth = 3;
+        X.lineJoin = "round";
+
         X.rotate(this.rotation);
-        X.fillStyle = "#cccccc";
-        X.strokeStyle = "#888888";
+        X.fillStyle = "#939393";
+        X.strokeStyle = "#6d6d6d";
 
         const canonWidth = this.canonWidth * this.radius;
         const canonLength = this.canonLength * this.radius;
@@ -96,7 +101,8 @@ abstract class Tank extends Entity implements IXPGivable {
         X.fill();
         X.stroke();
 
-        X.fillStyle = "#2faef7";
+        X.strokeStyle = "hsl(" + this.hue + ",79%,35%)";
+        X.fillStyle = "hsl(" + this.hue + ",78%,49%)";
         X.beginPath();
         X.arc(0, 0, this.radius, 0, Math.PI * 2);
         X.fill();
@@ -161,13 +167,25 @@ abstract class Tank extends Entity implements IXPGivable {
     }
 
     private drawHPBar(X: CanvasRenderingContext2D): void {
-        const x = -Tank.hpBarLength / 2
-        const y = this.radius + Tank.hpBarPadding - Tank.hpBarWidth / 2;
+        const length = Tank.hpBarLength * this.radius * 2;
+        const x = -length / 2
+        const y = this.radius + Tank.hpBarPadding * this.radius;
 
-        X.fillStyle = "#aaaaaa";
-        X.fillRect(x, y, Tank.hpBarLength, Tank.hpBarWidth);
-        X.fillStyle = "#00dd00";
-        X.fillRect(x, y, Tank.hpBarLength * this.health / this.maxHealth, Tank.hpBarWidth);
+        X.lineCap = "round";
+
+        X.lineWidth = Tank.hpBarWidth + 3;
+        X.strokeStyle = "#515151";
+        X.beginPath();
+        X.moveTo(x, y);
+        X.lineTo(x + length, y);
+        X.stroke();
+
+        X.lineWidth = Tank.hpBarWidth;
+        X.strokeStyle = "#83e079";
+        X.beginPath();
+        X.moveTo(x, y);
+        X.lineTo(x + length * this.health / this.maxHealth, y);
+        X.stroke();
     }
 
     private doMovement(deltaTime: number): void {
@@ -197,14 +215,17 @@ abstract class Tank extends Entity implements IXPGivable {
     }
 
     private fireBullet(): void {
+        const bulletRadius = this.canonWidth * this.radius / 2;
         const bullet = new Bullet(
             this.game,
-            this.x + Math.cos(this.rotation) * this.radius,
-            this.y + Math.sin(this.rotation) * this.radius,
+            this.x + Math.cos(this.rotation) * (this.radius + bulletRadius),
+            this.y + Math.sin(this.rotation) * (this.radius + bulletRadius),
             0.25 + 0.03 * this.build.bulletSpeed ** 1.4,
             this.rotation + (Math.random() - 0.5) * this.unstableness,
             this.build.bulletPenetration * 0.2,
-            this.build.bulletDamage * 0.2
+            this.build.bulletDamage * 0.2,
+            bulletRadius,
+            this.hue
         );
         bullet.setFirer(this);
         this.game.addEntity(bullet);

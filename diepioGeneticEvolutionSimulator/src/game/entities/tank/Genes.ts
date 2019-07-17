@@ -112,11 +112,16 @@ class Genes {
     }
 
     private calcMutateFromValue(currValue: number): number {
-        const newValue = currValue +
-            (Math.random() - 0.5) * 2 * this.mutationRate * Genes.baseMutationRate;
-        if (newValue >= Genes.max) { return Genes.max; }
-        else if (newValue <= Genes.min) { return Genes.min; }
-        return newValue;
+        const rate = this.mutationRate * Genes.baseMutationRate;
+        if (Math.random() < rate) {
+            const newValue = currValue +
+                (Math.random() - 0.5) * 2 * this.mutationRate * Genes.baseMutationRate;
+            if (newValue >= Genes.max) { return Genes.max; }
+            else if (newValue <= Genes.min) { return Genes.min; }
+            return newValue;
+        } else {
+            return currValue;
+        }
     }
 }
 
