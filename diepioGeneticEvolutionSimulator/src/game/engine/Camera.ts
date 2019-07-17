@@ -9,17 +9,27 @@ class Camera {
     public scale: number;
     private attached: boolean;
 
+    private tScale: number;
+    private tx: number;
+    private ty: number;
+
+    private attachedFromX: number;
+    private attachedFromY: number;
+
     private attachee?: IEntity;
     private canvas: Canvas;
 
     private updateLocationHandlers: Function[];
 
     constructor(canvas: Canvas) {
-        this.x = 0;
-        this.y = 0;
-        this.scale = 1;
+        this.tx = this.x = 0;
+        this.ty = this.y = 0;
+        this.tScale = this.scale = 1;
         this.attached = false;
         this.canvas = canvas;
+
+        this.attachedFromX = 0;
+        this.attachedFromY = 0;
 
         this.updateLocationHandlers = [];
 
@@ -39,8 +49,18 @@ class Camera {
 
     public attachTo(entity?: IEntity): void {
         if (entity) {
+            this.attachedFromX = this.x;
+            this.attachedFromY = this.y;
             this.attached = true;
         } else {
+            if (this.attachee) {
+                const ang = Math.atan2(
+                    this.y - this.attachedFromY,
+                    this.x - this.attachedFromX
+                );
+                this.tx -= Math.cos(ang) * 100;
+                this.ty -= Math.sin(ang) * 100;
+            }
             this.attached = false;
         }
         this.attachee = entity;
@@ -51,6 +71,8 @@ class Camera {
             if (!(keyboard.isDown("space") || mouse.down) || this.attached) { return; }
             this.x += e.movementX;
             this.y += e.movementY;
+            this.tx += e.movementX;
+            this.ty += e.movementY;
         });
 
         addEventListener("wheel", e => {
@@ -60,9 +82,20 @@ class Camera {
                 factor = 1 / factor;
             }
 
-            this.x -= (e.clientX - this.x) * (factor - 1);
-            this.y -= (e.clientY - this.y) * (factor - 1);
-            this.scale *= factor;
+            if (this.attached) {
+                this.tx = -this.attachee!.x * this.tScale + this.canvas.width / 2;
+                this.ty = -this.attachee!.y * this.tScale + this.canvas.height / 2;
+            } else {
+                let x = e.clientX;
+                let y = e.clientY;
+
+                const dx = -(x - this.tx) * (factor - 1);
+                const dy = -(y - this.ty) * (factor - 1);
+                this.tx += dx;
+                this.ty += dy;
+            }
+
+            this.tScale *= factor;
         });
     }
 
@@ -71,19 +104,29 @@ class Camera {
     }
 
     private updateLocation(): void {
+        this.updateTarget();
+        this.ease();
+    }
+
+    private updateTarget(): void {
         if (!this.attachee) { return; }
         if (this.attachee.destoryed) {
             this.attachTo(undefined);
             return;
         }
 
-        this.x = -this.attachee.x * this.scale + this.canvas.width / 2;
-        this.y = -this.attachee.y * this.scale + this.canvas.height / 2;
-
+        this.tx = -this.attachee.x * this.tScale + this.canvas.width / 2;
+        this.ty = -this.attachee.y * this.tScale + this.canvas.height / 2;
 
         for (const handler of this.updateLocationHandlers) {
             handler();
         }
+    }
+
+    private ease(): void {
+        this.scale += (this.tScale - this.scale) / 6;
+        this.x += (this.tx - this.x) / 6;
+        this.y += (this.ty - this.y) / 6;
     }
 }
 
