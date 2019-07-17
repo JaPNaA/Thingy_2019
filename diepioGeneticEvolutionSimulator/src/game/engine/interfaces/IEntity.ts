@@ -5,6 +5,7 @@ export default interface IEntity {
     vx: number;
     vy: number;
     destoryed: boolean;
+    teamID: number;
 
     _quadTreeX: number;
     _quadTreeY: number;

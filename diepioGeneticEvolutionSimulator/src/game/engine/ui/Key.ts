@@ -30,6 +30,7 @@ class Key {
     public y = 89;
     public z = 90;
     public space = 32;
+    public esc = 27;
 }
 
 const key = new Key();

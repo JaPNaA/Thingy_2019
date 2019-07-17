@@ -11,15 +11,16 @@ import { mouse } from "./ui/Mouse";
 import CircleQuadTree from "./CircleQuadTree";
 
 class Engine<T extends IEntity> {
-    private camera: Camera;
-
     public canvas: Canvas;
+    public camera: Camera;
+
     private renderer: Renderer;
     private ticker: Ticker<T>;
     private collider: CircleCollider<T>;
     private bounder: Bounder;
     private remover: Remover<T>;
     private entities: T[];
+    private renderHooks: Function[];
 
     constructor(entities: T[]) {
         this.canvas = new Canvas();
@@ -31,6 +32,7 @@ class Engine<T extends IEntity> {
         this.bounder = new Bounder();
         this.entities = entities;
 
+        this.renderHooks = [];
         mouse.attachCamera(this.camera);
     }
 
@@ -42,9 +44,12 @@ class Engine<T extends IEntity> {
 
         this.renderer.renderEntitiesInTree(this.collider.quadTree);
         // this.renderer.debugRenderQuadtree(this.collider.quadTree);
+        for (const hook of this.renderHooks) {
+            hook();
+        }
     }
 
-    public attachCameraTo(entity: T): void {
+    public attachCameraTo(entity?: T): void {
         this.camera.attachTo(entity);
     }
 
@@ -63,6 +68,10 @@ class Engine<T extends IEntity> {
 
     public getQuadTree(): CircleQuadTree<T> {
         return this.collider.getQuadTree();
+    }
+
+    public onRender(cb: Function): void {
+        this.renderHooks.push(cb);
     }
 }
 

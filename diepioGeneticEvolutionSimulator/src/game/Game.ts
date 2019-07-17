@@ -8,6 +8,7 @@ import GeneticTank from "./entities/tank/GeneticTank";
 import Genes from "./entities/tank/Genes";
 import Polygon from "./entities/Polygon";
 import CircleQuadTree from "./engine/CircleQuadTree";
+import DataViewer from "./dataViewer/DataViewer";
 
 type PolygonClass = new (game: Game, x: number, y: number) => Polygon;
 
@@ -24,6 +25,7 @@ class Game {
 
     private engine: Engine<Entity>;
     private boundaries: Boundaries;
+    private dataViewer: DataViewer;
 
     constructor() {
         this.entities = [];
@@ -31,6 +33,7 @@ class Game {
         this.boundaries = new Boundaries(16000, 16000);
         this.engine.setBoundaries(this.boundaries);
         this.quadTree = this.engine.getQuadTree();
+        this.dataViewer = new DataViewer(this, this.engine);
         this.setup();
     }
 

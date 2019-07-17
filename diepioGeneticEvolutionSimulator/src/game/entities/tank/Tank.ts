@@ -17,14 +17,6 @@ abstract class Tank extends Entity implements IXPGivable {
     public static baseMaxHealth: number = 16;
     public static baseDamage: number = 0.5;
 
-    protected unstableness: number = 0.2;
-    protected range: number = 720;
-    protected scale: number;
-    protected maxHealth: number;
-
-    protected cooldownSpeed: number;
-    protected speed: number;
-    protected regenRate: number;
 
     public radius: number = Tank.initalRadius;
     public damage: number;
@@ -36,11 +28,20 @@ abstract class Tank extends Entity implements IXPGivable {
     public vy: number;
     public targetable = true;
 
+    public build: TankBuild;
+    public levels: TankLevels;
+
+    protected unstableness: number = 0.2;
+    protected range: number = 720;
+    protected scale: number;
+    protected maxHealth: number;
+
+    protected cooldownSpeed: number;
+    protected speed: number;
+    protected regenRate: number;
+
     protected ax: number;
     protected ay: number;
-
-    protected build: TankBuild;
-    protected levels: TankLevels;
 
     private static fixedFriction: number = 0.995 ** Ticker.fixedTime;
     private static hpBarLength: number = 1;

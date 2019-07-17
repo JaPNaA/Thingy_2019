@@ -9,7 +9,8 @@ import TankLevels from "./TankLevels";
 import GeneticTankCursor from "./GeneticTankCursor";
 
 class GeneticTank extends Tank {
-    private genes: Genes;
+    public genes: Genes;
+
     private target?: Entity;
     private inIdealRange: boolean;
     private tooClose: boolean;

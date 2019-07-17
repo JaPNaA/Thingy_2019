@@ -32,9 +32,18 @@ class Camera {
         X.scale(this.scale, this.scale);
     }
 
-    public attachTo(entity: IEntity): void {
+    public applyTranslateOnly(X: CanvasRenderingContext2D): void {
+        this.updateLocation();
+        X.translate(this.x, this.y);
+    }
+
+    public attachTo(entity?: IEntity): void {
+        if (entity) {
+            this.attached = true;
+        } else {
+            this.attached = false;
+        }
         this.attachee = entity;
-        this.attached = true;
     }
 
     public setup(): void {
@@ -63,8 +72,14 @@ class Camera {
 
     private updateLocation(): void {
         if (!this.attachee) { return; }
+        if (this.attachee.destoryed) {
+            this.attachTo(undefined);
+            return;
+        }
+
         this.x = -this.attachee.x * this.scale + this.canvas.width / 2;
         this.y = -this.attachee.y * this.scale + this.canvas.height / 2;
+
 
         for (const handler of this.updateLocationHandlers) {
             handler();
