@@ -7,6 +7,7 @@ import Genes from "../entities/tank/Genes";
 import TankBuild from "../entities/tank/TankBuild";
 import Bullet from "../entities/Bullet";
 import { keyboard } from "../engine/ui/Keyboard";
+import Polygon from "../entities/Polygon";
 
 class DataViewer {
     private game: Game;
@@ -115,8 +116,9 @@ class DataViewer {
             return [[
                 "Genetic Tank",
                 "TeamID: " + entity.teamID,
+                "TimeToNewTeam: " + entity.timeToNewTeamID,
                 "Level: " + entity.levels.level,
-                "TotalXP: " + entity.levels.totalXP,
+                "TotalXP: " + this.round(entity.levels.totalXP, 10),
                 "",
                 "--- Build ---",
                 this.buildToString(entity.build)
@@ -129,7 +131,14 @@ class DataViewer {
             return [[
                 "Bullet",
                 "TeamID: " + entity.teamID,
-                "TTL: " + Math.floor(entity.ttl)
+                "TTL: " + Math.floor(entity.ttl),
+                "Health: " + this.round(entity.health, 10),
+                "Damage: " + this.round(entity.damage, 10)
+            ].join("\n")];
+        } else if (entity instanceof Polygon) {
+            return [[
+                "Polygon",
+                "Health: " + this.round(entity.health, 10)
             ].join("\n")];
         } else {
             return [entity.constructor.name + '\n' + "TeamID: " + entity.teamID];
@@ -143,7 +152,7 @@ class DataViewer {
         for (const key of keys) {
             const val = genes[key];
             if (typeof val === 'number') {
-                str.push(key + ": " + (Math.floor(val * 100) / 100));
+                str.push(key + ": " + this.round(val, 100));
             } else {
                 str.push(key + ": [" + val.constructor.name + "]");
             }
@@ -160,6 +169,10 @@ class DataViewer {
         }
 
         return str.join("\n");
+    }
+
+    private round(x: number, factor: number): number {
+        return Math.round(x * factor) / factor;
     }
 }
 

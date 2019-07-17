@@ -10,13 +10,13 @@ import GeneticTankCursor from "./GeneticTankCursor";
 
 class GeneticTank extends Tank {
     public genes: Genes;
+    public timeToNewTeamID?: number;
 
     private target?: Entity;
     private inIdealRange: boolean;
     private tooClose: boolean;
     private noise: OpenSimplexNoise;
     private noiseProgress: number;
-    private timeToNewTeamID?: number;
 
     private cursor: GeneticTankCursor;
 
