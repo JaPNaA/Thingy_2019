@@ -1,7 +1,7 @@
 type LevelUpHandler = () => void;
 
 class TankLevels {
-    public static readonly maxLevel = 55;
+    public static readonly maxLevel = 35;
     public static requiredForLevel: number[];
     public totalXP: number;
     public level: number;
@@ -43,8 +43,8 @@ TankLevels.requiredForLevel = [];
 
 for (let i = 0; i <= TankLevels.maxLevel; i++) {
     TankLevels.requiredForLevel[i] =
-        0.5 * (i ** (0.055 * i))
-        + 1.3 * (i ** 2.50)
+        0.5 * (i ** (0.07 * i))
+        + 1.3 * (i ** 2.8)
         - 1.8;
     // console.log(TankLevels);
 }
