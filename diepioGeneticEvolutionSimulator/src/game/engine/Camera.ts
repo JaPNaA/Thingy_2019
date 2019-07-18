@@ -37,13 +37,11 @@ class Camera {
     }
 
     public apply(X: CanvasRenderingContext2D): void {
-        this.updateLocation();
         X.translate(this.x, this.y);
         X.scale(this.scale, this.scale);
     }
 
     public applyTranslateOnly(X: CanvasRenderingContext2D): void {
-        this.updateLocation();
         X.translate(this.x, this.y);
     }
 
@@ -103,7 +101,7 @@ class Camera {
         this.updateLocationHandlers.push(handler);
     }
 
-    private updateLocation(): void {
+    public updateLocation(): void {
         this.updateTarget();
         this.ease();
     }

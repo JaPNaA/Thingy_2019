@@ -116,7 +116,7 @@ class DataViewer {
             return [[
                 "Genetic Tank",
                 "TeamID: " + entity.teamID,
-                "TimeToNewTeam: " + entity.timeToNewTeamID,
+                "TimeToNewTeam: " + (entity.timeToNewTeamID && Math.floor(entity.timeToNewTeamID)),
                 "Level: " + entity.levels.level,
                 "TotalXP: " + this.round(entity.levels.totalXP, 10),
                 "",

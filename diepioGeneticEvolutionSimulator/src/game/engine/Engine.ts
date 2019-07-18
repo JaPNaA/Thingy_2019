@@ -42,6 +42,7 @@ class Engine<T extends IEntity> {
         this.bounder.boundAll(this.entities);
         this.remover.removeAllIfDestoryed(this.entities);
 
+        this.camera.updateLocation();
         this.renderer.renderEntitiesInTree(this.collider.quadTree);
         // this.renderer.debugRenderQuadtree(this.collider.quadTree);
         for (const hook of this.renderHooks) {
