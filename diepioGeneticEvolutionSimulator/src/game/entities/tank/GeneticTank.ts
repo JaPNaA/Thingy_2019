@@ -11,26 +11,32 @@ import GeneticTankCursor from "./GeneticTankCursor";
 class GeneticTank extends Tank {
     public genes: Genes;
     public timeToNewTeamID?: number;
+    public searchingForMate: boolean;
 
     private target?: Entity;
+    private targetIsMate: boolean;
     private inIdealRange: boolean;
     private tooClose: boolean;
     private noise: OpenSimplexNoise;
     private noiseProgress: number;
+
+    private static maxGeneDistCompatible = 1.6;
 
     private cursor: GeneticTankCursor;
 
     constructor(game: Game, x: number, y: number, genes: Genes) {
         super(game, x, y);
         this.genes = genes;
+        this.targetIsMate = false;
         this.inIdealRange = false;
         this.tooClose = false;
-        this.noise = new OpenSimplexNoise(Math.random() * Number.MAX_SAFE_INTEGER);
+        this.searchingForMate = false;
+
         this.noiseProgress = Math.random() * 100;
-
-        this.cursor = new GeneticTankCursor();
-
         this.unstableness = 1 - this.genes.accuracy;
+
+        this.noise = new OpenSimplexNoise(Math.random() * Number.MAX_SAFE_INTEGER);
+        this.cursor = new GeneticTankCursor();
     }
 
     public tick(deltaTime: number): void {
@@ -43,6 +49,14 @@ class GeneticTank extends Tank {
     public fixedTick(): void {
         super.fixedTick();
         this.cursor.fixedTick();
+    }
+
+    public collideWith(other: Entity): void {
+        if (other === this.target && this.targetIsMate) {
+            this.mateWith(other as GeneticTank);
+        }
+
+        super.collideWith(other);
     }
 
     protected getMovement(deltaTime: number): [number, number] {
@@ -72,7 +86,7 @@ class GeneticTank extends Tank {
     }
 
     protected getTriggered(): boolean {
-        return Boolean(this.target);
+        return Boolean(this.target && !this.targetIsMate);
     }
 
     protected onLevelUp(): void {
@@ -83,7 +97,7 @@ class GeneticTank extends Tank {
             this.getRandomStatByGenes()
         )) { }
 
-        this.reproduceIfShould();
+        this.updateSearchingForMate();
         this.updateStatsWithBuild();
     }
 
@@ -98,10 +112,12 @@ class GeneticTank extends Tank {
         if (by instanceof Bullet) {
             if (by.firer && this.canBeTarget(by.firer)) {
                 this.target = by.firer;
+                this.targetIsMate = false;
             }
         } else if (by instanceof Tank) {
             if (this.canBeTarget(by)) {
                 this.target = by;
+                this.targetIsMate = false;
             }
         }
     }
@@ -115,6 +131,8 @@ class GeneticTank extends Tank {
         let closest = undefined;
         let closestDistSquared = Infinity;
 
+        this.targetIsMate = false;
+
         for (let i = 0; i < entities.length; i++) {
             const entity = entities[i];
             if (entity.teamID === this.teamID) { continue; }
@@ -126,7 +144,16 @@ class GeneticTank extends Tank {
             if (distSquared > closestDistSquared) { continue; }
 
             if (entity instanceof Tank) {
-                if (Math.random() < this.genes.aggression) {
+                if (
+                    this.searchingForMate &&
+                    entity instanceof GeneticTank &&
+                    entity.searchingForMate &&
+                    this.genes.compare(entity.genes) <= GeneticTank.maxGeneDistCompatible
+                ) {
+                    closest = entity;
+                    this.targetIsMate = true;
+                    break;
+                } if (Math.random() < this.genes.aggression) {
                     closest = entity;
                     closestDistSquared = distSquared;
                 }
@@ -154,7 +181,7 @@ class GeneticTank extends Tank {
     }
 
     private updateRangeStates(): void {
-        if (!this.target) {
+        if (!this.target || this.targetIsMate) {
             this.inIdealRange = false;
             this.tooClose = false;
             return;
@@ -196,32 +223,47 @@ class GeneticTank extends Tank {
         throw new Error("Impossible state");
     }
 
-    private reproduceIfShould(): void {
-        if (
-            this.levels.level <
-            (this.genes.levelToReproduction * 0.75 + 0.25) * TankLevels.maxLevel
-        ) { return; }
+    private mateWith(other: GeneticTank): void {
+        const babyX = (other.x + this.x) / 2;
+        const babyY = (other.y + this.y) / 2;
+        const thisCare = this.genes.care * 0.3 + 0.1;
+        const otherCare = other.genes.care * 0.3 + 0.1;
+        const totalCare = this.genes.care + other.genes.care;
 
-        const randomAngle = Math.random() * Math.PI * 2;
-        const radius2 = this.radius - 2;
-        const care = this.genes.care * 0.6 + 0.2;
+        const thisPoints = this.levels.totalXP * (1 - thisCare);
+        const otherPoints = other.levels.totalXP * (1 - otherCare);
+        const givePoints = this.levels.totalXP * thisCare + other.levels.totalXP * otherCare;
 
-        const selfPoints = this.levels.totalXP * (1 - care);
-        const givePoints = this.levels.totalXP * care;
-        TankBuild.reset(this.build);
         this.levels.reset();
-        this.levels.addXP(selfPoints);
+        this.levels.addXP(thisPoints);
+        other.levels.reset();
+        other.levels.addXP(otherPoints);
+        TankBuild.reset(this.build);
+        TankBuild.reset(other.build);
 
         const baby = new GeneticTank(
-            this.game,
-            this.x + Math.cos(randomAngle) * radius2,
-            this.y + Math.sin(randomAngle) * radius2,
-            this.genes.copyAndMutate()
+            this.game, babyX, babyY,
+            Genes.combineAndMutate(this.genes, other.genes)
         );
         baby.levels.addXP(givePoints);
-        baby.setMotherTeam(this.teamID, this.genes.care);
+        baby.setMotherTeam(this.teamID, totalCare);
+        other.setMotherTeam(this.teamID, totalCare);
 
         this.game.addEntity(baby);
+
+        this.target = undefined;
+        this.targetIsMate = false;
+        other.target = undefined;
+        other.targetIsMate = false;
+
+        console.log("mated", {
+            baby, this: this, other
+        });
+    }
+
+    private updateSearchingForMate(): void {
+        this.searchingForMate = this.levels.level >=
+            (this.genes.levelToReproduction * 0.75 + 0.25) * TankLevels.maxLevel;
     }
 
     private updateTeamIdIfShould(deltaTime: number): void {

@@ -119,6 +119,7 @@ class DataViewer {
                 "TimeToNewTeam: " + (entity.timeToNewTeamID && Math.floor(entity.timeToNewTeamID)),
                 "Level: " + entity.levels.level,
                 "TotalXP: " + this.round(entity.levels.totalXP, 10),
+                "IsSearchingForMate: " + entity.searchingForMate.toString(),
                 "",
                 "--- Build ---",
                 this.buildToString(entity.build)

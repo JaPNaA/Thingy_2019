@@ -90,6 +90,17 @@ class Genes {
         }
     }
 
+    public static combineAndMutate(a: Genes, b: Genes) {
+        const copy = new Genes(a);
+
+        const genes = Object.keys(copy) as (keyof Genes)[];
+        for (const gene of genes) {
+            copy.mixAndMutateGene(gene, b[gene]);
+        }
+
+        return copy;
+    }
+
     public copyAndMutate(): Genes {
         const newGenes = new Genes(this);
 
@@ -101,10 +112,42 @@ class Genes {
         return newGenes;
     }
 
+    /**
+     * Calculates the distance between genes
+     */
+    public compare(other: Genes): number {
+        const genes = Object.keys(other) as (keyof Genes)[];
+        let sum = 0;
+
+        for (const gene of genes) {
+            const a = this[gene];
+            const b = other[gene];
+            if (typeof a === "number") {
+                const d = (a - (b as number));
+                sum += d * d;
+            } else if (gene === "class") {
+                // do nothing, for now
+                // todo
+            }
+        }
+
+        return Math.sqrt(sum);
+    }
+
     protected mutateGene<T extends keyof Genes>(gene: T): void {
         const val = this[gene];
         if (typeof val === "number") {
             this[gene] = this.calcMutateFromValue(val) as any;
+        } else if (gene === "class") {
+            // do nothing, for now
+            // todo
+        }
+    }
+
+    protected mixAndMutateGene<T extends keyof Genes>(gene: T, otherVal: Genes[T]): void {
+        const thisVal = this[gene];
+        if (typeof thisVal === "number") {
+            this[gene] = this.calcMutateFromValue((thisVal + (otherVal as number)) / 2) as any;
         } else if (gene === "class") {
             // do nothing, for now
             // todo

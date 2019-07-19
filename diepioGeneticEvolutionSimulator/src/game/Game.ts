@@ -16,7 +16,14 @@ class Game {
     public entities: Entity[];
     public quadTree: CircleQuadTree<Entity>;
 
+    // small
+    // private static initalTanks: number = 3;
+    // private static targetEntities: number = 20;
+    // private static size: number = 720;
+    // large
+    private static initalTanks: number = 96;
     private static targetEntities: number = 2400;
+    private static size: number = 16000;
     private static spawnrates: [PolygonClass, number][] = [
         [Square, 0.5],
         [Triangle, 0.3],
@@ -30,7 +37,7 @@ class Game {
     constructor() {
         this.entities = [];
         this.engine = new Engine(this.entities);
-        this.boundaries = new Boundaries(16000, 16000);
+        this.boundaries = new Boundaries(Game.size, Game.size);
         this.engine.setBoundaries(this.boundaries);
         this.quadTree = this.engine.getQuadTree();
         this.dataViewer = new DataViewer(this, this.engine);
@@ -94,7 +101,7 @@ class Game {
     }
 
     private populateInital(): void {
-        for (let i = 0; i < 96; i++) {
+        for (let i = 0; i < Game.initalTanks; i++) {
             this.addEntity(new GeneticTank(
                 this,
                 Math.random() * this.boundaries.width,

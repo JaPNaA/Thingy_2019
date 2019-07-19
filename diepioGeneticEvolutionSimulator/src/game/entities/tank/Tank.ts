@@ -135,7 +135,7 @@ abstract class Tank extends Entity implements IXPGivable {
         this.levels.addXP(xp);
     }
 
-    public destory(by: Entity): void {
+    public destory(by?: Entity): void {
         super.destory(by);
         if (isXPGivable(by)) {
             by.giveXP(this.levels.totalXP / 3);
