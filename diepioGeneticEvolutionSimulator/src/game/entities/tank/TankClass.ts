@@ -22,10 +22,21 @@ class TankClass {
             }
         }
     }
+
+    public clone(): TankClass {
+        const newCanons = [];
+        for (const canon of this.canons) {
+            newCanons.push(canon.clone());
+        }
+        return new TankClass(newCanons, {
+            bulletSpeedBoost: this.bulletSpeedBoost,
+            rangeBoost: this.rangeBoost
+        });
+    }
 }
 
-const tankClass = {
-    basic: new TankClass([new TankCanon(0, 18, 20, 0, 1)])
-};
+const basicTank = new TankClass([
+    new TankCanon(0, 0.75, 0.85, 0, 1)
+]);
 
-export { TankClass, tankClass };
+export { TankClass, basicTank };

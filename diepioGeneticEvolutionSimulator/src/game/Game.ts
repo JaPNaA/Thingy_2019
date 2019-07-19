@@ -18,15 +18,17 @@ class Game {
     public quadTree: CircleQuadTree<Entity>;
 
     // small
-    // private static initalTanks: number = 3;
-    // private static maintainTanks: number = 32;
-    // private static targetEntities: number = 20;
-    // private static size: number = 720;
+    private static initalTanks: number = 3;
+    private static maintainTanks: number = 3;
+    private static targetEntities: number = 20;
+    private static size: number = 720;
+
     // large
-    private static initalTanks: number = 96;
-    private static maintainTanks: number = 32;
-    private static targetEntities: number = 2400;
-    private static size: number = 16000;
+    // private static initalTanks: number = 96;
+    // private static maintainTanks: number = 32;
+    // private static targetEntities: number = 2400;
+    // private static size: number = 16000;
+
     private static spawnrates: [PolygonClass, number][] = [
         [Square, 0.5],
         [Triangle, 0.3],

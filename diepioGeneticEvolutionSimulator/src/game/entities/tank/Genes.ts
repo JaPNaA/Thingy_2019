@@ -1,4 +1,4 @@
-import { TankClass, tankClass } from "./Classes";
+import { TankClass, basicTank } from "./TankClass";
 
 /**
  * Tank genes, all `number` properties in range [0..1]
@@ -86,7 +86,7 @@ class Genes {
             this.levelToReproduction = Math.random();
             this.care = Math.random();
             this.mutationRate = Math.random();
-            this.class = tankClass.basic;
+            this.class = basicTank;
         }
     }
 

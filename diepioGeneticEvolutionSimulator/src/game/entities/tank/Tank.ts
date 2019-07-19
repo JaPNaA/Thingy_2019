@@ -6,6 +6,8 @@ import Bullet from "../Bullet";
 import TankBuild from "./TankBuild";
 import TankLevels from "./TankLevels";
 import { IXPGivable, isXPGivable } from "../IXPGivable";
+import { TankClass, basicTank } from "./TankClass";
+import TankCanon from "./TankCanon";
 
 abstract class Tank extends Entity implements IXPGivable {
     public static initalRadius = 24;
@@ -30,7 +32,7 @@ abstract class Tank extends Entity implements IXPGivable {
     public build: TankBuild;
     public levels: TankLevels;
 
-    protected unstableness: number = 0.2;
+    protected unstableness: number = 0;
     protected range: number = 720;
     protected scale: number;
     protected maxHealth: number;
@@ -43,20 +45,24 @@ abstract class Tank extends Entity implements IXPGivable {
     protected ay: number;
 
     protected hue: number = Math.random() * 360;
+    protected tankClass: TankClass;
 
     private static fixedFriction: number = 0.995 ** Ticker.fixedTime;
     private static hpBarLength: number = 1;
     private static hpBarWidth: number = 4;
     private static hpBarPadding: number = 0.5;
 
-    private canonWidth: number = 0.75;
-    private canonLength: number = 0.85;
-    private cooldown: number;
+    // private canonWidth: number = 0.75;
+    // private canonLength: number = 0.85;
+    // private cooldown: number;
 
     private timeToQuickHeal: number;
 
-    constructor(game: Game, x: number, y: number) {
+    constructor(game: Game, x: number, y: number, tankClass: TankClass = basicTank) {
         super(game);
+
+        this.tankClass = tankClass.clone();
+
         this.x = x;
         this.y = y;
         this.vx = 0;
@@ -64,7 +70,6 @@ abstract class Tank extends Entity implements IXPGivable {
         this.ax = 0;
         this.ay = 0;
         this.rotation = 0;
-        this.cooldown = 0;
         this.damage = Tank.baseDamage;
 
         this.scale = 1;
@@ -94,12 +99,19 @@ abstract class Tank extends Entity implements IXPGivable {
         X.fillStyle = "#939393";
         X.strokeStyle = "#6d6d6d";
 
-        const canonWidth = this.canonWidth * this.radius;
-        const canonLength = this.canonLength * this.radius;
-        X.beginPath();
-        X.rect(0, -canonWidth / 2, canonLength + this.radius, canonWidth);
-        X.fill();
-        X.stroke();
+        let currAngOffset = 0;
+
+        for (const canon of this.tankClass.canons) {
+            const canonWidth = canon.width * this.radius;
+            const canonLength = canon.length * this.radius;
+
+            X.rotate(canon.angle - currAngOffset);
+            currAngOffset = canon.angle;
+            X.beginPath();
+            X.rect(0, -canonWidth / 2, canonLength + this.radius, canonWidth);
+            X.fill();
+            X.stroke();
+        }
 
         X.strokeStyle = "hsl(" + this.hue + ",79%,35%)";
         X.fillStyle = "hsl(" + this.hue + ",78%,49%)";
@@ -200,28 +212,34 @@ abstract class Tank extends Entity implements IXPGivable {
     }
 
     private fireIfShould(deltaTime: number): void {
-        this.cooldown -= deltaTime;
+        for (const canon of this.tankClass.canons) {
+            const cooldown = canon.cooldown * this.cooldownSpeed;
+            canon.warmth += deltaTime;
 
-        if (this.getTriggered()) {
-            while (this.cooldown <= 0) {
-                this.cooldown += this.cooldownSpeed;
-                this.fireBullet();
-            }
-        } else {
-            if (this.cooldown < 0) {
-                this.cooldown = 0;
+            if (this.getTriggered()) {
+                const cooldownAndOffset = cooldown * (1 + canon.offset);
+
+                while (canon.warmth >= cooldownAndOffset) {
+                    canon.warmth -= cooldown;
+                    this.fireBullet(canon);
+                }
+            } else {
+                if (canon.warmth > cooldown) {
+                    canon.warmth = cooldown;
+                }
             }
         }
     }
 
-    private fireBullet(): void {
-        const bulletRadius = this.canonWidth * this.radius / 2;
+    private fireBullet(canon: TankCanon): void {
+        const bulletRadius = canon.width * this.radius / 2;
+        const ang = this.rotation + canon.angle;
         const bullet = new Bullet(
             this.game,
-            this.x + Math.cos(this.rotation) * (this.radius + bulletRadius),
-            this.y + Math.sin(this.rotation) * (this.radius + bulletRadius),
+            this.x + Math.cos(ang) * (this.radius + bulletRadius),
+            this.y + Math.sin(ang) * (this.radius + bulletRadius),
             0.25 + 0.03 * this.build.bulletSpeed ** 1.4,
-            this.rotation + (Math.random() - 0.5) * this.unstableness,
+            ang + (Math.random() - 0.5) * (this.unstableness + canon.unstableness),
             this.build.bulletPenetration * 0.2,
             this.build.bulletDamage * 0.2,
             bulletRadius,
