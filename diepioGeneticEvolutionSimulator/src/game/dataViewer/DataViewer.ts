@@ -15,6 +15,7 @@ class DataViewer {
 
     private fontSize = 12;
     private lineHeight = 1.15;
+    private lastAttachedEntity?: IEntity;
 
     constructor(game: Game, engine: Engine<IEntity>) {
         this.game = game;
@@ -38,8 +39,10 @@ class DataViewer {
         if (entity) {
             this.drawDataFor(entity);
 
-            if (mouse.down) {
+            if (mouse.down && entity != this.lastAttachedEntity) {
+                console.log("attach", entity);
                 this.engine.attachCameraTo(entity);
+                this.lastAttachedEntity = entity;
             }
         }
     }
