@@ -9,6 +9,7 @@ import Genes from "./entities/tank/Genes";
 import Polygon from "./entities/Polygon";
 import CircleQuadTree from "./engine/CircleQuadTree";
 import DataViewer from "./dataViewer/DataViewer";
+import Tank from "./entities/tank/Tank";
 
 type PolygonClass = new (game: Game, x: number, y: number) => Polygon;
 
@@ -18,10 +19,12 @@ class Game {
 
     // small
     // private static initalTanks: number = 3;
+    // private static maintainTanks: number = 32;
     // private static targetEntities: number = 20;
     // private static size: number = 720;
     // large
     private static initalTanks: number = 96;
+    private static maintainTanks: number = 32;
     private static targetEntities: number = 2400;
     private static size: number = 16000;
     private static spawnrates: [PolygonClass, number][] = [
@@ -72,6 +75,7 @@ class Game {
     private reqanf() {
         this.engine.render();
         this.createShapesToTarget();
+        this.maintainTankNumbers();
 
         requestAnimationFrame(this.reqanf.bind(this));
     }
@@ -80,6 +84,25 @@ class Game {
         let amount = this.entities.length;
         for (; amount < Game.targetEntities; amount++) {
             this.spawnShape();
+        }
+    }
+
+    private maintainTankNumbers(): void {
+        let amount = 0;
+        for (const entity of this.entities) {
+            if (entity instanceof Tank) {
+                amount++;
+                if (amount >= Game.maintainTanks) { return; }
+            }
+        }
+
+        for (; amount < Game.maintainTanks; amount++) {
+            this.addEntity(new GeneticTank(
+                this,
+                Math.random() * this.boundaries.width,
+                Math.random() * this.boundaries.height,
+                new Genes()
+            ));
         }
     }
 

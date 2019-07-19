@@ -39,10 +39,12 @@ class DataViewer {
         if (entity) {
             this.drawDataFor(entity);
 
-            if (mouse.down && entity != this.lastAttachedEntity) {
-                console.log("attach", entity);
-                this.engine.attachCameraTo(entity);
+            if (mouse.down) {
+                if (entity != this.lastAttachedEntity) {
+                    console.log("attach", entity);
+                }
                 this.lastAttachedEntity = entity;
+                this.engine.attachCameraTo(entity);
             }
         }
     }
