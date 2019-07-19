@@ -1,9 +1,10 @@
 import TankCanon from "./TankCanon";
 
 class TankClass {
-    public canons: TankCanon[];
-    public bulletSpeedBoost: number;
-    public rangeBoost: number;
+    public readonly canons: TankCanon[];
+    public readonly bulletSpeedBoost: number;
+    public readonly rangeBoost: number;
+    public readonly powerDivider: number;
 
     constructor(canons: TankCanon[], options?: {
         bulletSpeedBoost?: number,
@@ -21,6 +22,11 @@ class TankClass {
                 this.rangeBoost = options.rangeBoost;
             }
         }
+
+        this.powerDivider = 0;
+        for (const canon of canons) {
+            this.powerDivider += 1 / canon.power;
+        }
     }
 
     public clone(): TankClass {
@@ -36,7 +42,7 @@ class TankClass {
 }
 
 const basicTank = new TankClass([
-    new TankCanon(0, 0.75, 0.85, 0, 1)
+    new TankCanon(0, 0.75, 0.85, 0, 1, true)
 ]);
 
 export { TankClass, basicTank };

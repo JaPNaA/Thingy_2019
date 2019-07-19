@@ -12,8 +12,8 @@ class Bullet extends Entity implements IXPGivable {
     public vy: number;
     public rotation: number;
     public radius: number;
-    public health: number = 1;
-    public damage: number = 1;
+    public health: number;
+    public damage: number;
     public ttl: number = 10000;
     public targetable = false;
 
@@ -30,8 +30,8 @@ class Bullet extends Entity implements IXPGivable {
         this.vx = Math.cos(direction) * speed;
         this.vy = Math.sin(direction) * speed;
         this.rotation = 0;
-        this.health += health;
-        this.damage += damage;
+        this.health = health;
+        this.damage = damage;
         this.radius = radius;
         this.hue = hue;
     }
