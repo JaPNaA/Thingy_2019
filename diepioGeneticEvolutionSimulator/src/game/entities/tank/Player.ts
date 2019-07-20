@@ -10,7 +10,7 @@ class Player extends Tank {
     }
 
     public setGodMode(): void {
-        this.levels.addXP(TankLevels.requiredForLevel[TankLevels.requiredForLevel.length - 1]);
+        this.levels.addXP(TankLevels.requiredForLastLevel);
         this.build.bodyDamage = 7;
         // this.build.bulletDamage = 36;
         // this.build.bulletPenetration = 36;

@@ -54,7 +54,7 @@ class GeneticTank extends Tank {
 
     public collideWith(other: Entity): void {
         if (other === this.mate) {
-            this.mateWith(other as GeneticTank);
+            this.mateWith(this.mate);
         }
 
         super.collideWith(other);
@@ -144,7 +144,7 @@ class GeneticTank extends Tank {
             if (distSquared > closestDistSquared) { continue; }
 
             if (entity instanceof Tank) {
-                if (Math.random() < this.genes.aggression) {
+                if (Math.random() < this.genes.aggression / 16) {
                     closest = entity;
                     closestDistSquared = distSquared;
                 }
@@ -236,6 +236,7 @@ class GeneticTank extends Tank {
         baby.levels.addXP(givePoints);
         baby.setMotherTeam(this.teamID, totalCare);
         other.setMotherTeam(this.teamID, totalCare);
+        this.setMotherTeam(this.teamID, totalCare);
 
         this.game.addEntity(baby);
 
@@ -250,7 +251,7 @@ class GeneticTank extends Tank {
     }
 
     private updateMate(): void {
-        if (this.mate && !this.mate.destoryed) { return; }
+        if (this.mate && !this.mate.destoryed && this.mate.searchingForMate) { return; }
 
         this.searchingForMate = this.levels.level >=
             (this.genes.levelToReproduction * 0.75 + 0.25) * TankLevels.maxLevel;
