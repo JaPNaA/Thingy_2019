@@ -45,6 +45,22 @@ class Camera {
         X.translate(this.x, this.y);
     }
 
+    public goto(x: number, y: number, scale?: number): void {
+        if (scale) {
+            this.tScale = scale;
+        }
+        this.tx = -x * this.tScale + this.canvas.width / 2;
+        this.ty = -y * this.tScale + this.canvas.height / 2;
+    }
+
+    public gotoNoTransition(x: number, y: number, scale?: number): void {
+        if (scale) {
+            this.scale = this.tScale = scale;
+        }
+        this.x = this.tx = -x * this.tScale + this.canvas.width / 2;
+        this.y = this.ty = -y * this.tScale + this.canvas.height / 2;
+    }
+
     public attachTo(entity?: IEntity): void {
         if (entity) {
             this.attachedFromX = this.x;
@@ -81,8 +97,7 @@ class Camera {
             }
 
             if (this.attached) {
-                this.tx = -this.attachee!.x * this.tScale + this.canvas.width / 2;
-                this.ty = -this.attachee!.y * this.tScale + this.canvas.height / 2;
+                this.goto(this.attachee!.x, this.attachee!.y);
             } else {
                 let x = e.clientX;
                 let y = e.clientY;
@@ -113,8 +128,7 @@ class Camera {
             return;
         }
 
-        this.tx = -this.attachee.x * this.tScale + this.canvas.width / 2;
-        this.ty = -this.attachee.y * this.tScale + this.canvas.height / 2;
+        this.goto(this.attachee.x, this.attachee.y);
 
         for (const handler of this.updateLocationHandlers) {
             handler();

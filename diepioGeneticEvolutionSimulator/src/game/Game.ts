@@ -29,6 +29,8 @@ class Game {
     private static targetEntities: number = 2400;
     private static size: number = 16000;
 
+    private static titleDelay: number = 2000;
+
     private static spawnrates: [PolygonClass, number][] = [
         [Square, 0.5],
         [Triangle, 0.3],
@@ -47,6 +49,12 @@ class Game {
         this.quadTree = this.engine.getQuadTree();
         this.dataViewer = new DataViewer(this, this.engine);
         this.setup();
+
+        this.engine.camera.gotoNoTransition(Game.size / 2, Game.size / 2, Math.max(innerWidth, innerHeight) * 2);
+        setTimeout(() =>
+            this.engine.camera.goto(Game.size / 2, Game.size / 2, 1),
+            2000
+        );
     }
 
     public setup(): void {
@@ -75,11 +83,30 @@ class Game {
     }
 
     private reqanf() {
+        const now = performance.now();
         this.engine.render();
         this.createShapesToTarget();
         this.maintainTankNumbers();
 
+        if (now < Game.titleDelay) {
+            this.drawName(now);
+        }
+
         requestAnimationFrame(this.reqanf.bind(this));
+    }
+
+    private drawName(now: number) {
+        const X = this.engine.canvas.getX();
+        const x = this.engine.canvas.width / 2;
+        const y = this.engine.canvas.height / 2;
+        X.save();
+        X.globalAlpha = Math.min((1 - now / Game.titleDelay) * 2, 1);
+        X.textBaseline = "middle";
+        X.textAlign = "center";
+        X.font = Math.min(innerWidth * 0.06, 64) + "px Ubuntu, Arial";
+        X.fillStyle = "#000000";
+        X.fillText("diep.io Genetic Evolution Simulator", x, y);
+        X.restore();
     }
 
     private createShapesToTarget(): void {
