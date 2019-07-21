@@ -1,9 +1,34 @@
+import ConfigEditor from "./config/ConfigEditor";
+import Config from "./config/Config";
 import Game from "./game/Game";
 
-const game = new Game();
-game.appendTo(document.body);
+const messageDiv = document.createElement("div");
+messageDiv.classList.add("message");
+function setMessage(str?: string) {
+    if (str) {
+        messageDiv.innerText = str;
+        document.body.appendChild(messageDiv);
+    } else {
+        document.body.removeChild(messageDiv);
+    }
+}
 
-console.log(game);
+const configEditor = new ConfigEditor("Config", new Config());
+configEditor.appendTo(document.body);
+configEditor.setInvalidSubmitionHandler(() => alert("Invalid config!"));
+configEditor.setSubmitHandler(config => {
+    setMessage("Creating inital entities...");
 
-// @ts-ignore
-window.game = game;
+    setTimeout(() => {
+        configEditor.remove();
+        setMessage();
+
+        const game = new Game(config);
+        game.appendTo(document.body);
+
+        // @ts-ignore -- debugging purposes
+        window.game = game;
+    }, 1);
+});
+
+setMessage("Adjust the settings if the simulation runs too slowly");

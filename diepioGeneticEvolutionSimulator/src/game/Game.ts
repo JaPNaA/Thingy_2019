@@ -10,6 +10,7 @@ import Polygon from "./entities/Polygon";
 import CircleQuadTree from "./engine/CircleQuadTree";
 import DataViewer from "./dataViewer/DataViewer";
 import Tank from "./entities/tank/Tank";
+import Config from "../config/Config";
 
 type PolygonClass = new (game: Game, x: number, y: number) => Polygon;
 
@@ -17,42 +18,40 @@ class Game {
     public entities: Entity[];
     public quadTree: CircleQuadTree<Entity>;
 
-    // small
-    // private static initalTanks: number = 3;
-    // private static maintainTanks: number = 3;
-    // private static targetEntities: number = 20;
-    // private static size: number = 720;
-
-    // large
-    private static initalTanks: number = 96;
-    private static maintainTanks: number = 32;
-    private static targetEntities: number = 2400;
-    private static size: number = 16000;
-
     private static titleDelay: number = 2000;
 
-    private static spawnrates: [PolygonClass, number][] = [
-        [Square, 0.5],
-        [Triangle, 0.3],
-        [Pentagon, 0.2]
-    ];
+    private startTime: number = performance.now();
+
+    private initalTanks: number;
+    private maintainTanks: number;
+    private targetEntities: number;
+    private size: number;
+
+    private spawnrates: [PolygonClass, number][];
 
     private engine: Engine<Entity>;
     private boundaries: Boundaries;
     private dataViewer: DataViewer;
 
-    constructor() {
+    constructor(config: Config) {
         this.entities = [];
+
+        this.initalTanks = config.initalTanks;
+        this.maintainTanks = config.maintainTanks;
+        this.targetEntities = config.targetEntities;
+        this.size = config.size;
+        this.spawnrates = this.createSpawnrates(config);
+
         this.engine = new Engine(this.entities);
-        this.boundaries = new Boundaries(Game.size, Game.size);
+        this.boundaries = new Boundaries(this.size, this.size);
         this.engine.setBoundaries(this.boundaries);
         this.quadTree = this.engine.getQuadTree();
         this.dataViewer = new DataViewer(this, this.engine);
         this.setup();
 
-        this.engine.camera.gotoNoTransition(Game.size / 2, Game.size / 2, Math.max(innerWidth, innerHeight) * 2);
+        this.engine.camera.gotoNoTransition(this.size / 2, this.size / 2, Math.max(innerWidth, innerHeight) * 2);
         setTimeout(() =>
-            this.engine.camera.goto(Game.size / 2, Game.size / 2, 1),
+            this.engine.camera.goto(this.size / 2, this.size / 2, 1),
             Game.titleDelay
         );
     }
@@ -83,7 +82,7 @@ class Game {
     }
 
     private reqanf() {
-        const now = performance.now();
+        const now = performance.now() - this.startTime;
         this.engine.render();
         this.createShapesToTarget();
         this.maintainTankNumbers();
@@ -93,6 +92,19 @@ class Game {
         }
 
         requestAnimationFrame(this.reqanf.bind(this));
+    }
+
+    private createSpawnrates(config: Config): [PolygonClass, number][] {
+        let total =
+            config.spawnRates.square +
+            config.spawnRates.triangle +
+            config.spawnRates.pentagon;
+
+        return [
+            [Square, config.spawnRates.square / total],
+            [Triangle, config.spawnRates.triangle / total],
+            [Pentagon, config.spawnRates.pentagon / total]
+        ];
     }
 
     private drawName(now: number) {
@@ -111,7 +123,7 @@ class Game {
 
     private createShapesToTarget(): void {
         let amount = this.entities.length;
-        for (; amount < Game.targetEntities; amount++) {
+        for (; amount < this.targetEntities; amount++) {
             this.spawnShape();
         }
     }
@@ -121,11 +133,11 @@ class Game {
         for (const entity of this.entities) {
             if (entity instanceof Tank) {
                 amount++;
-                if (amount >= Game.maintainTanks) { return; }
+                if (amount >= this.maintainTanks) { return; }
             }
         }
 
-        for (; amount < Game.maintainTanks; amount++) {
+        for (; amount < this.maintainTanks; amount++) {
             this.addEntity(new GeneticTank(
                 this,
                 Math.random() * this.boundaries.width,
@@ -139,7 +151,7 @@ class Game {
         const rand = Math.random();
         let total = 0;
 
-        for (const [entityType, rate] of Game.spawnrates) {
+        for (const [entityType, rate] of this.spawnrates) {
             total += rate;
             if (rand < total) {
                 this.addEntity(new entityType(
@@ -153,7 +165,7 @@ class Game {
     }
 
     private populateInital(): void {
-        for (let i = 0; i < Game.initalTanks; i++) {
+        for (let i = 0; i < this.initalTanks; i++) {
             this.addEntity(new GeneticTank(
                 this,
                 Math.random() * this.boundaries.width,
