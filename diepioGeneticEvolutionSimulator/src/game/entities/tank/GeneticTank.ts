@@ -38,6 +38,7 @@ class GeneticTank extends Tank {
 
         this.noise = new OpenSimplexNoise(Math.random() * Number.MAX_SAFE_INTEGER);
         this.cursor = new GeneticTankCursor();
+        this.tankClass = genes.class.clone();
     }
 
     public tick(deltaTime: number): void {

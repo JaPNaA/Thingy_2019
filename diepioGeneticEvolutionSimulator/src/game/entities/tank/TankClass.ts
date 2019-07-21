@@ -6,7 +6,8 @@ class TankClass {
     public readonly rangeBoost: number;
     public readonly powerDivider: number;
 
-    private static readonly canonNumberChangeChance: number = 0.3;
+    private static readonly canonNumberChangeChance: number = 0.4;
+    private static readonly addCanonChance: number = 0.55;
 
     constructor(canons: TankCanon[], options?: {
         bulletSpeedBoost?: number,
@@ -43,6 +44,7 @@ class TankClass {
     }
 
     public cloneAndMutate(geneMutationRate: number): TankClass {
+        console.log("clone and mutate");
         const mutationRate = geneMutationRate * TankClass.canonNumberChangeChance;
         const newCanons = [];
 
@@ -50,7 +52,7 @@ class TankClass {
             const rand = Math.random();
 
             if (rand < mutationRate) {
-                if (rand < mutationRate / 2) {
+                if (rand < mutationRate * TankClass.addCanonChance) {
                     newCanons.push(canon.cloneAndMutate(geneMutationRate));
                     newCanons.push(canon.cloneAndMutate(geneMutationRate));
                 } // else: lose canon

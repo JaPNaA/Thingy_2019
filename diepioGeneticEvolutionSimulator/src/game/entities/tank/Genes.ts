@@ -139,8 +139,7 @@ class Genes {
         if (typeof val === "number") {
             this[gene] = this.calcMutateFromValue(val) as any;
         } else if (gene === "class") {
-            // do nothing, for now
-            // todo
+            this.class = this.class.cloneAndMutate(this.mutationRate) as any;
         }
     }
 
@@ -149,8 +148,12 @@ class Genes {
         if (typeof thisVal === "number") {
             this[gene] = this.calcMutateFromValue((thisVal + (otherVal as number)) / 2) as any;
         } else if (gene === "class") {
-            // do nothing, for now
-            // todo
+            // todo: actually mix the genes
+            if (Math.random() < 0.5) {
+                this.class = (thisVal as TankClass).cloneAndMutate(this.mutationRate);
+            } else {
+                this.class = (otherVal as TankClass).cloneAndMutate(this.mutationRate);
+            }
         }
     }
 
