@@ -53,7 +53,7 @@ class Game {
         this.engine.camera.gotoNoTransition(Game.size / 2, Game.size / 2, Math.max(innerWidth, innerHeight) * 2);
         setTimeout(() =>
             this.engine.camera.goto(Game.size / 2, Game.size / 2, 1),
-            2000
+            Game.titleDelay
         );
     }
 

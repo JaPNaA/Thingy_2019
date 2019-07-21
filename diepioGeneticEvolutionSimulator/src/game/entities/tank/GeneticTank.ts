@@ -168,6 +168,7 @@ class GeneticTank extends Tank {
 
         return Boolean(
             !entity.destoryed &&
+            entity.teamID !== this.teamID &&
             distSquared <= range * range
         );
     }
@@ -261,6 +262,9 @@ class GeneticTank extends Tank {
 
         this.mate = undefined;
 
+        let closest: GeneticTank | undefined;
+        let closestDist = Infinity;
+
         for (const entity of this.game.entities) {
             if (
                 entity !== this &&
@@ -268,10 +272,17 @@ class GeneticTank extends Tank {
                 entity.searchingForMate &&
                 this.genes.compare(entity.genes) <= GeneticTank.maxGeneDistCompatible
             ) {
-                this.mate = entity;
-                break;
+                const dx = entity.x - this.x;
+                const dy = entity.y - this.y;
+                const dist = dx * dx + dy * dy;
+                if (dist < closestDist) {
+                    closest = entity;
+                    closestDist = dist;
+                }
             }
         }
+
+        this.mate = closest;
     }
 
     private updateTeamIdIfShould(deltaTime: number): void {
