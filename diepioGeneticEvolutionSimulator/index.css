@@ -34,7 +34,7 @@ button {
 
 .ConfigEditor .section .section,
 .ConfigEditor .configItem {
-    border-left: 1px solid black;
+    border-left: 1px solid #d0d0d0;
 }
 
 .ConfigEditor .configItem {

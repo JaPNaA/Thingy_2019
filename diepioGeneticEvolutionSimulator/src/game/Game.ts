@@ -52,17 +52,16 @@ class Game {
         this.engine.setBoundaries(this.boundaries);
         this.quadTree = this.engine.getQuadTree();
         this.dataViewer = new DataViewer(this, this.engine);
-        this.setup();
 
         if (config.player.beInTheGame) {
             this.createPlayer();
         }
 
-        this.engine.camera.gotoNoTransition(this.size / 2, this.size / 2, Math.max(innerWidth, innerHeight) * 2);
-        setTimeout(() =>
-            this.engine.camera.goto(this.size / 2, this.size / 2, 1),
-            Game.titleDelay
-        );
+        this.engine.debugDrawHitCircles = config.debug.drawHitCircles;
+        this.engine.debugRenderQuadTree = config.debug.drawQuadTree;
+
+        this.setup();
+        this.transitionIn();
     }
 
     public setup(): void {
@@ -88,6 +87,14 @@ class Game {
                 entity.destory();
             }
         }
+    }
+
+    private transitionIn(): void {
+        this.engine.camera.gotoNoTransition(this.size / 2, this.size / 2, Math.max(innerWidth, innerHeight) * 2);
+        setTimeout(() =>
+            this.engine.camera.goto(this.size / 2, this.size / 2, 1),
+            Game.titleDelay
+        );
     }
 
     private reqanf() {

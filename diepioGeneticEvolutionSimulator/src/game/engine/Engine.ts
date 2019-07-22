@@ -14,6 +14,9 @@ class Engine<T extends IEntity> {
     public canvas: Canvas;
     public camera: Camera;
 
+    public debugRenderQuadTree: boolean;
+    public debugDrawHitCircles: boolean;
+
     private renderer: Renderer;
     private ticker: Ticker<T>;
     private collider: CircleCollider<T>;
@@ -23,6 +26,9 @@ class Engine<T extends IEntity> {
     private renderHooks: Function[];
 
     constructor(entities: T[]) {
+        this.debugDrawHitCircles = false;
+        this.debugRenderQuadTree = false;
+
         this.canvas = new Canvas();
         this.camera = new Camera(this.canvas);
         this.renderer = new Renderer(this.canvas, this.camera);
@@ -43,8 +49,14 @@ class Engine<T extends IEntity> {
         this.remover.removeAllIfDestoryed(this.entities);
 
         this.camera.updateLocation();
+
+        this.renderer.debugDrawHitCircle = this.debugDrawHitCircles
         this.renderer.renderEntitiesInTree(this.collider.quadTree);
-        // this.renderer.debugRenderQuadtree(this.collider.quadTree);
+
+        if (this.debugRenderQuadTree) {
+            this.renderer.debugRenderQuadtree(this.collider.quadTree);
+        }
+
         for (const hook of this.renderHooks) {
             hook();
         }

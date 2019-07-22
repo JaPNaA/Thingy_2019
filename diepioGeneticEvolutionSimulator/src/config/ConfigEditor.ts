@@ -7,6 +7,8 @@ interface InputTree {
 }
 
 class ConfigEditor<T> {
+    public changed: boolean;
+
     private static localStorageKey = "diepGES-config";
 
     private elm: HTMLDivElement;
@@ -23,6 +25,7 @@ class ConfigEditor<T> {
     private parent?: Node;
 
     constructor(name: string, config: T) {
+        this.changed = false;
         this.elm = document.createElement("div");
         this.elm.classList.add("ConfigEditor");
         this.config = config;
@@ -186,6 +189,7 @@ class ConfigEditor<T> {
         elm.appendChild(label);
 
         input.addEventListener("change", () => {
+            this.changed = true;
             config[key] = input.checked;
         });
 
@@ -207,6 +211,7 @@ class ConfigEditor<T> {
         input.addEventListener("change", () => {
             elm.classList.remove("invalid");
             this.inputValids[validIndex] = true;
+            this.changed = true;
             const parsed = parse(input.value);
 
             if (parsed === undefined) {

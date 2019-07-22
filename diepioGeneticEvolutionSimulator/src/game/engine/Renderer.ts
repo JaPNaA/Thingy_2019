@@ -4,11 +4,15 @@ import IEntity from "./interfaces/IEntity";
 import CircleQuadTree from "./CircleQuadTree";
 
 class Renderer {
+    public debugDrawHitCircle: boolean;
+
     private canvas: Canvas;
     private camera: Camera;
     private X: CanvasRenderingContext2D;
 
     constructor(canvas: Canvas, camera: Camera) {
+        this.debugDrawHitCircle = false;
+
         this.canvas = canvas;
         this.camera = camera;
         this.X = canvas.getX();
@@ -30,11 +34,19 @@ class Renderer {
 
         this.drawGrid(viewX, viewY, viewWidth, viewHeight);
 
-        for (const entity of entities) {
-            this.X.save();
-            entity.render(this.X);
-            this.X.restore();
-            // entity.__debugRenderHitCircle(this.X);
+        if (this.debugDrawHitCircle) {
+            for (const entity of entities) {
+                this.X.save();
+                entity.render(this.X);
+                this.X.restore();
+                entity.__debugRenderHitCircle(this.X);
+            }
+        } else {
+            for (const entity of entities) {
+                this.X.save();
+                entity.render(this.X);
+                this.X.restore();
+            }
         }
 
         this.X.resetTransform();

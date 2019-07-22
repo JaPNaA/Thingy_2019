@@ -18,7 +18,9 @@ configEditor.appendTo(document.body);
 configEditor.setInvalidSubmitionHandler(() => alert("Invalid config!"));
 configEditor.setSubmitHandler(config => {
     setMessage("Creating inital entities...");
-    configEditor.saveConfigToLocalStorage();
+    if (configEditor.changed) {
+        configEditor.saveConfigToLocalStorage();
+    }
 
     setTimeout(() => {
         document.body.scrollTop = document.documentElement.scrollTop = 0;

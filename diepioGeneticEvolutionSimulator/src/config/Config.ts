@@ -27,6 +27,11 @@ class Config {
             movementSpeed: 36
         }
     }
+
+    public debug = {
+        drawHitCircles: false,
+        drawQuadTree: false
+    }
 }
 
 export default Config;
