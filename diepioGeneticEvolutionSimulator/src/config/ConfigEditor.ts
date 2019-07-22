@@ -1,13 +1,24 @@
+import IInput from "./IInput";
+
 type SubmitHandler<T> = (config: T) => void;
 
+interface InputTree {
+    [x: string]: HTMLInputElement | InputTree;
+}
+
 class ConfigEditor<T> {
+    private static localStorageKey = "diepGES-config";
+
     private elm: HTMLDivElement;
     private submitHandler?: SubmitHandler<T>;
     private invalidSubmitionHandler?: Function;
     private config: T;
+    private inputTree: InputTree;
 
     private inputValids: boolean[];
     private submitButton: HTMLButtonElement;
+    private restoreButton: HTMLButtonElement;
+    private restoreButtonEnabled: boolean;
 
     private parent?: Node;
 
@@ -16,6 +27,7 @@ class ConfigEditor<T> {
         this.elm.classList.add("ConfigEditor");
         this.config = config;
         this.inputValids = [];
+        this.restoreButtonEnabled = true;
 
         this.submitButton = document.createElement("button");
         this.submitButton.classList.add("submit");
@@ -30,16 +42,41 @@ class ConfigEditor<T> {
             }
         });
 
-        this.elm.appendChild(this.createConfigTree(name, this.config));
+        this.restoreButton = document.createElement("button");
+        this.restoreButton.classList.add("restore");
+        this.restoreButton.innerHTML = "Restore config";
+        this.restoreButton.addEventListener("click", () => {
+            if (!this.restoreButtonEnabled) { return; }
+            this.restoreConfig(
+                this.config,
+                JSON.parse(localStorage[ConfigEditor.localStorageKey]),
+                this.inputTree
+            );
+            this.restoreButton.classList.add("disabled");
+        });
+
+        if (!localStorage[ConfigEditor.localStorageKey]) {
+            this.restoreButtonEnabled = false;
+            this.restoreButton.classList.add("disabled");
+        }
+
+        this.inputTree = {};
+
+        this.elm.appendChild(this.createConfigTree(name, this.config, this.inputTree));
         this.elm.appendChild(this.submitButton);
+        this.elm.appendChild(this.restoreButton);
     }
 
-    public appendTo(parent: Node) {
+    public appendTo(parent: Node): void {
         parent.appendChild(this.elm);
         this.parent = parent;
     }
 
-    public remove() {
+    public saveConfigToLocalStorage(): void {
+        localStorage[ConfigEditor.localStorageKey] = JSON.stringify(this.config);
+    }
+
+    public remove(): void {
         if (!this.parent) { throw new Error("Was never appended"); }
         this.parent.removeChild(this.elm);
     }
@@ -52,6 +89,24 @@ class ConfigEditor<T> {
         this.invalidSubmitionHandler = handler;
     }
 
+    private restoreConfig(thisObj: any, otherObj: any, inputTree: InputTree): void {
+        const keys = Object.keys(thisObj);
+
+        for (const key of keys) {
+            if (typeof thisObj[key] !== typeof otherObj[key]) { continue; }
+            if (typeof otherObj[key] !== "object") {
+                thisObj[key] = otherObj[key];
+                if (typeof thisObj[key] === "boolean") {
+                    (inputTree[key] as HTMLInputElement).checked = otherObj[key];
+                } else {
+                    (inputTree[key] as HTMLInputElement).value = otherObj[key];
+                }
+            } else {
+                this.restoreConfig(thisObj[key], otherObj[key], inputTree[key] as InputTree);
+            }
+        }
+    }
+
     private allInputsAreValid(): boolean {
         for (const valid of this.inputValids) {
             if (!valid) { return false; }
@@ -60,42 +115,54 @@ class ConfigEditor<T> {
         return true;
     }
 
-    private createConfigTree(name: string, config: any, depth: number = 1): HTMLDivElement {
-        const elm = document.createElement("div");
+    private createConfigTree(name: string, config: any, inputTree: InputTree, depth: number = 1): HTMLDivElement {
+        const section = document.createElement("div");
         const heading = document.createElement("h" + depth);
         const keys = Object.keys(config);
 
-        elm.classList.add("section");
+        section.classList.add("section");
         heading.classList.add("heading");
         heading.innerHTML = name;
-        elm.appendChild(heading);
+        section.appendChild(heading);
 
         for (const key of keys) {
             const obj = config[key];
 
             switch (typeof obj) {
-                case "number":
-                    elm.appendChild(this.createNumberInput(config, key, obj));
+                case "number": {
+                    const { elm, input } = this.createNumberInput(config, key, obj);
+                    section.appendChild(elm)
+                    inputTree[key] = input;
                     break;
-                case "string":
-                    elm.appendChild(this.createStringInput(config, key, obj));
+                }
+                case "string": {
+                    const { elm, input } = this.createStringInput(config, key, obj);
+                    section.appendChild(elm)
+                    inputTree[key] = input;
                     break;
-                case "boolean":
-                    elm.appendChild(this.createBooleanInput(config, key, obj));
+                }
+                case "boolean": {
+                    const { elm, input } = this.createBooleanInput(config, key, obj);
+                    section.appendChild(elm)
+                    inputTree[key] = input;
                     break;
-                case "object":
-                    elm.appendChild(this.createConfigTree(
+                }
+                case "object": {
+                    const elmBranch = {} as any;
+                    inputTree[key] = elmBranch;
+                    section.appendChild(this.createConfigTree(
                         this.formatCamelCase(key),
-                        obj, depth + 1
+                        obj, elmBranch, depth + 1
                     ));
                     break;
+                }
             }
         }
 
-        return elm;
+        return section;
     }
 
-    private createNumberInput(config: any, key: string, value: number): HTMLDivElement {
+    private createNumberInput(config: any, key: string, value: number): IInput {
         return this.createInput("number", config, value.toString(), key, value => {
             const parsed = parseInt(value);
             if (isNaN(parsed)) { return; }
@@ -103,14 +170,15 @@ class ConfigEditor<T> {
         });
     }
 
-    private createStringInput(config: any, key: string, value: string): HTMLDivElement {
+    private createStringInput(config: any, key: string, value: string): IInput {
         return this.createInput("text", config, value, key, value => value ? value : undefined);
     }
 
-    private createBooleanInput(config: any, key: string, value: boolean): HTMLDivElement {
+    private createBooleanInput(config: any, key: string, value: boolean): IInput {
         const elm = document.createElement("div");
         const label = document.createElement("label");
         const input = document.createElement("input");
+        elm.classList.add("configItem");
         input.type = "checkbox";
         input.checked = value;
         label.innerText = this.formatCamelCase(key);
@@ -121,10 +189,10 @@ class ConfigEditor<T> {
             config[key] = input.checked;
         });
 
-        return elm;
+        return { elm, input };
     }
 
-    private createInput(type: string, config: any, value: string, key: string, parse: (value: string) => any | undefined): HTMLDivElement {
+    private createInput(type: string, config: any, value: string, key: string, parse: (value: string) => any | undefined): IInput {
         const elm = document.createElement("div");
         const label = document.createElement("label");
         const input = document.createElement("input");
@@ -149,7 +217,7 @@ class ConfigEditor<T> {
             }
         });
 
-        return elm;
+        return { elm, input };
     }
 
     private formatCamelCase(str: string): string {

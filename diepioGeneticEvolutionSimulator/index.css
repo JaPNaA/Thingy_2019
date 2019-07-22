@@ -1,7 +1,10 @@
 body {
     margin: 0;
-    overflow: hidden;
     font-family: Roboto, Arial, Helvetica, sans-serif;
+}
+
+body.noScroll {
+    overflow: hidden;
 }
 
 input,
@@ -44,12 +47,15 @@ button {
     content: ": ";
 }
 
+.ConfigEditor .configItem input + label::after {
+    content: none;
+}
+
 .ConfigEditor .configItem input[type="number"] {
     width: 5em;
 }
 
-.ConfigEditor .submit {
-    background-color: #5fff72;
+.ConfigEditor button {
     border: none;
     padding: 8px 16px;
     border-radius: 4px;
@@ -57,4 +63,20 @@ button {
     font-size: 1em;
     cursor: pointer;
     outline: none;
+    color: #000000;
+
+    margin-left: 8px;
+}
+
+.ConfigEditor .submit {
+    background-color: #5fff72;
+}
+
+.ConfigEditor .restore {
+    background-color: #85ceff;
+}
+
+.ConfigEditor .restore.disabled {
+    opacity: 0.2;
+    cursor: default;
 }

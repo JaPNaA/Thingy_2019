@@ -2,24 +2,14 @@ import { keyboard } from "../../engine/ui/Keyboard";
 import { mouse } from "../../engine/ui/Mouse";
 import Game from "../../Game";
 import Tank from "./Tank";
-import TankLevels from "./TankLevels";
 
 class Player extends Tank {
     constructor(game: Game, x: number, y: number) {
         super(game, x, y);
     }
 
-    public setGodMode(): void {
-        this.levels.addXP(TankLevels.requiredForLastLevel);
-        this.build.bodyDamage = 7;
-        // this.build.bulletDamage = 36;
-        // this.build.bulletPenetration = 36;
-        this.build.bulletSpeed = 7;
-        this.build.healthRegeneration = 7;
-        this.build.maxHealth = 7;
-        this.build.movementSpeed = 36;
-        this.build.reload = 7;
-        this.updateStatsWithBuild();
+    public updateStatsWithBuild() {
+        super.updateStatsWithBuild();
     }
 
     protected getMovement(): [number, number] {

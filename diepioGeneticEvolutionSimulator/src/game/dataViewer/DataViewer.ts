@@ -10,6 +10,8 @@ import { keyboard } from "../engine/ui/Keyboard";
 import Polygon from "../entities/Polygon";
 
 class DataViewer {
+    public attachOnClick = true;
+
     private game: Game;
     private engine: Engine<IEntity>;
 
@@ -39,7 +41,7 @@ class DataViewer {
         if (entity) {
             this.drawDataFor(entity);
 
-            if (mouse.down) {
+            if (this.attachOnClick && mouse.down) {
                 if (entity != this.lastAttachedEntity) {
                     console.log("attach", entity);
                 }

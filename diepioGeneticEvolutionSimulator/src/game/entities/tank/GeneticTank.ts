@@ -20,6 +20,7 @@ class GeneticTank extends Tank {
     private noise: OpenSimplexNoise;
     private noiseProgress: number;
 
+    private static reproductionCost = TankLevels.requiredForLevel[10];
     private static maxGeneDistCompatible = 1.6;
     private static hueVariation = 30;
 
@@ -219,9 +220,12 @@ class GeneticTank extends Tank {
         const otherCare = other.genes.care * 0.3 + 0.1;
         const totalCare = this.genes.care + other.genes.care;
 
-        const thisPoints = this.levels.totalXP * (1 - thisCare);
-        const otherPoints = other.levels.totalXP * (1 - otherCare);
-        const givePoints = this.levels.totalXP * thisCare + other.levels.totalXP * otherCare;
+        const thisNewXP = this.levels.totalXP - GeneticTank.reproductionCost;
+        const otherNewXP = other.levels.totalXP - GeneticTank.reproductionCost;
+
+        const thisPoints = thisNewXP * (1 - thisCare);
+        const otherPoints = otherNewXP * (1 - otherCare);
+        const givePoints = thisNewXP * thisCare + otherNewXP * otherCare;
 
         TankBuild.reset(this.build);
         TankBuild.reset(other.build);

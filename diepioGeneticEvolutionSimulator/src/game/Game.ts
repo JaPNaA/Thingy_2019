@@ -11,12 +11,16 @@ import CircleQuadTree from "./engine/CircleQuadTree";
 import DataViewer from "./dataViewer/DataViewer";
 import Tank from "./entities/tank/Tank";
 import Config from "../config/Config";
+import Player from "./entities/tank/Player";
+import TankLevels from "./entities/tank/TankLevels";
+import TankBuild from "./entities/tank/TankBuild";
 
 type PolygonClass = new (game: Game, x: number, y: number) => Polygon;
 
 class Game {
     public entities: Entity[];
     public quadTree: CircleQuadTree<Entity>;
+    private config: Config;
 
     private static titleDelay: number = 2000;
 
@@ -35,6 +39,7 @@ class Game {
 
     constructor(config: Config) {
         this.entities = [];
+        this.config = config;
 
         this.initalTanks = config.initalTanks;
         this.maintainTanks = config.maintainTanks;
@@ -48,6 +53,10 @@ class Game {
         this.quadTree = this.engine.getQuadTree();
         this.dataViewer = new DataViewer(this, this.engine);
         this.setup();
+
+        if (config.player.beInTheGame) {
+            this.createPlayer();
+        }
 
         this.engine.camera.gotoNoTransition(this.size / 2, this.size / 2, Math.max(innerWidth, innerHeight) * 2);
         setTimeout(() =>
@@ -173,6 +182,21 @@ class Game {
                 new Genes()
             ));
         }
+    }
+
+    private createPlayer(): void {
+        const player = new Player(this, this.boundaries.width / 2, this.boundaries.height / 2);
+
+        for (const key of TankBuild.keys) {
+            player.build[key] = this.config.player.build[key];
+        }
+
+        player.levels.addXP(TankLevels.requiredForLevel[this.config.player.level] || 0);
+        player.updateStatsWithBuild();
+
+        this.dataViewer.attachOnClick = false;
+        this.engine.attachCameraTo(player);
+        this.addEntity(player);
     }
 }
 
