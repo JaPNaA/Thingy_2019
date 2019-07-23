@@ -188,10 +188,17 @@ class ConfigEditor<T> {
         elm.appendChild(input);
         elm.appendChild(label);
 
-        input.addEventListener("change", () => {
+        const changeHandler = () => {
             this.changed = true;
             config[key] = input.checked;
+        };
+
+        label.addEventListener("click", () => {
+            input.checked = !input.checked;
+            changeHandler();
         });
+
+        input.addEventListener("change", changeHandler);
 
         return { elm, input };
     }

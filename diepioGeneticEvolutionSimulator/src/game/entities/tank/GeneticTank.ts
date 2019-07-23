@@ -22,7 +22,7 @@ class GeneticTank extends Tank {
 
     private static reproductionCost = TankLevels.requiredForLevel[10];
     private static maxGeneDistCompatible = 1.6;
-    private static hueVariation = 30;
+    private static hueVariation = 45;
 
     private cursor: GeneticTankCursor;
 
@@ -237,7 +237,7 @@ class GeneticTank extends Tank {
         const baby = new GeneticTank(
             this.game, babyX, babyY,
             Genes.combineAndMutate(this.genes, other.genes),
-            (this.hue + other.hue) / 2 + (Math.random() - 0.5) * GeneticTank.hueVariation
+            this.mixHue(this.hue, other.hue) + (Math.random() - 0.5) * GeneticTank.hueVariation
         );
         baby.levels.addXP(givePoints);
         baby.setMotherTeam(this.teamID, totalCare);
@@ -296,6 +296,15 @@ class GeneticTank extends Tank {
         if (this.timeToNewTeamID < 0) {
             this.resetTeamId();
             this.timeToNewTeamID = undefined;
+        }
+    }
+
+    private mixHue(a: number, b: number): number {
+        const d = Math.abs(a - b);
+        if (d <= 180) {
+            return (a + b) / 2;
+        } else {
+            return (a + b) / 2 + 180 % 360;
         }
     }
 }

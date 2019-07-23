@@ -16,6 +16,8 @@ class Camera {
     private attachedFromX: number;
     private attachedFromY: number;
 
+    private cursorLocked: boolean;
+
     private attachee?: IEntity;
     private canvas: Canvas;
 
@@ -30,6 +32,8 @@ class Camera {
 
         this.attachedFromX = 0;
         this.attachedFromY = 0;
+
+        this.cursorLocked = false;
 
         this.updateLocationHandlers = [];
 
@@ -82,11 +86,27 @@ class Camera {
 
     public setup(): void {
         addEventListener("mousemove", e => {
-            if (!(keyboard.isDown("space") || mouse.down) || this.attached) { return; }
-            this.x += e.movementX;
-            this.y += e.movementY;
-            this.tx += e.movementX;
-            this.ty += e.movementY;
+            if (this.attached) { return; }
+            if (keyboard.isDown("space") || mouse.down) {
+                this.x += e.movementX;
+                this.y += e.movementY;
+                this.tx += e.movementX;
+                this.ty += e.movementY;
+            }
+        });
+
+        addEventListener("mouseout", () => {
+            if (keyboard.isDown("space")) {
+                document.body.requestPointerLock();
+                this.cursorLocked = true;
+            }
+        });
+
+        addEventListener("keyup", () => {
+            if (!keyboard.isDown("space") && this.cursorLocked) {
+                document.exitPointerLock();
+                this.cursorLocked = false;
+            }
         });
 
         addEventListener("wheel", e => {
@@ -101,6 +121,11 @@ class Camera {
             } else {
                 let x = e.clientX;
                 let y = e.clientY;
+
+                if (this.cursorLocked) {
+                    x = innerWidth / 2;
+                    y = innerHeight / 2;
+                }
 
                 const dx = -(x - this.tx) * (factor - 1);
                 const dy = -(y - this.ty) * (factor - 1);
