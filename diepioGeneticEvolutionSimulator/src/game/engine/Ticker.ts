@@ -1,7 +1,5 @@
 import IEntity from "./interfaces/IEntity";
 
-const SLEEP_THRESHOLD = 0.001;
-
 class Ticker<T extends IEntity> {
     public static fixedTime: number = 1000 / 120;
 
@@ -26,10 +24,6 @@ class Ticker<T extends IEntity> {
             for (const tickable of entities) {
                 tickable.fixedTick();
             }
-        }
-
-        for (const entity of entities) {
-            entity._sleeping = Math.abs(entity.vx) + Math.abs(entity.vy) < SLEEP_THRESHOLD;
         }
     }
 }

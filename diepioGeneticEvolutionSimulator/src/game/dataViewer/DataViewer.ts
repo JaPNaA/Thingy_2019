@@ -149,7 +149,8 @@ class DataViewer {
         } else if (entity instanceof Polygon) {
             return [[
                 "Polygon",
-                "Health: " + this.round(entity.health, 10)
+                "Health: " + this.round(entity.health, 10),
+                "Sleeping: " + entity._sleeping.toString()
             ].join("\n")];
         } else {
             return [entity.constructor.name + '\n' + "TeamID: " + entity.teamID];

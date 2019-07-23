@@ -24,8 +24,8 @@ abstract class Polygon extends Entity {
         this.x = x;
         this.y = y;
 
-        this.vx = 0;
-        this.vy = 0;
+        this.vx = (Math.random() - 0.5);
+        this.vy = (Math.random() - 0.5);
 
         this.vrotation = (Math.random() - 0.5) * 0.025;
         this.rotation = Math.random() * Math.PI * 2;

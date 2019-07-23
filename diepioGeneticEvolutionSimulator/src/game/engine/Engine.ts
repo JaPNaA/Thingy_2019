@@ -9,6 +9,7 @@ import Camera from "./Camera";
 import IEntity from "./interfaces/IEntity";
 import { mouse } from "./ui/Mouse";
 import CircleQuadTree from "./CircleQuadTree";
+import Sleeper from "./Sleeper";
 
 class Engine<T extends IEntity> {
     public canvas: Canvas;
@@ -22,6 +23,7 @@ class Engine<T extends IEntity> {
     private collider: CircleCollider<T>;
     private bounder: Bounder;
     private remover: Remover<T>;
+    private sleeper: Sleeper;
     private entities: T[];
     private renderHooks: Function[];
 
@@ -36,6 +38,7 @@ class Engine<T extends IEntity> {
         this.ticker = new Ticker();
         this.remover = new Remover(this.collider);
         this.bounder = new Bounder();
+        this.sleeper = new Sleeper();
         this.entities = entities;
 
         this.renderHooks = [];
@@ -56,6 +59,8 @@ class Engine<T extends IEntity> {
         if (this.debugRenderQuadTree) {
             this.renderer.debugRenderQuadtree(this.collider.quadTree);
         }
+
+        this.sleeper.sleepAll(this.entities);
 
         for (const hook of this.renderHooks) {
             hook();

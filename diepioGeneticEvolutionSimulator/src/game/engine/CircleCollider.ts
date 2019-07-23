@@ -7,9 +7,9 @@ class CircleCollider<T extends IEntity> {
 
     public collideAll(entities: T[]): void {
         for (const entity of entities) {
+            entity._collisionObj = undefined;
             if (entity._sleeping) { continue; }
             this.quadTree.updateSingle(entity);
-            entity._collisionObj = undefined;
         }
 
         for (let i = 0; i < entities.length; i++) {
