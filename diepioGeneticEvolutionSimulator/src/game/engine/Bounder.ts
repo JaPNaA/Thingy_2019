@@ -12,6 +12,8 @@ class Bounder {
         if (!this.boundaries) { return; }
 
         for (const entity of entities) {
+            if (entity._sleeping) { continue; }
+
             if (entity.x < entity.radius) {
                 entity.x = entity.radius;
                 entity.vx = Math.abs(entity.vx);

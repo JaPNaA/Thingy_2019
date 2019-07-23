@@ -21,8 +21,9 @@ class Ticker<T extends IEntity> {
         }
 
         for (this.leftOverFixed += deltaTime; this.leftOverFixed >= Ticker.fixedTime; this.leftOverFixed -= Ticker.fixedTime) {
-            for (const tickable of entities) {
-                tickable.fixedTick();
+            for (const entity of entities) {
+                if (entity._sleeping) { continue; }
+                entity.fixedTick();
             }
         }
     }
