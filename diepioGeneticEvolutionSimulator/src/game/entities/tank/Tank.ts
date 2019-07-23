@@ -235,6 +235,8 @@ abstract class Tank extends Entity implements IXPGivable {
     private fireBullet(canon: TankCanon): void {
         const bulletRadius = canon.width * this.radius / 2;
         const ang = this.rotation + canon.angle;
+
+        // create bullet
         const power = canon.power / this.tankClass.powerDivider;
         const bullet = new Bullet(
             this.game,
@@ -249,6 +251,11 @@ abstract class Tank extends Entity implements IXPGivable {
         );
         bullet.setFirer(this);
         this.game.addEntity(bullet);
+
+        // pushback
+        const pushback = bulletRadius * (1 + this.build.bulletSpeed) * 0.0025;
+        this.vx -= Math.cos(ang) * pushback;
+        this.vy -= Math.sin(ang) * pushback;
     }
 
     private normalize(vec: [number, number], scale: number = 1): [number, number] {
