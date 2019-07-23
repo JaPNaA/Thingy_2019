@@ -1,10 +1,10 @@
 import TankLevels from "../game/entities/tank/TankLevels";
 
 class Config {
-    public initalTanks: number = 96;
-    public maintainTanks: number = 32;
-    public targetEntities: number = 2400;
-    public size: number = 16000;
+    public initalTanks: number = 192;
+    public maintainTanks: number = 64;
+    public targetEntities: number = 6400;
+    public size: number = 24000;
 
     public spawnRates = {
         square: 5,

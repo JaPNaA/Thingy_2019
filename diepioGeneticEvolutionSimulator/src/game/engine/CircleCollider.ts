@@ -7,12 +7,14 @@ class CircleCollider<T extends IEntity> {
 
     public collideAll(entities: T[]): void {
         for (const entity of entities) {
+            if (entity._sleeping) { continue; }
             this.quadTree.updateSingle(entity);
             entity._collisionObj = undefined;
         }
 
         for (let i = 0; i < entities.length; i++) {
             const entity = entities[i];
+            if (entity._sleeping) { continue; }
             const other = this.quadTree.queryOne(entity.x, entity.y, entity.radius, entity);
             if (other) {
                 if (other._collisionObj !== entity) {
