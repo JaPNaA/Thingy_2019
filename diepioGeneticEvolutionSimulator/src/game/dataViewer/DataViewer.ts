@@ -134,6 +134,9 @@ class DataViewer {
             [
                 "--- Genes ---",
                 this.genesToString(entity.genes),
+            ].join("\n"),
+            [
+                "Number of canons: " + entity.tankClass.canons.length
             ].join("\n")];
         } else if (entity instanceof Bullet) {
             return [[

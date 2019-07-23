@@ -44,10 +44,9 @@ class TankCanon {
         let offset = this.offset;
         let cooldown = this.cooldown;
 
-        if (Math.random() < rate) {
-            angle += (Math.random() - 0.5) * Math.PI * 0.5;
-            angle %= Math.PI * 2;
-        }
+        angle += (Math.random() - 0.5) * Math.PI * 0.5 * rate;
+        angle %= Math.PI * 2;
+
         if (Math.random() < rate) {
             width = Math.max(Math.min(width + (Math.random() - 0.5) * 0.2, 2), 0.5);
         }

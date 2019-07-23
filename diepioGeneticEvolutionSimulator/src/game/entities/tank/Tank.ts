@@ -31,6 +31,7 @@ abstract class Tank extends Entity implements IXPGivable {
 
     public build: TankBuild;
     public levels: TankLevels;
+    public tankClass: TankClass;
 
     protected unstableness: number = 0;
     protected range: number = 720;
@@ -45,7 +46,6 @@ abstract class Tank extends Entity implements IXPGivable {
     protected ay: number;
 
     protected hue: number = Math.random() * 360;
-    protected tankClass: TankClass;
 
     private static fixedFriction: number = 0.995 ** Ticker.fixedTime;
     private static hpBarLength: number = 1;
