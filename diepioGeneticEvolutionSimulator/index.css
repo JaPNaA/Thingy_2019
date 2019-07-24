@@ -1,9 +1,10 @@
 body {
-    margin: 0;
+    margin: 8px;
     font-family: Roboto, Arial, Helvetica, sans-serif;
 }
 
 body.noScroll {
+    margin: 0;
     overflow: hidden;
 }
 
@@ -13,11 +14,7 @@ button {
 }
 
 .message {
-    margin: 8px;
-}
-
-.ConfigEditor {
-    margin: 8px;
+    margin-top: 8px;
 }
 
 .ConfigEditor .heading {

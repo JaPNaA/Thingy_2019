@@ -13,6 +13,10 @@ function setMessage(str?: string) {
     }
 }
 
+function removeNode(node: Node) {
+    node.parentElement!.removeChild(node);
+}
+
 const configEditor = new ConfigEditor("Config", new Config());
 configEditor.appendTo(document.body);
 configEditor.setInvalidSubmitionHandler(() => alert("Invalid config!"));
@@ -26,6 +30,7 @@ configEditor.setSubmitHandler(config => {
         document.body.scrollTop = document.documentElement.scrollTop = 0;
         document.body.classList.add("noScroll");
         configEditor.remove();
+        removeNode(document.getElementById("controls")!);
         setMessage();
 
         const game = new Game(config);
