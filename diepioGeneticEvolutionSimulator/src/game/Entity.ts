@@ -31,7 +31,7 @@ abstract class Entity implements IEntity {
         this.teamID = Entity.teamIDIncrementer++;
     }
 
-    public abstract render(X: CanvasRenderingContext2D): void;
+    public abstract render(X: CanvasRenderingContext2D, now: number): void;
     public abstract tick(deltaTime: number): void;
 
     public collideWith(other: Entity): void {

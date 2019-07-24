@@ -12,7 +12,9 @@ class Triangle extends Polygon {
         [Math.cos(Math.PI * 6 / 3) * Triangle.renderedRadius, Math.sin(Math.PI * 6 / 3) * Triangle.renderedRadius]
     ];
 
-    public render(X: CanvasRenderingContext2D): void {
+    public render(X: CanvasRenderingContext2D, now: number): void {
+        this.rotation = this.initalRotation + this.vrotation * now;
+
         X.translate(this.x, this.y);
         X.rotate(this.rotation);
         X.beginPath();

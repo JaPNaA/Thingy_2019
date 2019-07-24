@@ -19,6 +19,7 @@ class Renderer {
     }
 
     public renderEntitiesInTree(tree: CircleQuadTree<IEntity>) {
+        const now = performance.now();
         const viewWidth = this.canvas.width / this.camera.scale;
         const viewHeight = this.canvas.height / this.camera.scale;
         const viewX = -this.camera.x / this.camera.scale;
@@ -37,14 +38,14 @@ class Renderer {
         if (this.debugDrawHitCircle) {
             for (const entity of entities) {
                 this.X.save();
-                entity.render(this.X);
+                entity.render(this.X, now);
                 this.X.restore();
                 entity.__debugRenderHitCircle(this.X);
             }
         } else {
             for (const entity of entities) {
                 this.X.save();
-                entity.render(this.X);
+                entity.render(this.X, now);
                 this.X.restore();
             }
         }

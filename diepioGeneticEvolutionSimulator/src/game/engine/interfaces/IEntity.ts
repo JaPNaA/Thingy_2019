@@ -12,7 +12,7 @@ export default interface IEntity {
     _collisionObj?: IEntity;
     _sleeping: boolean;
 
-    render(X: CanvasRenderingContext2D): void;
+    render(X: CanvasRenderingContext2D, now: number): void;
     tick(deltaTime: number): void;
     fixedTick(): void;
     collideWith(other: any): void;

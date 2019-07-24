@@ -16,6 +16,8 @@ abstract class Polygon extends Entity {
     public teamID = Polygon.polygonTeam;
     public targetable = true;
 
+    protected initalRotation: number;
+
     private static fixedFriction: number = 0.995 ** Ticker.fixedTime;
     private static polygonTeam: number = -1;
 
@@ -28,12 +30,11 @@ abstract class Polygon extends Entity {
         this.vy = (Math.random() - 0.5);
 
         this.vrotation = (Math.random() - 0.5) * 0.0015;
-        this.rotation = Math.random() * Math.PI * 2;
+        this.initalRotation = Math.random() * Math.PI * 2;
+        this.rotation = this.initalRotation;
     }
 
-    public tick(deltaTime: number): void {
-        this.rotation += this.vrotation * deltaTime;
-    }
+    public tick(): void { }
 
     public fixedTick(): void {
         this.x += this.vx * Ticker.fixedTime;

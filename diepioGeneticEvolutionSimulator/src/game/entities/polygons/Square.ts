@@ -7,7 +7,9 @@ class Square extends Polygon {
 
     private static renderRadius = 14;
 
-    public render(X: CanvasRenderingContext2D): void {
+    public render(X: CanvasRenderingContext2D, now: number): void {
+        this.rotation = this.initalRotation + this.vrotation * now;
+
         X.translate(this.x, this.y);
         X.rotate(this.rotation);
         X.beginPath();
