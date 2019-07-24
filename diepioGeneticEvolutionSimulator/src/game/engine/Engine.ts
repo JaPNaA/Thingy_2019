@@ -18,6 +18,8 @@ class Engine<T extends IEntity> {
     public debugRenderQuadTree: boolean;
     public debugDrawHitCircles: boolean;
 
+    private paused: boolean;
+
     private renderer: Renderer;
     private ticker: Ticker<T>;
     private collider: CircleCollider<T>;
@@ -30,6 +32,8 @@ class Engine<T extends IEntity> {
     constructor(entities: T[]) {
         this.debugDrawHitCircles = false;
         this.debugRenderQuadTree = false;
+
+        this.paused = false;
 
         this.canvas = new Canvas();
         this.camera = new Camera(this.canvas);
@@ -45,25 +49,46 @@ class Engine<T extends IEntity> {
         mouse.attachCamera(this.camera);
     }
 
+    public pause() {
+        this.paused = true;
+    }
+
+    public resume() {
+        if (!this.paused) { return; }
+        this.paused = false;
+        this.ticker.resume();
+    }
+
     public render() {
-        this.ticker.tickAll(this.entities);
-        this.collider.collideAll(this.entities);
-        this.bounder.boundAll(this.entities);
-        this.remover.removeAllIfDestoryed(this.entities);
+        if (this.paused) {
+            this.camera.updateLocation();
 
-        this.camera.updateLocation();
+            this.renderer.debugDrawHitCircle = this.debugDrawHitCircles
+            this.renderer.renderEntitiesInTree(this.collider.quadTree);
 
-        this.renderer.debugDrawHitCircle = this.debugDrawHitCircles
-        this.renderer.renderEntitiesInTree(this.collider.quadTree);
+            if (this.debugRenderQuadTree) {
+                this.renderer.debugRenderQuadtree(this.collider.quadTree);
+            }
+        } else {
+            this.ticker.tickAll(this.entities);
+            this.collider.collideAll(this.entities);
+            this.bounder.boundAll(this.entities);
+            this.remover.removeAllIfDestoryed(this.entities);
 
-        if (this.debugRenderQuadTree) {
-            this.renderer.debugRenderQuadtree(this.collider.quadTree);
-        }
+            this.camera.updateLocation();
 
-        this.sleeper.sleepAll(this.entities);
+            this.renderer.debugDrawHitCircle = this.debugDrawHitCircles
+            this.renderer.renderEntitiesInTree(this.collider.quadTree);
 
-        for (const hook of this.renderHooks) {
-            hook();
+            if (this.debugRenderQuadTree) {
+                this.renderer.debugRenderQuadtree(this.collider.quadTree);
+            }
+
+            this.sleeper.sleepAll(this.entities);
+
+            for (const hook of this.renderHooks) {
+                hook();
+            }
         }
     }
 

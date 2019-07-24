@@ -89,6 +89,14 @@ class Game {
         }
     }
 
+    public pause(): void {
+        this.engine.pause();
+    }
+
+    public resume(): void {
+        this.engine.resume();
+    }
+
     private transitionIn(): void {
         this.engine.camera.gotoNoTransition(this.size / 2, this.size / 2, Math.max(innerWidth, innerHeight) * 2);
         setTimeout(() =>

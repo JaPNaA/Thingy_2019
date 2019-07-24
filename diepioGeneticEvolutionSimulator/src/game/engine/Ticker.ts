@@ -11,7 +11,11 @@ class Ticker<T extends IEntity> {
         this.leftOverFixed = 0;
     }
 
-    tickAll(entities: T[]): void {
+    public resume(): void {
+        this.then = performance.now();
+    }
+
+    public tickAll(entities: T[]): void {
         const now = performance.now();
         const deltaTime = now - this.then;
         this.then = now;

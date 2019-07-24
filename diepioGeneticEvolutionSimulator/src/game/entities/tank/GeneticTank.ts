@@ -20,7 +20,7 @@ class GeneticTank extends Tank {
     private noise: OpenSimplexNoise;
     private noiseProgress: number;
 
-    private static reproductionCost = TankLevels.requiredForLevel[10];
+    private static reproductionCost = TankLevels.requiredForLevel[7];
     private static maxGeneDistCompatible = 1.6;
     private static hueVariation = 45;
 
