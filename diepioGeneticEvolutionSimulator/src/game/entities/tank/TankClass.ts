@@ -2,34 +2,18 @@ import TankCanon from "./TankCanon";
 
 class TankClass {
     public readonly canons: TankCanon[];
-    public readonly bulletSpeedBoost: number;
-    public readonly rangeBoost: number;
     public readonly powerDivider: number;
 
-    private static readonly canonNumberChangeChance: number = 0.4;
-    private static readonly addCanonChance: number = 0.55;
+    private static readonly canonNumberChangeChance: number = 0.6;
 
-    constructor(canons: TankCanon[], options?: {
-        bulletSpeedBoost?: number,
-        rangeBoost?: number
-    }) {
+    constructor(canons: TankCanon[]) {
         this.canons = canons;
-        this.bulletSpeedBoost = 1;
-        this.rangeBoost = 1;
-
-        if (options) {
-            if (options.bulletSpeedBoost) {
-                this.bulletSpeedBoost = options.bulletSpeedBoost
-            }
-            if (options.rangeBoost) {
-                this.rangeBoost = options.rangeBoost;
-            }
-        }
 
         this.powerDivider = 0;
         for (const canon of canons) {
-            this.powerDivider += 1 / canon.power;
+            this.powerDivider += canon.power;
         }
+        this.powerDivider = 1 + Math.log(this.powerDivider);
     }
 
     public clone(): TankClass {
@@ -37,22 +21,19 @@ class TankClass {
         for (const canon of this.canons) {
             newCanons.push(canon.clone());
         }
-        return new TankClass(newCanons, {
-            bulletSpeedBoost: this.bulletSpeedBoost,
-            rangeBoost: this.rangeBoost
-        });
+        return new TankClass(newCanons);
     }
 
     public cloneAndMutate(geneMutationRate: number): TankClass {
-        console.log("clone and mutate");
         const mutationRate = geneMutationRate * TankClass.canonNumberChangeChance;
         const newCanons = [];
+        let addCanonChance = 1 / (this.canons.length + 1);
 
         for (const canon of this.canons) {
             const rand = Math.random();
 
             if (rand < mutationRate) {
-                if (rand < mutationRate * TankClass.addCanonChance) {
+                if (rand < mutationRate * addCanonChance) {
                     newCanons.push(canon.cloneAndMutate(geneMutationRate));
                     newCanons.push(canon.cloneAndMutate(geneMutationRate));
                 } // else: lose canon
@@ -61,10 +42,30 @@ class TankClass {
             }
         }
 
-        return new TankClass(newCanons, {
-            bulletSpeedBoost: this.bulletSpeedBoost,
-            rangeBoost: this.rangeBoost
-        });
+        return new TankClass(newCanons);
+    }
+
+    public mixAndMutate(other: TankClass, geneMutationRate: number): TankClass {
+        const canons: TankCanon[] = [];
+        const avgNumberOfCanons = (other.canons.length + this.canons.length) / 2;
+        const numberOfCanons = Math.random() < 0.5 ? Math.floor(avgNumberOfCanons) : Math.ceil(avgNumberOfCanons);
+
+        for (let i = 0; i < numberOfCanons; i++) {
+            if (this.canons[i]) {
+                if (other.canons[i]) {
+                    canons.push(
+                        Math.random() < 0.5 ?
+                            this.canons[i] : other.canons[i]
+                    );
+                } else {
+                    canons.push(this.canons[i]);
+                }
+            } else {
+                canons.push(other.canons[i]);
+            }
+        }
+
+        return new TankClass(canons).cloneAndMutate(geneMutationRate);
     }
 }
 

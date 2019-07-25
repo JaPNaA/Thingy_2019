@@ -10,6 +10,7 @@ export default interface IEntity {
     _quadTreeX: number;
     _quadTreeY: number;
     _collisionObj?: IEntity;
+    _canSleep: boolean;
     _sleeping: boolean;
 
     render(X: CanvasRenderingContext2D, now: number): void;

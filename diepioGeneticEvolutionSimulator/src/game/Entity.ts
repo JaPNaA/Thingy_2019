@@ -16,6 +16,7 @@ abstract class Entity implements IEntity {
     public _quadTreeX: number = 0;
     public _quadTreeY: number = 0;
     public _collisionObj?: Entity;
+    public _canSleep: boolean = true;
     public _sleeping: boolean = false;
 
     public destoryed: boolean;

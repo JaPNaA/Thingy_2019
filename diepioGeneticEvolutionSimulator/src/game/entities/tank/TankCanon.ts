@@ -3,6 +3,7 @@ class TankCanon {
     public readonly bulletPower: number;
     public readonly unstableness: number;
     public warmth: number = 0;
+    public cooldownTime: number;
 
     private static readonly maxAccuracyLength: number = 1.5;
     private static readonly baseWidth: number = 0.75;
@@ -12,12 +13,13 @@ class TankCanon {
         public readonly width: number = TankCanon.baseWidth,
         public readonly length: number = 0.85,
         public readonly offset: number = 0,
-        public readonly cooldown: number = 1,
+        private readonly cooldown: number = 1,
         public readonly visible: boolean = true
     ) {
         const widthNorm = width / TankCanon.baseWidth;
-        this.bulletPower = widthNorm * widthNorm;
-        this.cooldown *= widthNorm;
+        const widthNorm2 = widthNorm * widthNorm
+        this.bulletPower = widthNorm2;
+        this.cooldownTime = widthNorm2 * cooldown;
         this.power = this.bulletPower / cooldown;
         this.unstableness = Math.min(Math.max(
             1 - length / TankCanon.maxAccuracyLength,

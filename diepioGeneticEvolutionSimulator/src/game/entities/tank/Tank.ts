@@ -29,6 +29,8 @@ abstract class Tank extends Entity implements IXPGivable {
     public vy: number;
     public targetable = true;
 
+    public _canSleep = false;
+
     public build: TankBuild;
     public levels: TankLevels;
     public tankClass: TankClass;
@@ -214,7 +216,7 @@ abstract class Tank extends Entity implements IXPGivable {
 
     private fireIfShould(deltaTime: number): void {
         for (const canon of this.tankClass.canons) {
-            const cooldown = canon.cooldown * this.cooldownSpeed;
+            const cooldown = canon.cooldownTime * this.cooldownSpeed;
             canon.warmth += deltaTime;
 
             if (this.getTriggered()) {
@@ -237,14 +239,14 @@ abstract class Tank extends Entity implements IXPGivable {
         const ang = this.rotation + canon.angle;
 
         // create bullet
-        const power = canon.power / this.tankClass.powerDivider;
+        const power = canon.bulletPower / this.tankClass.powerDivider;
         const bullet = new Bullet(
             this.game,
             this.x + Math.cos(ang) * (this.radius + bulletRadius),
             this.y + Math.sin(ang) * (this.radius + bulletRadius),
             0.25 + 0.03 * this.build.bulletSpeed ** 1.4,
             ang + (Math.random() - 0.5) * (this.unstableness + canon.unstableness),
-            0.5 + (0.5 + this.build.bulletPenetration * 0.2) * power,
+            0.5 + (0.5 + this.build.bulletPenetration * 0.2),
             0.5 + (0.5 + this.build.bulletDamage * 0.2) * power,
             bulletRadius,
             this.hue

@@ -136,7 +136,8 @@ class DataViewer {
                 this.genesToString(entity.genes),
             ].join("\n"),
             [
-                "Number of canons: " + entity.tankClass.canons.length
+                "Number of canons: " + entity.tankClass.canons.length,
+                "Power divisor: " + this.round(entity.tankClass.powerDivider, 1000)
             ].join("\n")];
         } else if (entity instanceof Bullet) {
             return [[
@@ -144,7 +145,8 @@ class DataViewer {
                 "TeamID: " + entity.teamID,
                 "TTL: " + Math.floor(entity.ttl),
                 "Health: " + this.round(entity.health, 10),
-                "Damage: " + this.round(entity.damage, 10)
+                "Damage: " + this.round(entity.damage, 10),
+                "Damage on hit: " + this.round(entity.health * entity.damage, 10)
             ].join("\n")];
         } else if (entity instanceof Polygon) {
             return [[

@@ -20,7 +20,7 @@ class GeneticTank extends Tank {
     private noise: OpenSimplexNoise;
     private noiseProgress: number;
 
-    private static reproductionCost = TankLevels.requiredForLevel[7];
+    private static reproductionCost = TankLevels.requiredForLevel[8];
     private static maxGeneDistCompatible = 1.6;
     private static hueVariation = 45;
 
@@ -250,10 +250,6 @@ class GeneticTank extends Tank {
         this.mate = undefined;
         other.target = undefined;
         other.mate = undefined;
-
-        console.log("mated", {
-            baby, this: this, other
-        });
     }
 
     private updateMate(): void {
