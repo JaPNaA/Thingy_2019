@@ -28,6 +28,7 @@ class DataViewer {
 
     public setup(): void {
         this.engine.onRender(() => this.onRender());
+        this.engine.canvas.touchControls.onDoubleTap(() => this.engine.attachCameraTo(undefined));
     }
 
     public onRender(): void {

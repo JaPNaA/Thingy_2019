@@ -1,6 +1,9 @@
+import TouchControls from "./TouchControls";
+
 class Canvas {
     public width: number;
     public height: number;
+    public touchControls: TouchControls;
     private canvas: HTMLCanvasElement;
     private X: CanvasRenderingContext2D;
 
@@ -10,6 +13,7 @@ class Canvas {
 
         this.canvas.width = this.width = 1280;
         this.canvas.height = this.height = 720;
+        this.touchControls = new TouchControls(this.canvas);
 
         this.setup();
     }
@@ -23,6 +27,7 @@ class Canvas {
     }
 
     private setup(): void {
+        this.touchControls.setup();
         addEventListener("resize", this.resizeHandler.bind(this));
         this.resizeHandler();
     }

@@ -2,6 +2,7 @@ import { keyboard } from "./ui/Keyboard";
 import { mouse } from "./ui/Mouse";
 import IEntity from "./interfaces/IEntity";
 import Canvas from "./Canvas";
+import TouchControls from "./TouchControls";
 
 class Camera {
     public x: number;
@@ -88,10 +89,7 @@ class Camera {
         addEventListener("mousemove", e => {
             if (this.attached) { return; }
             if (keyboard.isDown("space") || mouse.down) {
-                this.x += e.movementX;
-                this.y += e.movementY;
-                this.tx += e.movementX;
-                this.ty += e.movementY;
+                this.move(e.movementX, e.movementY);
             }
         });
 
@@ -111,29 +109,20 @@ class Camera {
 
         addEventListener("wheel", e => {
             let factor = 1.2;
-
             if (e.deltaY > 0) {
                 factor = 1 / factor;
             }
 
-            if (this.attached) {
-                this.goto(this.attachee!.x, this.attachee!.y);
-            } else {
-                let x = e.clientX;
-                let y = e.clientY;
+            this.zoomInto(factor, e.clientX, e.clientY);
+        });
 
-                if (this.cursorLocked) {
-                    x = innerWidth / 2;
-                    y = innerHeight / 2;
-                }
+        this.canvas.touchControls.onMove(e => {
+            this.move(e.x, e.y);
+        });
 
-                const dx = -(x - this.tx) * (factor - 1);
-                const dy = -(y - this.ty) * (factor - 1);
-                this.tx += dx;
-                this.ty += dy;
-            }
-
-            this.tScale *= factor;
+        this.canvas.touchControls.onZoom(e => {
+            const [factor, pos] = e;
+            this.zoomInto(factor, pos.x, pos.y);
         });
     }
 
@@ -144,6 +133,34 @@ class Camera {
     public updateLocation(): void {
         this.updateTarget();
         this.ease();
+    }
+
+    private zoomInto(factor: number, x_: number, y_: number): void {
+        if (this.attached) {
+            this.goto(this.attachee!.x, this.attachee!.y);
+        } else {
+            let x = x_;
+            let y = y_;
+
+            if (this.cursorLocked) {
+                x = innerWidth / 2;
+                y = innerHeight / 2;
+            }
+
+            const dx = -(x - this.tx) * (factor - 1);
+            const dy = -(y - this.ty) * (factor - 1);
+            this.tx += dx;
+            this.ty += dy;
+        }
+
+        this.tScale *= factor;
+    }
+
+    private move(dx: number, dy: number): void {
+        this.x += dx;
+        this.y += dy;
+        this.tx += dx;
+        this.ty += dy;
     }
 
     private updateTarget(): void {
