@@ -399,6 +399,7 @@
         _updateInlineStyles() {
             if (this.scale > 6) {
                 this.img.style.setProperty("image-rendering", "crisp-edges");
+                this.img.style.setProperty("image-rendering", "pixelated");
             } else {
                 this.img.style.setProperty("image-rendering", "unset");
             }
@@ -426,6 +427,7 @@
          * @param {MouseEvent} e event
          */
         _onMouseDown(e) {
+            if (e.button !== 0) { return; }
             e.preventDefault();
             this.isDragging = true;
         }
@@ -435,6 +437,7 @@
          * @param {MouseEvent} e event
          */
         _onMouseUp(e) {
+            if (e.button !== 0) { return; }
             e.preventDefault();
             this.isDragging = false;
 
@@ -578,6 +581,8 @@
     function initOverlayImageViewer() {
         if (CONFIG.openImageByLinkClick) {
             addEventListener("click", function (e) {
+                if (e.shiftKey || e.ctrlKey || e.altKey) { return; }
+
                 // @ts-ignore
                 const link = getLinkAncestor(e.target);
                 if (!link) { return; }
@@ -610,7 +615,7 @@
 
     /**
      * Removes all children of parent
-     * @param {Element} parent 
+     * @param {Element} parent
      */
     function removeChildrenOf(parent) {
         while (parent.firstChild) {
