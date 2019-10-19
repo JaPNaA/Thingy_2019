@@ -2,7 +2,7 @@ import Tetromino from "./tetromino/tetromino.js";
 import PlayField from "./playField/playfield.js";
 import TetrominoGenerator from "./tetromino/tetrominoGenerator.js";
 import IGameHooks from "./iGameHooks.js";
-import _null from "../utils/_null.js";
+import _null from "../utils/anyNull.js";
 import GamePhysics from "./gamePhysics.js";
 import GameHold from "./gameHold.js";
 import GameScoring from "./gameScoring.js";

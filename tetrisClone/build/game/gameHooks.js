@@ -1,4 +1,4 @@
-import _null from "../utils/_null.js";
+import _null from "../utils/anyNull.js";
 var GameHooks = /** @class */ (function () {
     function GameHooks() {
         this.newTetrominoFunc = _null;
