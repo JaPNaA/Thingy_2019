@@ -724,13 +724,43 @@
         const img = createHTMLElement("img");
         img.src = src;
 
+
         if (!img.complete) {
-            await new Promise((res, rej) => {
-                img.addEventListener("load", () => res());
-                img.addEventListener("error", () => rej("Error loading image"));
-            });
+            const loadingElm = createLoadingElement();
+
+            try {
+                await new Promise((res, rej) => {
+                    img.addEventListener("load", () => res());
+                    img.addEventListener("error", () => rej("Error loading image"));
+                });
+            } catch (err) {
+                throw err;
+            } finally {
+                loadingElm.parentElement && loadingElm.parentElement.removeChild(loadingElm);
+            }
         }
 
         return new ImageViewer(img, !isJustImage);
+    }
+
+    function createLoadingElement() {
+        /** @type {HTMLDivElement} */
+        const loadingElm = createHTMLElement("div");
+        loadingElm.style.position = "fixed";
+        loadingElm.style.top = "50%";
+        loadingElm.style.left = "50%";
+        loadingElm.style.padding = "16px";
+        loadingElm.style.transform = "translate(-50%, -50%)";
+        loadingElm.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+        loadingElm.style.color = "#ffffff";
+        loadingElm.style.fontWeight = "700";
+        loadingElm.style.fontFamily = "sans";
+        loadingElm.style.textAlign = "center";
+
+        loadingElm.innerText = "Loading image...";
+
+        document.body.appendChild(loadingElm);
+
+        return loadingElm;
     }
 })();
