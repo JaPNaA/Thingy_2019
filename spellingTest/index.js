@@ -88,7 +88,7 @@ function log(text) {
 async function main() {
     const wordsStr = await fetch("./words.txt").then(e => e.text());
     if (!wordsStr) { throw new Error("No words loaded"); }
-    const words = wordsStr.split("\n");
+    const words = wordsStr.split("\n").filter(e => e.trim().length > 0);
 
     while (true) {
         const test = new Test(words);
