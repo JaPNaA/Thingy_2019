@@ -1,0 +1,15 @@
+code {
+    font-family: Consolas, 'Courier New', Courier, monospace;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+code.correct, span.correct {
+    color: #093101;
+    background-color: #d3f0cd;
+}
+
+code.incorrect, span.incorrect {
+    color: #3d0404;
+    background-color: #e9cfcf;
+}
