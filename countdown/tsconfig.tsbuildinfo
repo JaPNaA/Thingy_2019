@@ -1,0 +1,63 @@
+{
+  "program": {
+    "fileInfos": {
+      "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.d.ts": {
+        "version": "49ff9798f592c8b7e628fd881401e68810c1b3589ecd7a41b32b3c287374cde0"
+      },
+      "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.es5.d.ts": {
+        "version": "ff5688d6b2fcfef06842a395d7ff4d5730d45b724d4c48913118c889829052a1"
+      },
+      "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.dom.d.ts": {
+        "version": "2d53f3741e5a4f78a90f623387d71a1cc809bb258f10cdaec034b67cbf71022f"
+      },
+      "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.webworker.importscripts.d.ts": {
+        "version": "fe4e59403e34c7ff747abe4ff6abbc7718229556d7c1a5b93473fb53156c913b"
+      },
+      "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.scripthost.d.ts": {
+        "version": "b9faa17292f17d2ad75e34fac77dd63a6403af1dba02d39cd0cbb9ffdf3de8b9"
+      },
+      "./src/date.ts": {
+        "version": "8c96e249847384a0f3602560492f1b87d3a1f206237276455c5297fad4bfa039"
+      },
+      "./src/utils.ts": {
+        "version": "c3612f082aa66e14fbeefb506cde2deac0ea4a8f63545df96eb9a6282c9ab132"
+      },
+      "./src/index.ts": {
+        "version": "fb22f80659c6eedac279ecbf2d32feccdb78a928669d752b2058900c26f72fcc",
+        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+      }
+    },
+    "options": {
+      "target": 1,
+      "module": 5,
+      "declaration": true,
+      "declarationMap": false,
+      "outDir": "./dist",
+      "rootDir": "./src",
+      "composite": true,
+      "removeComments": true,
+      "strict": true,
+      "esModuleInterop": true,
+      "watch": true,
+      "configFilePath": "./tsconfig.json"
+    },
+    "referencedMap": {
+      "./src/index.ts": [
+        "./src/date.ts",
+        "./src/utils.ts"
+      ]
+    },
+    "exportedModulesMap": {},
+    "semanticDiagnosticsPerFile": [
+      "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.d.ts",
+      "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.es5.d.ts",
+      "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.dom.d.ts",
+      "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.webworker.importscripts.d.ts",
+      "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.scripthost.d.ts",
+      "./src/date.ts",
+      "./src/utils.ts",
+      "./src/index.ts"
+    ]
+  },
+  "version": "3.6.4"
+}

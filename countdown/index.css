@@ -1,0 +1,130 @@
+:root {
+    --dark-blue: #1c2b80;
+    --light-blue: #8597ff;
+    --theme-blue: #3856ff;
+    --neutral: #495180;
+    --secondary: #2d45cc;
+}
+
+body {
+    background-color: var(--neutral);
+    margin: 0;
+}
+
+#start.view {
+    display: grid;
+    grid-template:
+        "top"
+        "middle";
+
+    grid-template-rows: 1fr 2fr;
+
+    width: 100%;
+    height: 100vh;
+}
+
+#start .section.top {
+    grid-area: top;
+    width: 100%;
+    height: 100%;
+    align-self: center;
+}
+
+#start .logoContainer {
+    width: 100%;
+    height: 100%;
+}
+
+#start .logoContainer img {
+    width: 100%;
+    height: 100%;
+}
+
+#start .section.middle {
+    padding: 16px;
+    background-color: var(--light-blue);
+}
+
+.horizontalSelect {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+}
+
+.horizontalSelect span {
+    display: block;
+    flex-grow: 1;
+    text-align: center;
+    padding: 8px;
+}
+
+.horizontalSelect span:hover {
+    background-color: var(--theme-blue);
+}
+
+.timeAndDateSelect {
+    display: grid;
+    grid-template:
+        "dateSelect"
+        "timeSelect"
+        "submitContainer";
+
+    gap: 32px;
+}
+
+.timeAndDateSelect .dateSelect {
+    grid-area: dateSelect;
+}
+
+.timeAndDateSelect .timeSelect {
+    grid-area: timeSelect;
+}
+
+.timeAndDateSelect .select {
+    display: flex;
+    width: 100%;
+}
+
+.timeAndDateSelect .input {
+    flex-grow: 1;
+
+    margin: 4px;
+
+    display: grid;
+    grid-template:
+        "label"
+        "input";
+}
+
+.timeAndDateSelect .input label {
+    grid-area: label;
+    width: 100%;
+}
+
+.timeAndDateSelect .input input {
+    grid-area: input;
+    width: 100%;
+
+    height: 24px;
+    background-color: transparent;
+
+    border-left: none;
+    border-top: none;
+    border-right: none;
+    border-bottom: 2px solid var(--dark-blue);
+}
+
+.timeAndDateSelect .submitContainer {
+    grid-area: submitContainer;
+
+    display: flex;
+    align-items: center;
+
+    height: 64px;
+    background-color: var(--theme-blue);
+}
+
+.timeAndDateSelect .submitContainer #submit {
+    width: 100%;
+    text-align: center;
+}
