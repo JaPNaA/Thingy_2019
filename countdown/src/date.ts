@@ -6,18 +6,27 @@ interface DateDiff {
     minutes: number;
     seconds: number;
     milliseconds: number;
-}
+};
+
+const dateDiffKeys: (keyof DateDiff)[] = ["years", "months", "days", "hours", "minutes", "seconds", "milliseconds"];
 
 export function dateDiffToString(dateDiff: DateDiff): string {
     const diffs = [];
 
-    if (dateDiff.years !== 0) { diffs.push(dateDiff.years + " years"); }
-    if (dateDiff.months !== 0) { diffs.push(dateDiff.months + " months"); }
-    if (dateDiff.days !== 0) { diffs.push(dateDiff.days + " days"); }
-    if (dateDiff.hours !== 0) { diffs.push(dateDiff.hours + " hours"); }
-    if (dateDiff.minutes !== 0) { diffs.push(dateDiff.minutes + " minutes"); }
-    if (dateDiff.seconds !== 0) { diffs.push(dateDiff.seconds + " seconds"); }
-    if (dateDiff.milliseconds !== 0) { diffs.push(dateDiff.milliseconds + " milliseconds"); }
+    let ignoring = true;
+
+    for (let i = 0; i < dateDiffKeys.length; i++) {
+        const key = dateDiffKeys[i];
+        if (dateDiff[key] !== 0) {
+            ignoring = false;
+        }
+
+        if (ignoring) { continue; }
+
+        diffs.push(dateDiff[key].toString() + " " + key);
+    }
+
+    // if (dateDiff.years)
 
     return diffs.join(", ");
 }
@@ -56,6 +65,8 @@ function getClosestYearlyDate(now: Date, date: Date): Date {
     }
 }
 
+//! bug: not accurate
+// fix: traverse dates instead of subtracting
 function dateDiff(a: Date, b: Date): DateDiff {
     return normalizeDateDiff({
         years: a.getFullYear() - b.getFullYear(),
@@ -69,6 +80,7 @@ function dateDiff(a: Date, b: Date): DateDiff {
 }
 
 function normalizeDateDiff(dateDiff: DateDiff): DateDiff {
+    // console.log(dateDiff);
     const date = new Date(
         dateDiff.years,
         dateDiff.months,

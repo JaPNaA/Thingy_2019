@@ -17,13 +17,31 @@
         "version": "b9faa17292f17d2ad75e34fac77dd63a6403af1dba02d39cd0cbb9ffdf3de8b9"
       },
       "./src/date.ts": {
-        "version": "8c96e249847384a0f3602560492f1b87d3a1f206237276455c5297fad4bfa039"
+        "version": "b89a8ed9e4d1875363a2cda635b07c98d9f954fdc59a2ff460b1fc9ba83d565f",
+        "signature": "46c1424fae26b22a60df6f0ef9eddf35fbe94e5fb73185ac6b41961dfbf5f778"
+      },
+      "./src/view/view.ts": {
+        "version": "0598cae8e3d9c2e1813f50da84ce45a0a864fd1f209bc780f4b3d298a03f5f4e",
+        "signature": "577fa4db4bf92461633100151bafcac8e003efbba9fb6c4d22fa41fc873cf945"
+      },
+      "./src/view/views.ts": {
+        "version": "6c5306b341e3bdb62311b844b0cadf6cfc5874b83c3a2c966050918b4929e527",
+        "signature": "49299d428091b4e979bd8f1c83103aa00c52f1267af5c156af5e2148b567e633"
       },
       "./src/utils.ts": {
-        "version": "c3612f082aa66e14fbeefb506cde2deac0ea4a8f63545df96eb9a6282c9ab132"
+        "version": "630dcf680d0cbd589894baadae3f7bac5cdd3ffeecf2cb4d15667e47f1d5b4cc",
+        "signature": "912e42748622601e6b404debe37e86ee4f3a2a32011c3af1057f46f32c29d87a"
+      },
+      "./src/view/views/countdownView.ts": {
+        "version": "27adc059efd33f0238e5a11a1c5dea57e4d074b4688fd57c80732fc459cf1918",
+        "signature": "70a080f4a4548fac0e18b16e31a7ea880d81a11d78d89151e16d7948ab1d26f4"
+      },
+      "./src/view/views/startView.ts": {
+        "version": "e4462fecc811ae5909b6e59b1bc99d9f6dc59b7bd628868fb1d2e6f551fd6499",
+        "signature": "4d1f7a08d7e716a697450ff0ef0e9f43e4970d33b366fe1c63310f52b01dd9f1"
       },
       "./src/index.ts": {
-        "version": "fb22f80659c6eedac279ecbf2d32feccdb78a928669d752b2058900c26f72fcc",
+        "version": "d14236bbd25367462eb276ff51d4471c23d0d5c060b2d437987feb50a813b398",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       }
     },
@@ -42,12 +60,36 @@
       "configFilePath": "./tsconfig.json"
     },
     "referencedMap": {
-      "./src/index.ts": [
-        "./src/date.ts",
+      "./src/view/views.ts": [
+        "./src/view/view.ts"
+      ],
+      "./src/view/views/countdownView.ts": [
+        "./src/view/view.ts",
+        "./src/utils.ts",
+        "./src/date.ts"
+      ],
+      "./src/view/views/startView.ts": [
+        "./src/view/view.ts",
+        "./src/view/views.ts",
+        "./src/view/views/countdownView.ts",
         "./src/utils.ts"
+      ],
+      "./src/index.ts": [
+        "./src/view/views.ts",
+        "./src/view/views/startView.ts"
       ]
     },
-    "exportedModulesMap": {},
+    "exportedModulesMap": {
+      "./src/view/views.ts": [
+        "./src/view/view.ts"
+      ],
+      "./src/view/views/countdownView.ts": [
+        "./src/view/view.ts"
+      ],
+      "./src/view/views/startView.ts": [
+        "./src/view/view.ts"
+      ]
+    },
     "semanticDiagnosticsPerFile": [
       "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.d.ts",
       "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.es5.d.ts",
@@ -55,7 +97,11 @@
       "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.webworker.importscripts.d.ts",
       "../../../../../../.nvm/versions/node/v10.16.0/lib/node_modules/typescript/lib/lib.scripthost.d.ts",
       "./src/date.ts",
+      "./src/view/view.ts",
+      "./src/view/views.ts",
       "./src/utils.ts",
+      "./src/view/views/countdownView.ts",
+      "./src/view/views/startView.ts",
       "./src/index.ts"
     ]
   },
