@@ -1,4 +1,6 @@
-interface DateDiff {
+import CalendarWalker from "./CalendarWalker.js";
+
+export interface DateDiff {
     years: number;
     months: number;
     days: number;
@@ -6,6 +8,7 @@ interface DateDiff {
     minutes: number;
     seconds: number;
     milliseconds: number;
+    negative: boolean;
 };
 
 const dateDiffKeys: (keyof DateDiff)[] = ["years", "months", "days", "hours", "minutes", "seconds", "milliseconds"];
@@ -41,6 +44,36 @@ export function getClosestDateDifferenceMilliseconds(a: Date, b: Date): number {
     return closest.getTime() - a.getTime();
 }
 
+function dateDiff(a_: Date, b_: Date): DateDiff {
+    let a: Date, b: Date;
+    let negative: boolean;
+
+    if (a_.getTime() < b_.getTime()) {
+        negative = true;
+        a = a_;
+        b = b_;
+    } else {
+        negative = false;
+        a = b_;
+        b = a_;
+    }
+
+    const walker = new CalendarWalker(a);
+    walker.walkToDate(b);
+    const diff = walker.distWalked;
+
+    return {
+        years: diff.years,
+        months: diff.months,
+        days: diff.days,
+        hours: diff.hours,
+        minutes: diff.minutes,
+        seconds: diff.seconds,
+        milliseconds: diff.milliseconds,
+        negative: negative
+    };
+}
+
 function getClosestYearlyDate(now: Date, date: Date): Date {
     const dateTime = date.getTime();
     const dateThisYear = new Date(date.getTime());
@@ -63,44 +96,6 @@ function getClosestYearlyDate(now: Date, date: Date): Date {
 
         return closestDate(now, dateLastYear, dateThisYear);
     }
-}
-
-//! bug: not accurate
-// fix: traverse dates instead of subtracting
-function dateDiff(a: Date, b: Date): DateDiff {
-    return normalizeDateDiff({
-        years: a.getFullYear() - b.getFullYear(),
-        months: a.getMonth() - b.getMonth(),
-        days: a.getDate() - b.getDate(),
-        hours: a.getHours() - b.getHours(),
-        minutes: a.getMinutes() - b.getMinutes(),
-        seconds: a.getSeconds() - b.getSeconds(),
-        milliseconds: a.getMilliseconds() - b.getMilliseconds()
-    });
-}
-
-function normalizeDateDiff(dateDiff: DateDiff): DateDiff {
-    // console.log(dateDiff);
-    const date = new Date(
-        dateDiff.years,
-        dateDiff.months,
-        dateDiff.days,
-        dateDiff.hours,
-        dateDiff.minutes,
-        dateDiff.seconds,
-        dateDiff.milliseconds
-    );
-
-    return {
-        // @ts-ignore get year (deprecated) is required to extract the year difference
-        years: date.getYear(),
-        months: date.getMonth(),
-        days: date.getDate(),
-        hours: date.getHours(),
-        minutes: date.getMinutes(),
-        seconds: date.getSeconds(),
-        milliseconds: date.getMilliseconds()
-    };
 }
 
 export function millisecondsThisYear() {
