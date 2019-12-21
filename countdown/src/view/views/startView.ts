@@ -13,7 +13,7 @@ class _StartView extends View {
         const submitButton = getElmById("selectSubmit");
         submitButton.addEventListener("click", function () {
             views.switch(countdownView);
-        })
+        });
     }
 }
 const startView = new _StartView();

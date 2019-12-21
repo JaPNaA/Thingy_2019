@@ -1,51 +1,78 @@
 import View from "../view.js";
-import { getElmById, round } from "../../utils.js";
-import { getClosestDateDifferenceMilliseconds, getClosestDateDifference, millisecondsThisYear } from "../../date.js";
+import { getElmById } from "../../utils.js";
+import { getClosestDateDifferenceMilliseconds, getClosestDateDifference, millisecondsThisYear, DateDiff, dateDiffNumbersKeys } from "../../date.js";
 
-const birthday = new Date(2003, 10, 19);
+const birthday = new Date();
+birthday.setTime(birthday.getTime() + 5000);
 console.log(birthday);
 
 
 class _CountdownView extends View {
-    private yearsElm = getElmById("countdownYears");
-    private monthsElm = getElmById("countdownMonths");
-    private daysElm = getElmById("countdownDays");
-    private hoursElm = getElmById("countdownHours");
-    private minutesElm = getElmById("countdownMinutes");
-    private secondsElm = getElmById("countdownSeconds");
-    private millisecondsElm = getElmById("countdownMilliseconds");
     private totalmillisecondsElm = getElmById("countdownTotalMilliseconds");
     private totalYearsElm = getElmById("countdownTotalYears");
 
+    private elms: { [x in keyof DateDiff]: HTMLElement } = {
+        years: getElmById("countdownYears"),
+        months: getElmById("countdownMonths"),
+        days: getElmById("countdownDays"),
+        hours: getElmById("countdownHours"),
+        minutes: getElmById("countdownMinutes"),
+        seconds: getElmById("countdownSeconds"),
+        milliseconds: getElmById("countdownMilliseconds"),
+        negative: getElmById("countdownNegative")
+    };
+
+    private requestAnimationFrameHandle: number = -1;
+
     constructor() {
         super(getElmById("countdown"));
-        this.setup();
     }
 
-    private setup() {
+    public open() {
+        super.open();
         this.requestAnimationFrameCallback();
     }
 
-    private requestAnimationFrameCallback() {
+    public close() {
+        cancelAnimationFrame(this.requestAnimationFrameHandle);
+    }
+
+    private requestAnimationFrameCallback(): void {
         const now = new Date();
 
         const diff = getClosestDateDifference(now, birthday);
         const msDiff = getClosestDateDifferenceMilliseconds(now, birthday);
 
-        this.yearsElm.innerText = diff.years.toString();
-        this.monthsElm.innerText = diff.months.toString();
-        this.daysElm.innerText = diff.days.toString();
-        this.hoursElm.innerText = diff.hours.toString();
-        this.minutesElm.innerText = diff.minutes.toString();
-        this.secondsElm.innerText = diff.seconds.toString();
-        this.millisecondsElm.innerText = diff.milliseconds.toString();
+        if (diff.negative) {
+            this.elm.classList.add("negative");
+        } else {
+            this.elm.classList.remove("negative");
+        }
+
+        this.updateElms(diff);
 
         this.totalmillisecondsElm.innerText = msDiff.toString();
         this.totalYearsElm.innerText = (msDiff / millisecondsThisYear()).toString();
 
-        console.log(diff.negative);
+        this.requestAnimationFrameHandle = requestAnimationFrame(() => this.requestAnimationFrameCallback());
+    }
 
-        requestAnimationFrame(() => this.requestAnimationFrameCallback());
+    private updateElms(diff: DateDiff): void {
+        let i = 0;
+        for (; i < dateDiffNumbersKeys.length; i++) {
+            const key = dateDiffNumbersKeys[i];
+            if (diff[key] !== 0) { break; }
+            this.elms[key].innerText = "0";
+            this.elms[key].classList.add("leadingZero");
+        }
+
+        for (; i < dateDiffNumbersKeys.length; i++) {
+            const key = dateDiffNumbersKeys[i];
+            this.elms[key].innerText = diff[key].toString();
+            this.elms[key].classList.remove("leadingZero");
+        }
+
+        this.elms.negative.innerText = diff.negative ? "ago" : "";
     }
 }
 

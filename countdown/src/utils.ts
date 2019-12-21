@@ -3,5 +3,7 @@ export function round(number: number, factor: number): number {
 }
 
 export function getElmById(id: string): HTMLElement {
-    return document.getElementById(id) as HTMLElement;
+    const elm = document.getElementById(id);
+    if (!elm) { throw new Error("element with id '" + id + "' does not exist") }
+    return elm;
 }

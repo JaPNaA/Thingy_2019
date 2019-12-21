@@ -160,6 +160,10 @@ body {
     padding: 8px;
 }
 
+#countdown .leadingZero {
+    opacity: 0;
+}
+
 #countdownYears::after {
     content: " years";
 }

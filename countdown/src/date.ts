@@ -11,28 +11,7 @@ export interface DateDiff {
     negative: boolean;
 };
 
-const dateDiffKeys: (keyof DateDiff)[] = ["years", "months", "days", "hours", "minutes", "seconds", "milliseconds"];
-
-export function dateDiffToString(dateDiff: DateDiff): string {
-    const diffs = [];
-
-    let ignoring = true;
-
-    for (let i = 0; i < dateDiffKeys.length; i++) {
-        const key = dateDiffKeys[i];
-        if (dateDiff[key] !== 0) {
-            ignoring = false;
-        }
-
-        if (ignoring) { continue; }
-
-        diffs.push(dateDiff[key].toString() + " " + key);
-    }
-
-    // if (dateDiff.years)
-
-    return diffs.join(", ");
-}
+export const dateDiffNumbersKeys: readonly (keyof DateDiff)[] = ["years", "months", "days", "hours", "minutes", "seconds", "milliseconds"];
 
 export function getClosestDateDifference(a: Date, b: Date): DateDiff {
     const closest = getClosestYearlyDate(a, b);
