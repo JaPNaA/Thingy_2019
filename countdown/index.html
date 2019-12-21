@@ -2,67 +2,87 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Birthday Countdown</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Countdown</title>
 
-    <link rel="icon" href="./img/CountdownC.svg">
-    <link rel="stylesheet" href="index.css">
+	<link rel="icon" href="./img/CountdownC.png">
+	<link rel="stylesheet" href="index.css">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div id="start" class="view">
-        <div class="section top">
-            <div class="logoContainer"> <img src="img/CountdownLogo.svg" alt="Countdown logo"> </div>
-        </div>
-        <div class="section middle">
-            <div class="title">to...</div>
-            <div class="to horizontalSelect">
-                <span id="toDate" class="selectOption">Date</span>
-                <span id="toBirthday" class="selectOption">Birthday</span>
-            </div>
-            <form class="timeAndDateSelect" id="form">
-                <div class="dateSelect select">
-                    <div class="input" id="year">
-                        <label for="year">Year</label>
-                        <input name="year" type="text">
-                    </div>
-                    <div class="input" id="month">
-                        <label for="month">Month</label>
-                        <input name="month" type="text">
-                    </div>
-                    <div class="input" id="date">
-                        <label for="date">Date</label>
-                        <input name="date" type="text">
-                    </div>
-                </div>
-                <div class="timeSelect select">
-                    <div class="input" id="hour">
-                        <label for="hour">Hour</label>
-                        <input name="hour" type="text">
-                    </div>
-                    <div class="input" id="minute">
-                        <label for="minute">Minute</label>
-                        <input name="minute" type="text">
-                    </div>
-                    <div class="input" id="second">
-                        <label for="second">Second</label>
-                        <input name="second" type="text">
-                    </div>
-                    <div class="input" id="millisecond">
-                        <label for="millisecond">Millisecond</label>
-                        <input name="millisecond" type="text">
-                    </div>
-                </div>
-                <div class="submitContainer">
-                    <div id="submit">Start Countdown!</div>
-                </div>
-            </form>
-        </div>
-    </div>
+	<div class="views">
+		<div id="start" class="view">
+			<div class="section top">
+				<div class="logoContainer"> <img src="img/CountdownLogo.svg" alt="Countdown logo"> </div>
+			</div>
+			<div class="section middle">
+				<div class="title">to...</div>
+				<div class="to horizontalSelect">
+					<span id="toDate" class="selectOption">Date</span>
+					<span id="toBirthday" class="selectOption">Birthday</span>
+				</div>
+				<form class="timeAndDateSelect" id="form">
+					<div class="dateSelect select">
+						<div class="input" id="selectYear">
+							<label for="year">Year</label>
+							<input name="year" type="text">
+						</div>
+						<div class="input" id="selectMonth">
+							<label for="month">Month</label>
+							<input name="month" type="text">
+						</div>
+						<div class="input" id="selectDate">
+							<label for="date">Date</label>
+							<input name="date" type="text">
+						</div>
+					</div>
+					<div class="timeSelect select">
+						<div class="input" id="selectHour">
+							<label for="hour">Hour</label>
+							<input name="hour" type="text">
+						</div>
+						<div class="input" id="selectMinute">
+							<label for="minute">Minute</label>
+							<input name="minute" type="text">
+						</div>
+						<div class="input" id="selectSecond">
+							<label for="second">Second</label>
+							<input name="second" type="text">
+						</div>
+						<div class="input" id="selectMillisecond">
+							<label for="millisecond">Millisecond</label>
+							<input name="millisecond" type="text">
+						</div>
+					</div>
+					<div id="selectSubmit" class="submitContainer">
+						<div>Start Countdown!</div>
+					</div>
+				</form>
+			</div>
+		</div>
 
-    <script src="dist/index.js" type="module"></script>
+		<div class="view" id="countdown">
+			<div class="timerContainer">
+				<div class="timer">
+					<div id="countdownYears"></div>
+					<div id="countdownMonths"></div>
+					<div id="countdownDays"></div>
+					<div id="countdownHours"></div>
+					<div id="countdownMinutes"></div>
+					<div id="countdownSeconds"></div>
+					<div id="countdownMilliseconds"></div>
+
+					<div id="countdownTotalMilliseconds"></div>
+					<div id="countdownTotalYears"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="dist/index.js" type="module"></script>
 </body>
 
 </html>
