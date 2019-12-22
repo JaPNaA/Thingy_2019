@@ -2,7 +2,7 @@ import View from "../view.js";
 import { getElmById } from "../../utils.js";
 import { DateDiff, dateDiffNumbersKeys, dateDiff, getTotalYearDiff } from "../../date.js";
 
-const birthday = new Date("2060/1/1");
+const birthday = new Date("2019/12/24 GMT-5");
 // birthday.setTime(birthday.getTime() + 5000);
 console.log(birthday);
 
@@ -86,6 +86,11 @@ class _CountdownView extends View {
         for (; i < dateDiffNumbersKeys.length; i++) {
             const key = dateDiffNumbersKeys[i];
             this.elms[key].innerText = this.padStart0(diff[key].toString(), this.dateDiffNumberDigits[key]);
+            if (diff[key] === 1) {
+                this.elms[key].classList.add("singular");
+            } else {
+                this.elms[key].classList.remove("singular");
+            }
             this.elms[key].classList.remove("leadingZero");
             this.elms[key].classList.remove("first");
         }
