@@ -156,12 +156,133 @@ body {
     text-align: center;
 }
 
-#countdown {
+#countdown .timer {
+    display: grid;
     padding: 8px;
 }
 
 #countdown .leadingZero {
-    opacity: 0;
+    display: none;
+}
+
+/* --- Layouts --- */
+
+#countdown[firstnonzero="years"] .timer {
+    grid-template:
+        "years years years years years years"
+        "months months months days days days"
+        "hours hours minutes minutes seconds seconds"
+        "negative negative negative negative negative negative"
+        "totalMilliseconds totalMilliseconds totalMilliseconds totalMilliseconds totalMilliseconds totalMilliseconds"
+        "totalYears totalYears totalYears totalYears totalYears totalYears";
+}
+
+#countdown[firstnonzero="years"] #countdownMilliseconds {
+    display: none;
+}
+
+#countdown[firstnonzero="months"] .timer {
+    grid-template:
+        "months months months"
+        "days days days"
+        "hours minutes seconds"
+        "negative negative negative"
+        "totalMilliseconds totalMilliseconds totalMilliseconds"
+        "totalYears totalYears totalYears";
+}
+
+#countdown[firstnonzero="months"] #countdownMilliseconds {
+    display: none;
+}
+
+#countdown[firstnonzero="days"] .timer {
+    grid-template:
+        "days days days"
+        "hours minutes seconds"
+        "negative negative negative"
+        "totalMilliseconds totalMilliseconds totalMilliseconds"
+        "totalYears totalYears totalYears";
+}
+
+#countdown[firstnonzero="days"] #countdownMilliseconds {
+    display: none;
+}
+
+#countdown[firstnonzero="hours"] .timer {
+    grid-template:
+        "hours hours"
+        "minutes seconds"
+        "negative negative"
+        "totalMilliseconds totalMilliseconds"
+        "totalYears totalYears";
+}
+
+#countdown[firstnonzero="hours"] #countdownMilliseconds {
+    display: none;
+}
+
+#countdown[firstnonzero="minutes"] .timer {
+    grid-template:
+        "minutes minutes"
+        "seconds milliseconds"
+        "negative negative"
+        "totalMilliseconds totalMilliseconds"
+        "totalYears totalYears";
+}
+
+#countdown[firstnonzero="seconds"] .timer,
+#countdown[firstnonzero="milliseconds"] .timer {
+    grid-template:
+        "seconds milliseconds"
+        "negative negative"
+        "totalMilliseconds totalMilliseconds"
+        "totalYears totalYears";
+}
+
+#countdown[firstnonzero="milliseconds"] #countdownSeconds {
+    display: block;
+}
+
+/* --- grid areas --- */
+
+#countdownYears {
+    grid-area: years;
+}
+
+#countdownMonths {
+    grid-area: months;
+}
+
+#countdownDays {
+    grid-area: days;
+}
+
+#countdownHours {
+    grid-area: hours;
+}
+
+#countdownMinutes {
+    grid-area: minutes;
+}
+
+#countdownSeconds {
+    grid-area: seconds;
+}
+
+#countdownMilliseconds {
+    grid-area: milliseconds;
+}
+
+#countdownNegative {
+    grid-area: negative;
+}
+
+#countdownTotalMilliseconds {
+    grid-area: totalMilliseconds;
+}
+
+#countdownTotalYears {
+    grid-area: totalYears;
 }
 
 #countdownYears::after {
