@@ -6,7 +6,7 @@ export default class CalendarWalker {
     public distWalked: DateDiff;
 
     constructor(startDate: Date) {
-        this.date = startDate;
+        this.date = new Date(startDate.getTime());
 
         this.distWalked = {
             years: 0,
