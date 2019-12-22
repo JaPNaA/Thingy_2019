@@ -2,7 +2,7 @@ import View from "../view.js";
 import { getElmById } from "../../utils.js";
 import { getClosestDateDifferenceMilliseconds, getClosestDateDifference, millisecondsThisYear, DateDiff, dateDiffNumbersKeys, dateDiff } from "../../date.js";
 
-const birthday = new Date("2020/1/1");
+const birthday = new Date("2019/12/21 8:42:30 PM");
 // birthday.setTime(birthday.getTime() + 5000);
 console.log(birthday);
 
@@ -41,8 +41,9 @@ class _CountdownView extends View {
 
     private requestAnimationFrameCallback(): void {
         const now = new Date();
+        const nowPlusABit = new Date(now.getTime() + 3100000000000);
 
-        const diff = dateDiff(now, birthday);
+        const diff = dateDiff(nowPlusABit, now);
         const msDiff = getClosestDateDifferenceMilliseconds(now, birthday);
 
         if (diff.negative) {
@@ -81,7 +82,12 @@ class _CountdownView extends View {
 
         this.elms.negative.innerText = diff.negative ? "ago" : "";
 
-        this.elms[dateDiffNumbersKeys[this.firstNonZeroedIndex]].classList.add("first");
+        const firstNonZeroed = dateDiffNumbersKeys[this.firstNonZeroedIndex];
+        if (firstNonZeroed) {
+            this.elms[firstNonZeroed].classList.add("first");
+        } else {
+            this.elms[dateDiffNumbersKeys[dateDiffNumbersKeys.length - 1]].classList.add("first");
+        }
     }
 }
 
