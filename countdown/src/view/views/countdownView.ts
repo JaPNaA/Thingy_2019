@@ -74,7 +74,7 @@ class _CountdownView extends View {
 
     private updateElms(diff: DateDiff): void {
         let i = 0;
-        for (; i < dateDiffNumbersKeys.length; i++) {
+        for (; i < dateDiffNumbersKeys.length - 1; i++) {
             const key = dateDiffNumbersKeys[i];
             if (diff[key] !== 0) { break; }
             this.elms[key].innerText = "0";
@@ -86,7 +86,7 @@ class _CountdownView extends View {
 
         for (; i < dateDiffNumbersKeys.length; i++) {
             const key = dateDiffNumbersKeys[i];
-            this.elms[key].innerText = diff[key].toString();
+            this.elms[key].innerText = this.padStart0(diff[key].toString(), this.dateDiffNumberDigits[key]);
             this.elms[key].classList.remove("leadingZero");
             this.elms[key].classList.remove("first");
         }
@@ -94,7 +94,6 @@ class _CountdownView extends View {
         this.elms.negative.innerText = diff.negative ? "ago" : "";
 
         const firstNonZeroed = dateDiffNumbersKeys[this.firstNonZeroedIndex];
-        if (firstNonZeroed) {
             this.elms[firstNonZeroed].classList.add("first");
     }
 
