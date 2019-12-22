@@ -22,6 +22,13 @@ class _CountdownView extends View {
         negative: getElmById("countdownNegative")
     };
 
+    private dateDiffNumberDigits: { [x in keyof DateDiff]?: number } = {
+        seconds: 2,
+        milliseconds: 3
+    };
+    private totalYearsDecimals = 9;
+    private totalYearsDecimalsFactor = Math.pow(10, -this.totalYearsDecimals);
+
     private firstNonZeroedIndex = 0;
 
     private requestAnimationFrameHandle: number = -1;
@@ -56,7 +63,11 @@ class _CountdownView extends View {
         this.elm.setAttribute("firstnonzero", dateDiffNumbersKeys[this.firstNonZeroedIndex]);
 
         this.totalmillisecondsElm.innerText = msDiff.toString();
-        this.totalYearsElm.innerText = (msDiff / millisecondsThisYear()).toString();
+        this.totalYearsElm.innerText =
+            this.padDecimals(this.roundWithFactor(
+                getTotalYearDiff(now, birthday),
+                this.totalYearsDecimalsFactor
+            ), this.totalYearsDecimals);
 
         this.requestAnimationFrameHandle = requestAnimationFrame(() => this.requestAnimationFrameCallback());
     }
@@ -85,9 +96,27 @@ class _CountdownView extends View {
         const firstNonZeroed = dateDiffNumbersKeys[this.firstNonZeroedIndex];
         if (firstNonZeroed) {
             this.elms[firstNonZeroed].classList.add("first");
-        } else {
-            this.elms[dateDiffNumbersKeys[dateDiffNumbersKeys.length - 1]].classList.add("first");
+    }
+
+    private padStart0(str: string, length?: number): string {
+        if (!length) { return str; }
+        const padLength = length - str.length;
+        if (padLength <= 0) { return str; }
+        let s = "";
+        for (let i = 0; i < padLength; i++) {
+            s += "0";
         }
+        return s + str;
+    }
+
+    private padDecimals(n: number, numDecimalDigits: number): string {
+        const decimalsStr = Math.round((n % 1) * (10 ** numDecimalDigits)).toString();
+        const padded = this.padStart0(decimalsStr, numDecimalDigits);
+        return Math.floor(n).toString() + "." + padded;
+        }
+
+    private roundWithFactor(n: number, to: number): number {
+        return Math.round(n / to) / (1 / to);
     }
 }
 
