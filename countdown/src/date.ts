@@ -77,11 +77,28 @@ function getClosestYearlyDate(now: Date, date: Date): Date {
     }
 }
 
-export function millisecondsThisYear() {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
-    const end = new Date(now.getFullYear() - 1, 0, 1, 0, 0, 0, 0);
-    return start.getTime() - end.getTime();
+export function getTotalYearDiff(a: Date, b: Date) {
+    const firstYear = a.getFullYear();
+    const firstYearMs = createDateWithYear(firstYear).getTime();
+    const msInFirstYear = getMillisecondsInYear(firstYear);
+    const startYearDiff = 1 - (a.getTime() - firstYearMs) / msInFirstYear;
+    
+    const lastYear = b.getFullYear();
+    const lastYearMs = createDateWithYear(lastYear).getTime();
+    const msInLastYear = getMillisecondsInYear(lastYear);
+    const lastYearDiff = (b.getTime() - lastYearMs) / msInLastYear;
+
+    return startYearDiff + lastYearDiff + (lastYear - firstYear - 1);
+}
+
+function getMillisecondsInYear(year: number) {
+    const start = createDateWithYear(year);
+    const end = createDateWithYear(year + 1);
+    return end.getTime() - start.getTime();
+}
+
+function createDateWithYear(year: number) {
+    return new Date(year, 0, 1, 0, 0, 0, 0);
 }
 
 function closestDate(ref: Date, a: Date, b: Date): Date {

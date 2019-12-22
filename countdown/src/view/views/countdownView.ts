@@ -1,8 +1,8 @@
 import View from "../view.js";
 import { getElmById } from "../../utils.js";
-import { getClosestDateDifferenceMilliseconds, getClosestDateDifference, millisecondsThisYear, DateDiff, dateDiffNumbersKeys, dateDiff } from "../../date.js";
+import { DateDiff, dateDiffNumbersKeys, dateDiff, getTotalYearDiff } from "../../date.js";
 
-const birthday = new Date("2019/12/21 8:42:30 PM");
+const birthday = new Date("2060/1/1");
 // birthday.setTime(birthday.getTime() + 5000);
 console.log(birthday);
 
@@ -48,10 +48,9 @@ class _CountdownView extends View {
 
     private requestAnimationFrameCallback(): void {
         const now = new Date();
-        const nowPlusABit = new Date(now.getTime() + 3100000000000);
 
-        const diff = dateDiff(nowPlusABit, now);
-        const msDiff = getClosestDateDifferenceMilliseconds(now, birthday);
+        const diff = dateDiff(birthday, now);
+        const msDiff = birthday.getTime() - now.getTime();
 
         if (diff.negative) {
             this.elm.classList.add("negative");
@@ -94,7 +93,7 @@ class _CountdownView extends View {
         this.elms.negative.innerText = diff.negative ? "ago" : "";
 
         const firstNonZeroed = dateDiffNumbersKeys[this.firstNonZeroedIndex];
-            this.elms[firstNonZeroed].classList.add("first");
+        this.elms[firstNonZeroed].classList.add("first");
     }
 
     private padStart0(str: string, length?: number): string {
@@ -112,7 +111,7 @@ class _CountdownView extends View {
         const decimalsStr = Math.round((n % 1) * (10 ** numDecimalDigits)).toString();
         const padded = this.padStart0(decimalsStr, numDecimalDigits);
         return Math.floor(n).toString() + "." + padded;
-        }
+    }
 
     private roundWithFactor(n: number, to: number): number {
         return Math.round(n / to) / (1 / to);
