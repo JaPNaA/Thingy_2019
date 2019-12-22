@@ -1,9 +1,9 @@
 import View from "../view.js";
 import { getElmById } from "../../utils.js";
-import { getClosestDateDifferenceMilliseconds, getClosestDateDifference, millisecondsThisYear, DateDiff, dateDiffNumbersKeys } from "../../date.js";
+import { getClosestDateDifferenceMilliseconds, getClosestDateDifference, millisecondsThisYear, DateDiff, dateDiffNumbersKeys, dateDiff } from "../../date.js";
 
-const birthday = new Date();
-birthday.setTime(birthday.getTime() + 5000);
+const birthday = new Date("2020/1/1");
+// birthday.setTime(birthday.getTime() + 5000);
 console.log(birthday);
 
 
@@ -21,6 +21,8 @@ class _CountdownView extends View {
         milliseconds: getElmById("countdownMilliseconds"),
         negative: getElmById("countdownNegative")
     };
+
+    private firstNonZeroedIndex = 0;
 
     private requestAnimationFrameHandle: number = -1;
 
@@ -40,7 +42,7 @@ class _CountdownView extends View {
     private requestAnimationFrameCallback(): void {
         const now = new Date();
 
-        const diff = getClosestDateDifference(now, birthday);
+        const diff = dateDiff(now, birthday);
         const msDiff = getClosestDateDifferenceMilliseconds(now, birthday);
 
         if (diff.negative) {
@@ -50,6 +52,7 @@ class _CountdownView extends View {
         }
 
         this.updateElms(diff);
+        this.elm.setAttribute("firstnonzero", dateDiffNumbersKeys[this.firstNonZeroedIndex]);
 
         this.totalmillisecondsElm.innerText = msDiff.toString();
         this.totalYearsElm.innerText = (msDiff / millisecondsThisYear()).toString();
@@ -64,15 +67,21 @@ class _CountdownView extends View {
             if (diff[key] !== 0) { break; }
             this.elms[key].innerText = "0";
             this.elms[key].classList.add("leadingZero");
+            this.elms[key].classList.remove("first");
         }
+
+        this.firstNonZeroedIndex = i;
 
         for (; i < dateDiffNumbersKeys.length; i++) {
             const key = dateDiffNumbersKeys[i];
             this.elms[key].innerText = diff[key].toString();
             this.elms[key].classList.remove("leadingZero");
+            this.elms[key].classList.remove("first");
         }
 
         this.elms.negative.innerText = diff.negative ? "ago" : "";
+
+        this.elms[dateDiffNumbersKeys[this.firstNonZeroedIndex]].classList.add("first");
     }
 }
 

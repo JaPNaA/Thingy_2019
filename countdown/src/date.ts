@@ -23,7 +23,7 @@ export function getClosestDateDifferenceMilliseconds(a: Date, b: Date): number {
     return closest.getTime() - a.getTime();
 }
 
-function dateDiff(a_: Date, b_: Date): DateDiff {
+export function dateDiff(a_: Date, b_: Date): DateDiff {
     let a: Date, b: Date;
     let negative: boolean;
 
