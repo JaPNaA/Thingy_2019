@@ -156,9 +156,25 @@ body {
     text-align: center;
 }
 
+#countdown .timerContainer {
+    width: 100%;
+    height: 100%;
+}
+
 #countdown .timer {
     display: grid;
+    position: absolute;
+
     padding: 8px;
+    width: auto;
+    row-gap: 4px;
+    column-gap: 1em;
+
+    font-size: 5vw;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 #countdown .timer > div {
@@ -170,7 +186,23 @@ body {
 }
 
 #countdown .first {
-    font-size: 10vw;
+    font-size: 1.7em;
+}
+
+#countdownTotalMilliseconds {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--black);
+}
+
+#countdownTotalMilliseconds,
+#countdownTotalYears {
+    font-size: 1rem;
+    opacity: 0.6;
+}
+
+#countdownNegative {
+    font-size: 0.6em;
 }
 
 /* --- Layouts --- */
@@ -190,6 +222,8 @@ body {
         "negative negative negative negative negative negative"
         "totalMilliseconds totalMilliseconds totalMilliseconds totalMilliseconds totalMilliseconds totalMilliseconds"
         "totalYears totalYears totalYears totalYears totalYears totalYears";
+
+    column-gap: 0.5em;
 }
 
 #countdown[firstnonzero="months"] .timer {
@@ -201,7 +235,6 @@ body {
         "totalMilliseconds totalMilliseconds totalMilliseconds"
         "totalYears totalYears totalYears";
 }
-
 
 #countdown[firstnonzero="days"] .timer {
     grid-template:
@@ -219,6 +252,27 @@ body {
         "negative negative"
         "totalMilliseconds totalMilliseconds"
         "totalYears totalYears";
+}
+
+#countdown[firstnonzero="minutes"] .timer,
+#countdown[firstnonzero="seconds"] .timer,
+#countdown[firstnonzero="milliseconds"] .timer {
+    column-gap: 0;
+}
+
+#countdown[firstnonzero="minutes"] #countdownSeconds,
+#countdown[firstnonzero="seconds"] #countdownSeconds,
+#countdown[firstnonzero="milliseconds"] #countdownSeconds,
+#countdown[firstnonzero="minutes"] #countdownMilliseconds,
+#countdown[firstnonzero="seconds"] #countdownMilliseconds,
+#countdown[firstnonzero="milliseconds"] #countdownMilliseconds {
+    font-size: 1.7em;
+}
+
+#countdown[firstnonzero="minutes"] #countdownSeconds::after,
+#countdown[firstnonzero="seconds"] #countdownSeconds::after,
+#countdown[firstnonzero="milliseconds"] #countdownSeconds::after {
+    content: "";
 }
 
 #countdown[firstnonzero="minutes"] .timer {
@@ -289,12 +343,24 @@ body {
     content: " years";
 }
 
+#countdownYears.singular::after {
+    content: " year";
+}
+
 #countdownMonths::after {
     content: " months";
 }
 
+#countdownMonths.singular::after {
+    content: " month";
+}
+
 #countdownDays::after {
     content: " days";
+}
+
+#countdownDays.singular::after {
+    content: " day";
 }
 
 #countdownHours::after {
@@ -313,8 +379,12 @@ body {
     content: ".";
 }
 
+#countdownMilliseconds::after {
+    content: " s";
+}
+
 #countdownTotalMilliseconds::after {
-    content: " total milliseconds";
+    content: " total ms";
 }
 
 #countdownTotalYears::after {
