@@ -161,11 +161,26 @@ body {
     padding: 8px;
 }
 
+#countdown .timer > div {
+    text-align: center;
+}
+
 #countdown .leadingZero {
     display: none;
 }
 
+#countdown .first {
+    font-size: 10vw;
+}
+
 /* --- Layouts --- */
+
+#countdown[firstnonzero="months"] #countdownMilliseconds,
+#countdown[firstnonzero="years"] #countdownMilliseconds,
+#countdown[firstnonzero="days"] #countdownMilliseconds,
+#countdown[firstnonzero="hours"] #countdownMilliseconds {
+    display: none;
+}
 
 #countdown[firstnonzero="years"] .timer {
     grid-template:
@@ -175,10 +190,6 @@ body {
         "negative negative negative negative negative negative"
         "totalMilliseconds totalMilliseconds totalMilliseconds totalMilliseconds totalMilliseconds totalMilliseconds"
         "totalYears totalYears totalYears totalYears totalYears totalYears";
-}
-
-#countdown[firstnonzero="years"] #countdownMilliseconds {
-    display: none;
 }
 
 #countdown[firstnonzero="months"] .timer {
@@ -191,9 +202,6 @@ body {
         "totalYears totalYears totalYears";
 }
 
-#countdown[firstnonzero="months"] #countdownMilliseconds {
-    display: none;
-}
 
 #countdown[firstnonzero="days"] .timer {
     grid-template:
@@ -204,10 +212,6 @@ body {
         "totalYears totalYears totalYears";
 }
 
-#countdown[firstnonzero="days"] #countdownMilliseconds {
-    display: none;
-}
-
 #countdown[firstnonzero="hours"] .timer {
     grid-template:
         "hours hours"
@@ -215,10 +219,6 @@ body {
         "negative negative"
         "totalMilliseconds totalMilliseconds"
         "totalYears totalYears";
-}
-
-#countdown[firstnonzero="hours"] #countdownMilliseconds {
-    display: none;
 }
 
 #countdown[firstnonzero="minutes"] .timer {
@@ -298,19 +298,19 @@ body {
 }
 
 #countdownHours::after {
-    content: " hours";
+    content: " hr";
 }
 
 #countdownMinutes::after {
-    content: " minutes";
+    content: " m";
 }
 
 #countdownSeconds::after {
-    content: " seconds";
+    content: " s";
 }
 
-#countdownMilliseconds::after {
-    content: " milliseconds";
+#countdownMilliseconds::before {
+    content: ".";
 }
 
 #countdownTotalMilliseconds::after {
