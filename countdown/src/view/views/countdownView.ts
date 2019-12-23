@@ -40,10 +40,20 @@ class _CountdownView extends View {
     public open() {
         super.open();
         this.requestAnimationFrameCallback();
+        this.resizeHandler();
+
+        registerResizeHandler(() => this.resizeHandler());
     }
 
     public close() {
         cancelAnimationFrame(this.requestAnimationFrameHandle);
+    }
+
+    private resizeHandler(): void {
+        this.elm.style.fontSize = Math.max(
+            26,
+            Math.min(innerWidth * 0.08, innerHeight * 0.1)
+        ) + "px";
     }
 
     private requestAnimationFrameCallback(): void {
