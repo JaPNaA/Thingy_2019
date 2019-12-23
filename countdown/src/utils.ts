@@ -13,6 +13,7 @@ let a = 0;
 export function registerResizeHandler(handler: () => void): void {
     let lastInnerWidth = innerWidth;
     let lastInnerHeight = innerHeight;
+    let remainingChecks = 0;
 
     function checkResize() {
         document.title = (++a).toString();
@@ -21,7 +22,10 @@ export function registerResizeHandler(handler: () => void): void {
             lastInnerHeight === innerHeight
         ) {
             // ios resize handling
-            requestAnimationFrame(() => checkResize());
+            if (remainingChecks > 0) {
+                requestAnimationFrame(() => checkResize());
+                remainingChecks--;
+            }
         } else {
             handler();
             lastInnerWidth = innerWidth;
@@ -29,5 +33,8 @@ export function registerResizeHandler(handler: () => void): void {
         }
     }
 
-    addEventListener("resize", checkResize);
+    addEventListener("resize", function () {
+        remainingChecks = 120;
+        checkResize();
+    });
 }
