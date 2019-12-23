@@ -16,7 +16,6 @@ export function registerResizeHandler(handler: () => void): void {
     let remainingChecks = 0;
 
     function checkResize() {
-        document.title = (++a).toString();
         if (
             lastInnerWidth === innerWidth &&
             lastInnerHeight === innerHeight
