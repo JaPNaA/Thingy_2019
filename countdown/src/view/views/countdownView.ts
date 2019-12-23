@@ -1,13 +1,10 @@
 import View from "../view.js";
-import { getElmById } from "../../utils.js";
+import { getElmById, registerResizeHandler } from "../../utils.js";
 import { DateDiff, dateDiffNumbersKeys, dateDiff, getTotalYearDiff } from "../../date.js";
 
-const birthday = new Date("2019/12/24 GMT-5");
-// birthday.setTime(birthday.getTime() + 5000);
-console.log(birthday);
-
-
 class _CountdownView extends View {
+    public targetDate: Date = new Date();
+
     private totalmillisecondsElm = getElmById("countdownTotalMilliseconds");
     private totalYearsElm = getElmById("countdownTotalYears");
 
@@ -59,8 +56,8 @@ class _CountdownView extends View {
     private requestAnimationFrameCallback(): void {
         const now = new Date();
 
-        const diff = dateDiff(birthday, now);
-        const msDiff = birthday.getTime() - now.getTime();
+        const diff = dateDiff(this.targetDate, now);
+        const msDiff = this.targetDate.getTime() - now.getTime();
 
         if (diff.negative) {
             this.elm.classList.add("negative");
@@ -74,7 +71,7 @@ class _CountdownView extends View {
         this.totalmillisecondsElm.innerText = msDiff.toString();
         this.totalYearsElm.innerText =
             this.padDecimals(this.roundWithFactor(
-                getTotalYearDiff(now, birthday),
+                getTotalYearDiff(now, this.targetDate),
                 this.totalYearsDecimalsFactor
             ), this.totalYearsDecimals);
 
@@ -123,9 +120,9 @@ class _CountdownView extends View {
     }
 
     private padDecimals(n: number, numDecimalDigits: number): string {
-        const decimalsStr = Math.round((n % 1) * (10 ** numDecimalDigits)).toString();
+        const decimalsStr = Math.round(Math.abs(n % 1) * (10 ** numDecimalDigits)).toString();
         const padded = this.padStart0(decimalsStr, numDecimalDigits);
-        return Math.floor(n).toString() + "." + padded;
+        return (n | 0).toString() + "." + padded;
     }
 
     private roundWithFactor(n: number, to: number): number {
