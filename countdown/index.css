@@ -26,12 +26,32 @@ body {
 }
 
 #start.view {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+
+    text-align: center;
+
+    height: auto;
+    min-height: 100vh;
+}
+
+#start .sectionsContainer {
+    display: inline-block;
+    align-self: center;
+    text-align: left;
+    height: auto;
+    width: 26em;
+}
+
+#start .sections {
     display: grid;
     grid-template:
         "top"
         "middle";
-
     grid-template-rows: 1fr 2fr;
+
+    margin-bottom: 64px;
 }
 
 #start .section.top {
@@ -109,6 +129,7 @@ body {
     flex-grow: 1;
 
     margin: 4px;
+    margin-top: -6px;
 
     display: grid;
     grid-template:
@@ -130,8 +151,13 @@ body {
     height: 1.2em;
     background-color: transparent;
 
+    font-size: 1em;
+    font-family: inherit;
+
     margin-top: 4px;
     outline: none;
+
+    border-radius: 0;
 
     border-left: none;
     border-top: none;
