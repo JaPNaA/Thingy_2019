@@ -15,6 +15,12 @@ body {
     margin: 0;
 }
 
+.view {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
 .view:not(.open) {
     display: none !important;
 }
@@ -26,9 +32,6 @@ body {
         "middle";
 
     grid-template-rows: 1fr 2fr;
-
-    width: 100%;
-    height: 100vh;
 }
 
 #start .section.top {
@@ -157,28 +160,28 @@ body {
 }
 
 #countdown .timerContainer {
-    width: 100%;
-    height: 100%;
-}
-
-#countdown .timer {
-    display: grid;
     position: absolute;
-
     padding: 8px;
-    width: auto;
-    row-gap: 4px;
-    column-gap: 1em;
-
-    font-size: 5vw;
 
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+
+    text-align: center;
 }
 
-#countdown .timer > div {
-    text-align: center;
+#countdown .timer {
+    display: grid;
+
+    height: auto;
+    width: auto;
+    max-width: 100vw;
+    min-width: 0;
+
+    row-gap: 4px;
+    column-gap: 1em;
+
+    white-space: nowrap;
 }
 
 #countdown .leadingZero {
@@ -189,20 +192,28 @@ body {
     font-size: 1.7em;
 }
 
-#countdownTotalMilliseconds {
-    margin-top: 16px;
-    padding-top: 16px;
+#countdownSeparator {
+    display: block;
+    width: 2em;
+    height: 1px;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+
     border-top: 1px solid var(--black);
 }
 
 #countdownTotalMilliseconds,
 #countdownTotalYears {
-    font-size: 1rem;
+    font-size: 0.8rem;
     opacity: 0.6;
 }
 
 #countdownNegative {
-    font-size: 0.6em;
+    font-size: 0.4em;
 }
 
 /* --- Layouts --- */
@@ -218,10 +229,7 @@ body {
     grid-template:
         "years years years years years years"
         "months months months days days days"
-        "hours hours minutes minutes seconds seconds"
-        "negative negative negative negative negative negative"
-        "totalMilliseconds totalMilliseconds totalMilliseconds totalMilliseconds totalMilliseconds totalMilliseconds"
-        "totalYears totalYears totalYears totalYears totalYears totalYears";
+        "hours hours minutes minutes seconds seconds";
 
     column-gap: 0.5em;
 }
@@ -230,28 +238,19 @@ body {
     grid-template:
         "months months months"
         "days days days"
-        "hours minutes seconds"
-        "negative negative negative"
-        "totalMilliseconds totalMilliseconds totalMilliseconds"
-        "totalYears totalYears totalYears";
+        "hours minutes seconds";
 }
 
 #countdown[firstnonzero="days"] .timer {
     grid-template:
         "days days days"
-        "hours minutes seconds"
-        "negative negative negative"
-        "totalMilliseconds totalMilliseconds totalMilliseconds"
-        "totalYears totalYears totalYears";
+        "hours minutes seconds";
 }
 
 #countdown[firstnonzero="hours"] .timer {
     grid-template:
         "hours hours"
-        "minutes seconds"
-        "negative negative"
-        "totalMilliseconds totalMilliseconds"
-        "totalYears totalYears";
+        "minutes seconds";
 }
 
 #countdown[firstnonzero="minutes"] .timer,
@@ -278,19 +277,12 @@ body {
 #countdown[firstnonzero="minutes"] .timer {
     grid-template:
         "minutes minutes"
-        "seconds milliseconds"
-        "negative negative"
-        "totalMilliseconds totalMilliseconds"
-        "totalYears totalYears";
+        "seconds milliseconds";
 }
 
 #countdown[firstnonzero="seconds"] .timer,
 #countdown[firstnonzero="milliseconds"] .timer {
-    grid-template:
-        "seconds milliseconds"
-        "negative negative"
-        "totalMilliseconds totalMilliseconds"
-        "totalYears totalYears";
+    grid-template: "seconds milliseconds";
 }
 
 #countdown[firstnonzero="milliseconds"] #countdownSeconds {
@@ -325,18 +317,6 @@ body {
 
 #countdownMilliseconds {
     grid-area: milliseconds;
-}
-
-#countdownNegative {
-    grid-area: negative;
-}
-
-#countdownTotalMilliseconds {
-    grid-area: totalMilliseconds;
-}
-
-#countdownTotalYears {
-    grid-area: totalYears;
 }
 
 #countdownYears::after {
