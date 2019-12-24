@@ -45,6 +45,7 @@ class _CountdownView extends View {
     }
 
     public close() {
+        super.close();
         cancelAnimationFrame(this.requestAnimationFrameHandle);
     }
 

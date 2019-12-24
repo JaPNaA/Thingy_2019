@@ -34,6 +34,10 @@ class _StartView extends View {
     }
 
     private setup() {
+        addEventListener("hashchange", () => {
+            views.switch(this);
+        });
+
         this.form.addEventListener("submit", e => {
             e.preventDefault();
 
@@ -165,5 +169,6 @@ class _StartView extends View {
         return (this.form.elements.namedItem(name) as HTMLInputElement).value;
     }
 }
+
 const startView = new _StartView();
 export default startView;
