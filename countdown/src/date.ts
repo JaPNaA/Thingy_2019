@@ -53,6 +53,25 @@ export function dateDiff(a_: Date, b_: Date): DateDiff {
     };
 }
 
+export function getTotalYearDiff(a: Date, b: Date) {
+    const firstYear = a.getFullYear();
+    const firstYearMs = createDateWithYear(firstYear).getTime();
+    const msInFirstYear = getMillisecondsInYear(firstYear);
+    const startYearDiff = 1 - (a.getTime() - firstYearMs) / msInFirstYear;
+    
+    const lastYear = b.getFullYear();
+    const lastYearMs = createDateWithYear(lastYear).getTime();
+    const msInLastYear = getMillisecondsInYear(lastYear);
+    const lastYearDiff = (b.getTime() - lastYearMs) / msInLastYear;
+
+    return startYearDiff + lastYearDiff + (lastYear - firstYear - 1);
+}
+
+export function getDaysInMonth(month: Date): number {
+    const end = new Date(month.getFullYear(), month.getMonth() + 1, -1);
+    return end.getDate();
+}
+
 function getClosestYearlyDate(now: Date, date: Date): Date {
     const dateTime = date.getTime();
     const dateThisYear = new Date(date.getTime());
@@ -75,20 +94,6 @@ function getClosestYearlyDate(now: Date, date: Date): Date {
 
         return closestDate(now, dateLastYear, dateThisYear);
     }
-}
-
-export function getTotalYearDiff(a: Date, b: Date) {
-    const firstYear = a.getFullYear();
-    const firstYearMs = createDateWithYear(firstYear).getTime();
-    const msInFirstYear = getMillisecondsInYear(firstYear);
-    const startYearDiff = 1 - (a.getTime() - firstYearMs) / msInFirstYear;
-    
-    const lastYear = b.getFullYear();
-    const lastYearMs = createDateWithYear(lastYear).getTime();
-    const msInLastYear = getMillisecondsInYear(lastYear);
-    const lastYearDiff = (b.getTime() - lastYearMs) / msInLastYear;
-
-    return startYearDiff + lastYearDiff + (lastYear - firstYear - 1);
 }
 
 function getMillisecondsInYear(year: number) {
