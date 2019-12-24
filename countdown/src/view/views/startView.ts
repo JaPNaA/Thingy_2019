@@ -22,14 +22,39 @@ class _StartView extends View {
         this.setup();
     }
 
+    public open() {
+        const time = this.getTimeFromLocationHash();
+        if (time !== null) {
+            countdownView.targetDate = new Date(time);
+            views.switch(countdownView);
+            return;
+        }
+
+        super.open();
+    }
+
     private setup() {
         this.form.addEventListener("submit", e => {
             e.preventDefault();
 
-            console.log(this.getAndValidateInputs());
+            const values = this.getAndValidateInputs();
+            const date = new Date(
+                values.year, values.month, values.date,
+                values.hour, values.minute, values.second,
+                values.millisecond
+            );
+
+            countdownView.targetDate = date;
 
             views.switch(countdownView);
         });
+    }
+
+    private getTimeFromLocationHash(): number | null {
+        if (!location.hash || location.hash.length < 1) { return null; }
+        const afterHash = parseInt(location.hash.slice(1));
+        if (isNaN(afterHash)) { return null; }
+        return afterHash;
     }
 
     private getAndValidateInputs(): { [x: string]: number } {

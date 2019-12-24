@@ -39,6 +39,8 @@ class _CountdownView extends View {
         this.requestAnimationFrameCallback();
         this.resizeHandler();
 
+        location.hash = this.targetDate.getTime().toString();
+
         registerResizeHandler(() => this.resizeHandler());
     }
 
