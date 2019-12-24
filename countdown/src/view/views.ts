@@ -16,11 +16,12 @@ class _Views {
         }
 
         this.switching = true;
-        view.open();
 
         if (this.activeView) {
             this.activeView.close();
         }
+
+        view.open();
 
         this.activeView = view;
         this.switching = false;

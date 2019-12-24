@@ -11,8 +11,19 @@
     --invalid-light-red: #ffeaea;
 }
 
+body.dark {
+    --dark-blue: #3c4d80;
+    --light-blue: #000000;
+    --theme-blue: #6d8ae4;
+    --neutral: #697187;
+    --secondary: #607bcc;
+    --white: #000000;
+    --black: #ffffff;
+}
+
 body {
     background-color: #e3eaff;
+    color: var(--black);
     font-family: "Open Sans", Arial, sans-serif;
     font-size: 0.9em;
     margin: 0;
@@ -32,6 +43,7 @@ input[type="number"] {
 }
 
 .view {
+    background-color: var(--light-blue);
     position: absolute;
     width: 100%;
     height: 100%;
@@ -85,6 +97,10 @@ input[type="number"] {
 #start .logoContainer img {
     width: 100%;
     height: 100%;
+}
+
+.dark #start .logoContainer img {
+    filter: invert(0.9);
 }
 
 #start .section.middle {
@@ -208,6 +224,7 @@ input[type="number"] {
 
     font-size: 1em;
     font-family: inherit;
+    color: var(--black);
 
     margin-top: 4px;
     outline: none;
@@ -260,6 +277,10 @@ input[type="number"] {
 .timeAndDateSelect .submitContainer input:focus,
 .timeAndDateSelect .submitContainer input:hover {
     background-color: var(--theme-blue);
+}
+
+#countdown.settled {
+    cursor: none;
 }
 
 #countdown .timerContainer {
@@ -317,6 +338,27 @@ input[type="number"] {
 
 #countdownNegative {
     font-size: 0.4em;
+}
+
+#countdown #actionsContainer {
+    font-size: 0.8rem;
+    margin: 8px;
+}
+
+#countdown.settled #actionsContainer {
+    opacity: 0;
+}
+
+#countdown #actionsContainer > div {
+    cursor: pointer;
+}
+
+#countdown #actionsContainer > div.disabled {
+    opacity: 0.4;
+}
+
+#countdown #actionsContainer > div.disabled::after {
+    content: " (unavailable)";
 }
 
 /* --- Layouts --- */

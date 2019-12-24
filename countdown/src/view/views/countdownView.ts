@@ -1,12 +1,17 @@
 import View from "../view.js";
 import { getElmById, registerResizeHandler } from "../../utils.js";
 import { DateDiff, dateDiffNumbersKeys, dateDiff, getTotalYearDiff } from "../../date.js";
+import views from "../views.js";
+import startView from "./startView.js";
 
 class _CountdownView extends View {
     public targetDate: Date = new Date();
 
     private totalmillisecondsElm = getElmById("countdownTotalMilliseconds");
     private totalYearsElm = getElmById("countdownTotalYears");
+    private reset = getElmById("reset");
+    private dark = getElmById("dark");
+    private fullscreen = getElmById("fullscreen");
 
     private elms: { [x in keyof DateDiff]: HTMLElement } = {
         years: getElmById("countdownYears"),
@@ -29,9 +34,11 @@ class _CountdownView extends View {
     private firstNonZeroedIndex = 0;
 
     private requestAnimationFrameHandle: number = -1;
+    private actionTimeoutHandle: number = -1;
 
     constructor() {
         super(getElmById("countdown"));
+        this.setup();
     }
 
     public open() {
@@ -41,12 +48,66 @@ class _CountdownView extends View {
 
         location.hash = this.targetDate.getTime().toString();
 
-        registerResizeHandler(() => this.resizeHandler());
+        addEventListener("mousemove", this.actionHandler);
+        addEventListener("mousedown", this.actionHandler);
+        addEventListener("touchstart", this.actionHandler);
+        addEventListener("touchmove", this.actionHandler);
+        this.actionHandler();
     }
 
     public close() {
         super.close();
         cancelAnimationFrame(this.requestAnimationFrameHandle);
+        clearTimeout(this.actionTimeoutHandle);
+
+        removeEventListener("mousemove", this.actionHandler);
+        removeEventListener("mousedown", this.actionHandler);
+        removeEventListener("touchstart", this.actionHandler);
+        removeEventListener("touchmove", this.actionHandler);
+    }
+
+    private setup() {
+        this.actionHandler = this.actionHandler.bind(this);
+
+        registerResizeHandler(() => this.resizeHandler());
+
+        if (!document.fullscreenEnabled) {
+            this.fullscreen.classList.add("disabled");
+        }
+
+        this.reset.addEventListener("click", () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+            location.hash = "";
+            views.switch(startView);
+        });
+
+        this.dark.addEventListener("click", () => {
+            if (document.body.classList.contains("dark")) {
+                document.body.classList.remove("dark");
+            } else {
+                document.body.classList.add("dark");
+            }
+        });
+
+        this.fullscreen.addEventListener("click", () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                this.elm.requestFullscreen();
+            }
+        });
+    }
+
+    private actionHandler(): void {
+        this.elm.classList.remove("settled");
+
+        clearTimeout(this.actionTimeoutHandle);
+
+        this.actionTimeoutHandle = setTimeout(() => {
+            this.elm.classList.add("settled");
+        }, 4000);
     }
 
     private resizeHandler(): void {
