@@ -23,8 +23,9 @@ class _StartView extends View {
     }
 
     private setup() {
-        const submitButton = getElmById("selectSubmit");
-        submitButton.addEventListener("click", () => {
+        this.form.addEventListener("submit", e => {
+            e.preventDefault();
+
             console.log(this.getAndValidateInputs());
 
             views.switch(countdownView);
