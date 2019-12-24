@@ -8,8 +8,6 @@ export function getElmById(id: string): HTMLElement {
     return elm;
 }
 
-let a = 0;
-
 export function registerResizeHandler(handler: () => void): void {
     let lastInnerWidth = innerWidth;
     let lastInnerHeight = innerHeight;
@@ -36,4 +34,83 @@ export function registerResizeHandler(handler: () => void): void {
         remainingChecks = 120;
         checkResize();
     });
+}
+
+/**
+ * Attempts to parse month string
+ * 
+ * "jan" -> 0
+ * "dec" -> 11
+ * 
+ * throws an error if the string is ambiguous or
+ * if there was no match
+ * 
+ * @param str month
+ * @returns number [0..11]
+ */
+export function monthStrToIndex(str: string): number {
+    let matchIndex = -1;
+
+    for (let i = 0, length = months.length; i < length; i++) {
+        const score = fuzzyStartsWith(str, months[i]);
+        if (score > 0) {
+            if (matchIndex >= 0) {
+                throw new Error(
+                    "Ambiguous, could be '" +
+                    months[matchIndex] +
+                    "' or '" +
+                    months[i] +
+                    "'"
+                );
+            } else {
+                matchIndex = i;
+            }
+        }
+    }
+
+    if (matchIndex < 0) {
+        throw new Error("Could not find a matching month");
+    }
+
+    return matchIndex;
+}
+
+const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+];
+
+// modified from japnaa.github.io
+function fuzzyStartsWith(start: string, str: string): number {
+    const strLength = str.length;
+    const startLower = start.toLowerCase();
+    const strLower = str.toLowerCase();
+    let currStrIndex = 0;
+    let skipped = 0;
+
+    outer: for (const char of startLower) {
+        for (; currStrIndex < strLength;) {
+            if (strLower[currStrIndex] === char) {
+                currStrIndex++;
+                continue outer;
+            } else {
+                skipped++;
+                currStrIndex++;
+            }
+        }
+
+        return 0;
+    }
+
+    return (currStrIndex - skipped) / currStrIndex;
 }
