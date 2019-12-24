@@ -6,6 +6,9 @@
     --secondary: #607bcc;
     --white: #dfdfdf;
     --black: #000000;
+
+    --invalid-red: #a12626;
+    --invalid-light-red: #ffeaea;
 }
 
 body {
@@ -13,6 +16,19 @@ body {
     font-family: "Open Sans", Arial, sans-serif;
     font-size: 0.9em;
     margin: 0;
+}
+
+/* --- hide the input buttons --- */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
 }
 
 .view {
@@ -126,6 +142,7 @@ body {
 }
 
 .timeAndDateSelect .input {
+    position: relative;
     flex-grow: 1;
 
     margin: 4px;
@@ -137,11 +154,48 @@ body {
         "label";
 }
 
+.timeAndDateSelect .input.invalid {
+    color: var(--invalid-red);
+}
+
 .timeAndDateSelect .input label {
     grid-area: label;
     width: 100%;
     margin-top: 2px;
     font-size: 0.85em;
+}
+
+.timeAndDateSelect .input.invalid::before {
+    content: "";
+    display: block;
+    position: absolute;
+
+    bottom: 48px;
+    left: 2px;
+    width: 8px;
+    height: 8px;
+
+    transform: rotate(45deg);
+
+    background-color: var(--invalid-red);
+    box-shadow: 0 2px 16px rgb(0, 0, 0, 0.25);
+}
+
+.timeAndDateSelect .input.invalid::after {
+    content: attr(reason-invalid);
+    display: block;
+    position: absolute;
+
+    box-sizing: border-box;
+
+    width: 100%;
+    bottom: 52px;
+    padding: 8px;
+
+    background-color: var(--invalid-light-red);
+    box-shadow: 0 2px 16px rgb(0, 0, 0, 0.25);
+
+    font-size: 0.9em;
 }
 
 .timeAndDateSelect .input input {
@@ -165,6 +219,15 @@ body {
     border-bottom: 2px solid var(--dark-blue);
 
     transition: 0.15s border-bottom-color ease;
+}
+
+.timeAndDateSelect .input.invalid input {
+    border-color: var(--invalid-red);
+}
+
+.timeAndDateSelect .input input::placeholder {
+    color: var(--dark-blue);
+    opacity: 1;
 }
 
 .timeAndDateSelect .input input:focus {
