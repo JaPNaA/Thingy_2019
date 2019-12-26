@@ -36,6 +36,14 @@ export function registerResizeHandler(handler: () => void): void {
     });
 }
 
+export function toggleClass(elm: HTMLElement, className: string): void {
+    if (elm.classList.contains(className)) {
+        elm.classList.remove(className);
+    } else {
+        elm.classList.add(className);
+    }
+}
+
 /**
  * Attempts to parse month string
  * 

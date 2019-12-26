@@ -283,6 +283,10 @@ input[type="number"] {
     cursor: none;
 }
 
+#countdown.footerHidden .timerFooter {
+    display: none;
+}
+
 #countdown .timerContainer {
     position: absolute;
     padding: 8px;

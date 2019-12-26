@@ -1,5 +1,5 @@
 import View from "../view.js";
-import { getElmById, registerResizeHandler } from "../../utils.js";
+import { getElmById, registerResizeHandler, toggleClass } from "../../utils.js";
 import { DateDiff, dateDiffNumbersKeys, dateDiff, getTotalYearDiff } from "../../date.js";
 import views from "../views.js";
 import startView from "./startView.js";
@@ -9,9 +9,11 @@ class _CountdownView extends View {
 
     private totalmillisecondsElm = getElmById("countdownTotalMilliseconds");
     private totalYearsElm = getElmById("countdownTotalYears");
-    private reset = getElmById("reset");
-    private dark = getElmById("dark");
-    private fullscreen = getElmById("fullscreen");
+
+    private actionReset = getElmById("timerActionReset");
+    private actionDark = getElmById("timerActionDark");
+    private actionFullscreen = getElmById("timerActionFullscreen");
+    private actionFooter = getElmById("timerActionFooter");
 
     private elms: { [x in keyof DateDiff]: HTMLElement } = {
         years: getElmById("countdownYears"),
@@ -72,10 +74,10 @@ class _CountdownView extends View {
         registerResizeHandler(() => this.resizeHandler());
 
         if (!document.fullscreenEnabled) {
-            this.fullscreen.classList.add("disabled");
+            this.actionFullscreen.classList.add("disabled");
         }
 
-        this.reset.addEventListener("click", () => {
+        this.actionReset.addEventListener("click", () => {
             if (document.fullscreenElement) {
                 document.exitFullscreen();
             }
@@ -83,20 +85,20 @@ class _CountdownView extends View {
             views.switch(startView);
         });
 
-        this.dark.addEventListener("click", () => {
-            if (document.body.classList.contains("dark")) {
-                document.body.classList.remove("dark");
-            } else {
-                document.body.classList.add("dark");
-            }
+        this.actionDark.addEventListener("click", () => {
+            toggleClass(document.body, "dark");
         });
 
-        this.fullscreen.addEventListener("click", () => {
+        this.actionFullscreen.addEventListener("click", () => {
             if (document.fullscreenElement) {
                 document.exitFullscreen();
             } else {
                 this.elm.requestFullscreen();
             }
+        });
+
+        this.actionFooter.addEventListener("click", () => {
+            toggleClass(this.elm, "footerHidden");
         });
     }
 
