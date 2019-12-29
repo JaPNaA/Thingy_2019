@@ -306,6 +306,10 @@ input[type="number"] {
     z-index: 24;
 }
 
+#countdown.backgroundDisabled #backgroundCanvas {
+    display: none;
+}
+
 #countdown .foregroundContainer {
     position: absolute;
     width: 100%;

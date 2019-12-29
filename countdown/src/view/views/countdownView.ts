@@ -17,6 +17,7 @@ class _CountdownView extends View {
 
     private actionReset = getElmById("timerActionReset");
     private actionDark = getElmById("timerActionDark");
+    private actionBackground = getElmById("timerActionBackground");
     private actionFullscreen = getElmById("timerActionFullscreen");
     private actionFooter = getElmById("timerActionFooter");
 
@@ -42,6 +43,9 @@ class _CountdownView extends View {
 
     private requestAnimationFrameHandle: number = -1;
     private actionTimeoutHandle: number = -1;
+
+    private isDark: boolean = false;
+    private isBackgroundEnabled: boolean = true;
 
     constructor() {
         super(getElmById("countdown"));
@@ -91,8 +95,26 @@ class _CountdownView extends View {
         });
 
         this.actionDark.addEventListener("click", () => {
-            toggleClass(document.body, "dark");
+            if (this.isDark) {
+                document.body.classList.remove("dark");
+                this.backgroundCanvas.setColor("#000000");
+            } else {
+                document.body.classList.add("dark");
+                this.backgroundCanvas.setColor("#ffffff");
+            }
+
+            this.isDark = !this.isDark;
         });
+
+        this.actionBackground.addEventListener("click", () => {
+            if (this.isBackgroundEnabled) {
+                this.elm.classList.add("backgroundDisabled");
+            } else {
+                this.elm.classList.remove("backgroundDisabled");
+            }
+
+            this.isBackgroundEnabled = !this.isBackgroundEnabled;
+        })
 
         this.actionFullscreen.addEventListener("click", () => {
             if (document.fullscreenElement) {
@@ -118,6 +140,7 @@ class _CountdownView extends View {
     }
 
     private resizeHandler(): void {
+        this.backgroundCanvas.resizeHandler();
         this.elm.style.fontSize = Math.max(
             26,
             Math.min(innerWidth * 0.08, innerHeight * 0.1)
@@ -138,6 +161,10 @@ class _CountdownView extends View {
 
         this.updateElms(diff);
         this.elm.setAttribute("firstnonzero", dateDiffNumbersKeys[this.firstNonZeroedIndex]);
+
+        if (this.isBackgroundEnabled) {
+            this.backgroundCanvas.draw(diff);
+        }
 
         this.totalmillisecondsElm.innerText = msDiff.toString();
         this.totalYearsElm.innerText =
