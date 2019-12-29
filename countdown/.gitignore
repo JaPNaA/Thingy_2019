@@ -1,2 +1,2 @@
 /tsconfig.tsbuildinfo
-/dist
+/dist/**/*.d.ts
