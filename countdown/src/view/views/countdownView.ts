@@ -3,9 +3,14 @@ import { getElmById, registerResizeHandler, toggleClass } from "../../utils.js";
 import { DateDiff, dateDiffNumbersKeys, dateDiff, getTotalYearDiff } from "../../date.js";
 import views from "../views.js";
 import startView from "./startView.js";
+import BackgroundCanvas from "./countdownView/BackgroundCanvas.js";
 
 class _CountdownView extends View {
     public targetDate: Date = new Date();
+
+    private backgroundCanvas = new BackgroundCanvas(
+        getElmById("backgroundCanvas") as HTMLCanvasElement
+    );
 
     private totalmillisecondsElm = getElmById("countdownTotalMilliseconds");
     private totalYearsElm = getElmById("countdownTotalYears");

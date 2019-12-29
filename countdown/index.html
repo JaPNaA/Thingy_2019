@@ -69,30 +69,36 @@
 		</div>
 
 		<div class="view" id="countdown">
-			<div class="timerContainer">
-				<div class="timer">
-					<div id="countdownYears"></div>
-					<div id="countdownMonths"></div>
-					<div id="countdownDays"></div>
-					<div id="countdownHours"></div>
-					<div id="countdownMinutes"></div>
-					<div id="countdownSeconds"></div>
-					<div id="countdownMilliseconds"></div>
-				</div>
-
-				<div class="timerFooter">
-					<div id="countdownNegative"></div>
-					<div id="countdownSeparator"></div>
-					<div id="countdownTotalMilliseconds"></div>
-					<div id="countdownTotalYears"></div>
-				</div>
+			<div class="backgroundCanvasContainer">
+				<canvas id="backgroundCanvas"></canvas>
 			</div>
 
-			<div id="actionsContainer">
-				<div id="timerActionReset"> Exit countdown </div> <br>
-				<div id="timerActionDark"> Toggle dark mode </div>
-				<div id="timerActionFooter"> Toggle "total"s </div> <br>
-				<div id="timerActionFullscreen"> Toggle fullscreen </div>
+			<div class="foregroundContainer">
+				<div class="timerContainer">
+					<div class="timer">
+						<div id="countdownYears"></div>
+						<div id="countdownMonths"></div>
+						<div id="countdownDays"></div>
+						<div id="countdownHours"></div>
+						<div id="countdownMinutes"></div>
+						<div id="countdownSeconds"></div>
+						<div id="countdownMilliseconds"></div>
+					</div>
+
+					<div class="timerFooter">
+						<div id="countdownNegative"></div>
+						<div id="countdownSeparator"></div>
+						<div id="countdownTotalMilliseconds"></div>
+						<div id="countdownTotalYears"></div>
+					</div>
+				</div>
+
+				<div id="actionsContainer">
+					<div id="timerActionReset"> Exit countdown </div> <br>
+					<div id="timerActionDark"> Toggle dark mode </div>
+					<div id="timerActionFooter"> Toggle "total"s </div> <br>
+					<div id="timerActionFullscreen"> Toggle fullscreen </div>
+				</div>
 			</div>
 		</div>
 	</div>

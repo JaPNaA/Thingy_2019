@@ -287,6 +287,32 @@ input[type="number"] {
     display: none;
 }
 
+#countdown .backgroundCanvasContainer {
+    z-index: 1;
+    position: relative;
+    width: 0;
+    height: 0;
+    top: 0;
+    left: 0;
+}
+
+#countdown #backgroundCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--light-blue);
+    z-index: 24;
+}
+
+#countdown .foregroundContainer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
 #countdown .timerContainer {
     position: absolute;
     padding: 8px;
