@@ -2,7 +2,8 @@ import View from "../view.js";
 import views from "../views.js";
 import countdownView from "./countdownView.js";
 import { getElmById, monthStrToIndex } from "../../utils.js";
-import { getDaysInMonth } from "../../date.js";
+import { getDaysInMonth, getClosestYearlyDate } from "../../date.js";
+import HorizontalSelect from "./startView/HorizontalSelect.js";
 
 class _StartView extends View {
     private form: HTMLFormElement = getElmById("form") as HTMLFormElement;
@@ -19,6 +20,7 @@ class _StartView extends View {
 
     constructor() {
         super(getElmById("start"));
+        new HorizontalSelect(getElmById("selectType"));
         this.setup();
     }
 
@@ -42,11 +44,16 @@ class _StartView extends View {
             e.preventDefault();
 
             const values = this.getAndValidateInputs();
-            const date = new Date(
+
+            let date = new Date(
                 values.year, values.month, values.date,
                 values.hour, values.minute, values.second,
                 values.millisecond
             );
+
+            if (this.getNamedInputValue("type") === "birthday") {
+                date = getClosestYearlyDate(new Date(), date);
+            }
 
             countdownView.targetDate = date;
 

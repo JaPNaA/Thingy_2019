@@ -72,7 +72,7 @@ export function getDaysInMonth(month: Date): number {
     return end.getDate();
 }
 
-function getClosestYearlyDate(now: Date, date: Date): Date {
+export function getClosestYearlyDate(now: Date, date: Date): Date {
     const dateTime = date.getTime();
     const dateThisYear = new Date(date.getTime());
 

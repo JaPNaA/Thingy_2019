@@ -121,6 +121,10 @@ input[type="number"] {
     margin-bottom: 32px;
 }
 
+.horizontalSelect select {
+    display: none;
+}
+
 .horizontalSelect .selectOption {
     display: block;
     flex-grow: 1;
@@ -130,6 +134,12 @@ input[type="number"] {
 }
 
 .horizontalSelect .selectOption:hover {
+    background-color: var(--secondary);
+    color: var(--black);
+    box-shadow: 0 0 2px #3856ff;
+}
+
+.horizontalSelect .selectOption.selected {
     background-color: var(--theme-blue);
     color: var(--black);
     box-shadow: 0 0 8px #3856ff;

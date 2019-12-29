@@ -22,9 +22,11 @@
 					</div>
 					<div class="section middle">
 						<div class="title">to...</div>
-						<div class="to horizontalSelect">
-							<span id="toDate" class="selectOption">Date</span>
-							<span id="toBirthday" class="selectOption">Birthday</span>
+						<div class="to horizontalSelect" id="selectType">
+							<select name="type" form="form">
+								<option value="date" selected>Date</option>
+								<option value="birthday">Birthday</option>
+							</select>
 						</div>
 						<form class="timeAndDateSelect" id="form">
 							<div class="dateSelect select">
