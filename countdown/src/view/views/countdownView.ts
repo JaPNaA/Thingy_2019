@@ -1,5 +1,5 @@
 import View from "../view.js";
-import { getElmById, registerResizeHandler, toggleClass } from "../../utils.js";
+import { addKonamiCodeListener, getElmById, registerResizeHandler, toggleClass } from "../../utils.js";
 import { DateDiff, dateDiffNumbersKeys, dateDiff, getTotalYearDiff } from "../../date.js";
 import views from "../views.js";
 import startView from "./startView.js";
@@ -8,12 +8,15 @@ import BackgroundCanvas from "./countdownView/BackgroundCanvas.js";
 class _CountdownView extends View {
     public targetDate: Date = new Date();
 
+
     private backgroundCanvas = new BackgroundCanvas(
         getElmById("backgroundCanvas") as HTMLCanvasElement
     );
 
     private totalmillisecondsElm = getElmById("countdownTotalMilliseconds");
     private totalYearsElm = getElmById("countdownTotalYears");
+    private totalMillenniaEasterEgg = getElmById("countdownTotalMillenniaEasterEgg");
+    private totalMillenniaEasterEggEnabled = false;
 
     private actionReset = getElmById("timerActionReset");
     private actionDark = getElmById("timerActionDark");
@@ -49,6 +52,11 @@ class _CountdownView extends View {
 
     constructor() {
         super(getElmById("countdown"));
+        addKonamiCodeListener(() => {
+            this.totalMillenniaEasterEggEnabled = true;
+            this.totalMillenniaEasterEgg.classList.remove("hidden");
+        });
+
         this.setup();
     }
 
@@ -167,11 +175,19 @@ class _CountdownView extends View {
         }
 
         this.totalmillisecondsElm.innerText = msDiff.toString();
+
+        const totalYears = this.roundWithFactor(
+            getTotalYearDiff(now, this.targetDate),
+            this.totalYearsDecimalsFactor
+        );
+
         this.totalYearsElm.innerText =
-            this.padDecimals(this.roundWithFactor(
-                getTotalYearDiff(now, this.targetDate),
-                this.totalYearsDecimalsFactor
-            ), this.totalYearsDecimals);
+            this.padDecimals(totalYears, this.totalYearsDecimals);
+
+        if (this.totalMillenniaEasterEggEnabled) {
+            this.totalMillenniaEasterEgg.innerHTML =
+                this.padDecimals(totalYears / 1000, this.totalYearsDecimals);
+        }
 
         this.requestAnimationFrameHandle = requestAnimationFrame(() => this.requestAnimationFrameCallback());
     }
@@ -220,7 +236,8 @@ class _CountdownView extends View {
     private padDecimals(n: number, numDecimalDigits: number): string {
         const decimalsStr = Math.round(Math.abs(n % 1) * (10 ** numDecimalDigits)).toString();
         const padded = this.padStart0(decimalsStr, numDecimalDigits);
-        return (n | 0).toString() + "." + padded;
+        const trunked = (n | 0);
+        return (trunked === 0 && n < 0 ? "-0" : trunked).toString() + "." + padded;
     }
 
     private roundWithFactor(n: number, to: number): number {

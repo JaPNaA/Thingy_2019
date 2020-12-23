@@ -2,7 +2,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import View from "../view.js";
-import { getElmById, registerResizeHandler, toggleClass } from "../../utils.js";
+import { addKonamiCodeListener, getElmById, registerResizeHandler, toggleClass } from "../../utils.js";
 import { dateDiffNumbersKeys, dateDiff, getTotalYearDiff } from "../../date.js";
 import views from "../views.js";
 import startView from "./startView.js";
@@ -25,6 +25,8 @@ var _CountdownView = (function (_super) {
         _this.backgroundCanvas = new BackgroundCanvas(getElmById("backgroundCanvas"));
         _this.totalmillisecondsElm = getElmById("countdownTotalMilliseconds");
         _this.totalYearsElm = getElmById("countdownTotalYears");
+        _this.totalMillenniaEasterEgg = getElmById("countdownTotalMillenniaEasterEgg");
+        _this.totalMillenniaEasterEggEnabled = false;
         _this.actionReset = getElmById("timerActionReset");
         _this.actionDark = getElmById("timerActionDark");
         _this.actionBackground = getElmById("timerActionBackground");
@@ -51,6 +53,10 @@ var _CountdownView = (function (_super) {
         _this.actionTimeoutHandle = -1;
         _this.isDark = false;
         _this.isBackgroundEnabled = true;
+        addKonamiCodeListener(function () {
+            _this.totalMillenniaEasterEggEnabled = true;
+            _this.totalMillenniaEasterEgg.classList.remove("hidden");
+        });
         _this.setup();
         return _this;
     }
@@ -149,8 +155,13 @@ var _CountdownView = (function (_super) {
             this.backgroundCanvas.draw(diff);
         }
         this.totalmillisecondsElm.innerText = msDiff.toString();
+        var totalYears = this.roundWithFactor(getTotalYearDiff(now, this.targetDate), this.totalYearsDecimalsFactor);
         this.totalYearsElm.innerText =
-            this.padDecimals(this.roundWithFactor(getTotalYearDiff(now, this.targetDate), this.totalYearsDecimalsFactor), this.totalYearsDecimals);
+            this.padDecimals(totalYears, this.totalYearsDecimals);
+        if (this.totalMillenniaEasterEggEnabled) {
+            this.totalMillenniaEasterEgg.innerHTML =
+                this.padDecimals(totalYears / 1000, this.totalYearsDecimals);
+        }
         this.requestAnimationFrameHandle = requestAnimationFrame(function () { return _this.requestAnimationFrameCallback(); });
     };
     _CountdownView.prototype.updateElms = function (diff) {
@@ -198,7 +209,8 @@ var _CountdownView = (function (_super) {
     _CountdownView.prototype.padDecimals = function (n, numDecimalDigits) {
         var decimalsStr = Math.round(Math.abs(n % 1) * (Math.pow(10, numDecimalDigits))).toString();
         var padded = this.padStart0(decimalsStr, numDecimalDigits);
-        return (n | 0).toString() + "." + padded;
+        var trunked = (n | 0);
+        return (trunked === 0 && n < 0 ? "-0" : trunked).toString() + "." + padded;
     };
     _CountdownView.prototype.roundWithFactor = function (n, to) {
         return Math.round(n / to) / (1 / to);

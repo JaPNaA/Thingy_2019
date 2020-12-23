@@ -122,3 +122,26 @@ function fuzzyStartsWith(start: string, str: string): number {
 
     return (currStrIndex - skipped) / currStrIndex;
 }
+
+export function addKonamiCodeListener(handler: () => void) {
+    const sequenceKeys = [
+        "ArrowUp", "ArrowUp",
+        "ArrowDown", "ArrowDown",
+        "ArrowLeft", "ArrowRight",
+        "ArrowLeft", "ArrowRight",
+        "KeyB", "KeyA"
+    ];
+    let currIndex = 0;
+
+    addEventListener("keydown", function (e) {
+        if (e.code === sequenceKeys[currIndex]) {
+            currIndex++;
+            if (currIndex === sequenceKeys.length) {
+                handler();
+                currIndex = 0;
+            }
+        } else {
+            currIndex = 0;
+        }
+    });
+}

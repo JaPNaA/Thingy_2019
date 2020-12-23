@@ -42,6 +42,10 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
+.hidden {
+    display: none;
+}
+
 .view {
     background-color: var(--light-blue);
     position: absolute;
@@ -374,7 +378,8 @@ input[type="number"] {
 }
 
 #countdownTotalMilliseconds,
-#countdownTotalYears {
+#countdownTotalYears,
+#countdownTotalMillenniaEasterEgg {
     font-size: 0.8rem;
     opacity: 0.6;
 }
@@ -563,4 +568,8 @@ input[type="number"] {
 
 #countdownTotalYears::after {
     content: " total years";
+}
+
+#countdownTotalMillenniaEasterEgg::after {
+    content: " total millennia";
 }
