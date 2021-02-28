@@ -3,6 +3,6 @@
 /lib
 /share
 /__pycache__
-saved_model.h5
 pyplot-export.png
 /local
+/lib64

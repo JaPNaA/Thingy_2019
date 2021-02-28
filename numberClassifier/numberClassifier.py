@@ -28,23 +28,33 @@ def route_index():
         arr2d = []
 
         for y in range(28):
-            yoff = y * 28
+            yOffset = y * 28
             arr_row = []
             for x in range(28):
-                arr_row.append(arr[yoff + x])
+                arr_row.append(arr[yOffset + x])
             arr2d.append(arr_row)
         
         ndarr = numpy.array([arr2d])
         ndarr = ndarr / 255.0
 
-        print(ndarr)
+        print(len(ndarr))
+        print(len(ndarr[0]))
+        print(len(ndarr[0][0]))
 
-        with model.session.as_default():
-            with model.graph.as_default():
-                predictions = model.model.predict(ndarr)
-                prediction = numpy.argmax(predictions[0])
-                print(predictions)
-                return str(prediction) + str(predictions)
+        return str(
+            numpy.argmax(
+                model.model.predict(
+                    ndarr
+                )[0]
+            )
+        )
+
+        # with model.session.as_default():
+        #     with model.graph.as_default():
+        #         predictions = model.model.predict(ndarr)
+        #         prediction = numpy.argmax(predictions[0])
+        #         print(predictions)
+        #         return str(prediction) + str(predictions)
 
 
 @app.route("/static/<path:path>")

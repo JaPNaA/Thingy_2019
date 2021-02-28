@@ -1,5 +1,6 @@
 const canvas = document.createElement("canvas");
-const predictButton = document.createElement("button");
+const clearButton = document.createElement("button");
+const predictionDiv = document.createElement("div");
 const scale = 12;
 
 canvas.width = 28;
@@ -14,9 +15,11 @@ canvas.style.imageRendering = "crisp-edges"; // for firefox
 
 document.body.appendChild(canvas);
 
-predictButton.innerHTML = "Predict!";
-predictButton.style.display = "block";
-document.body.appendChild(predictButton);
+clearButton.innerHTML = "Clear";
+clearButton.style.display = "block";
+document.body.appendChild(clearButton);
+
+document.body.appendChild(predictionDiv);
 
 const X = canvas.getContext("2d");
 
@@ -41,6 +44,7 @@ addEventListener("mouseup", () => {
     mouseDown = false;
     lastPointX = undefined;
     lastPointY = undefined;
+    getPrediction();
 });
 addEventListener("mousemove", function (e) {
     if (!mouseDown) { return; }
@@ -61,7 +65,7 @@ addEventListener("mousemove", function (e) {
     lastPointY = y;
 });
 
-predictButton.addEventListener("click", function () {
+function getPrediction() {
     const arr = [];
     const imageData = X.getImageData(0, 0, canvas.width, canvas.height);
 
@@ -82,6 +86,10 @@ predictButton.addEventListener("click", function () {
     })
         .then(e => e.text())
         .then(e => {
-            console.log(e);
+            predictionDiv.innerText = "Is it a... " + e + "?";
         });
+}
+
+clearButton.addEventListener("click", function() {
+    X.clearRect(0, 0, canvas.width, canvas.height);
 });
