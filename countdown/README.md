@@ -1,4 +1,11 @@
-# Birthday Countdown
+# Countdown
+
+<!---
+backgroundCSS: url(/Thingy_2019/0p/countdown.png)
+author: JaPNaA
+timestamp: Nov 20 2019 11:00
+tags: countdown, time, timer
+--->
 
 Created because `2017/exactBirthday` wasn't good for countdowns.
 
